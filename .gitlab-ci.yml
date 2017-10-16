@@ -1,2 +1,7 @@
+stages:
+  - build
+
 job1:
-  - touch test.txt
+  stage: build
+  script:
+    - touch test.txt
