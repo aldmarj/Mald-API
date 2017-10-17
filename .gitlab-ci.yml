@@ -1,8 +1,0 @@
-stages:
-  - deploy
-
-job1:
-  stage: deploy
-  script:
-    - echo '$test' > sshKey.ppk
-    - cat sshKey.ppk
