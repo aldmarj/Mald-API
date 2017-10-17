@@ -1,8 +1,8 @@
 stages:
-  - build
+  - deploy
 
 job1:
-  stage: build
+  stage: deploy
   script:
     - echo '$test' > sshKey.ppk
     - cat sshKey.ppk
