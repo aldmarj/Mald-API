@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Context>
+<Context>
+    <Resource name="jdbc/api" auth="Container" type="javax.sql.DataSource"
+              username="%username%" password="%password%" driverClassName="com.mysql.jdbc.Driver"
+              url="jdbc:mysql://localhost:3306/database?autoReconnect=true&amp;useSSL=false"
+              maxActive="15" maxIdle="3" />
+</Context>
