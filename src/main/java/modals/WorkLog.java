@@ -15,8 +15,12 @@ public class WorkLog
     private final String description;
 
     public WorkLog(final int workLogId, final Employee employee, final BusinessClient client,
-                   final long startTime, final long endTime, final String description)
+                   final long startTime, final long endTime, final String description) throws IllegalArgumentException
     {
+        if (endTime < startTime)
+        {
+            throw new IllegalArgumentException("End time must be after start time");
+        }
         this.workLogId = workLogId;
         this.employee = employee;
         this.client = client;
