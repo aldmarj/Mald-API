@@ -3,11 +3,15 @@
  */
 package database;
 
-import java.beans.PropertyVetoException;
+import java.sql.Connection;
+import java.sql.SQLException;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
-
-import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 /**
  * Singleton object of the database connection pool. 
@@ -16,56 +20,43 @@ import com.mchange.v2.c3p0.ComboPooledDataSource;
  */
 final public class DatabasePool {
 		
+	/** Logger **/
+	private final static Logger logger = Logger.getLogger(DatabasePool.class);
+	
 	/** The instance of the singleton object **/
 	private static DatabasePool instance;
 	
-	/** The connection pool **/
-	private static ComboPooledDataSource pool;
-	
-	/** Logger **/
-	final static Logger logger = Logger.getLogger(DatabasePool.class);
-	
+	/** The datasource object **/
+	private static DataSource dataSource;
+
 	/**
 	 * CLASS CONSTRUCTOR
 	 */
 	private DatabasePool() 
 	{
-		DatabaseProperties properties = DatabaseProperties.getInstance();
-
 		try 
 		{
-			pool = new ComboPooledDataSource();
-		   
-			pool.setDriverClass(properties.getJdbcDriver());
-	
-			pool.setJdbcUrl(properties.getDatabaseURL());
-			pool.setUser(properties.getDatabaseUser());
-			pool.setPassword(properties.getDatabasePass());
-	
-	//	   // the settings below are optional -- c3p0 can work with defaults
-	//	   pool.setMinPoolSize(5);
-	//	   pool.setAcquireIncrement(5);
-	//	   pool.setMaxPoolSize(20);
-		   
+			final Context init = new InitialContext();
+			dataSource = (DataSource) init.lookup("java:/comp/env/jdbc/api");
 		} 
-		catch (PropertyVetoException e) 
+		catch (NamingException e) 
 		{
-			// The pool was not set up correctly
 			logger.error("The pool was not set up correctly", e);
 		}
 	}
 	
 	/**
-	 * Returns the instance of this database pool object.
+	 * Returns a connection from the database pool.
 	 * 
-	 * @return the instance.
+	 * @return the connection.
+	 * @throws SQLException if no connections available.
 	 */
-	public static ComboPooledDataSource getInstance()
+	public static Connection getConnection() throws SQLException
 	{
 		if (instance == null)
 		{
 			instance = new DatabasePool();
 		}
-		return pool;
+		return dataSource.getConnection();
 	}
 }

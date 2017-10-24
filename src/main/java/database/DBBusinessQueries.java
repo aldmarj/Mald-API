@@ -20,7 +20,7 @@ import com.mysql.jdbc.Statement;
 public abstract class DBBusinessQueries {
 	
 	/** Logger **/
-	final static Logger logger = Logger.getLogger(DBBusinessQueries.class);
+	private final static Logger logger = Logger.getLogger(DBBusinessQueries.class);
 
 	/**
 	 * Creates a business in the database with the given name and tag.
@@ -38,7 +38,7 @@ public abstract class DBBusinessQueries {
 		ResultSet resultSet = null;
 	    try 
 	    {
-	    	connection = DatabasePool.getInstance().getConnection();
+	    	connection = DatabasePool.getConnection();
 			
 			String query = "INSERT INTO Business(businessName, businessTag) VALUES (?, ?);";
 			

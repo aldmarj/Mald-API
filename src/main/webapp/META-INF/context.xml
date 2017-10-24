@@ -2,7 +2,7 @@
 <!DOCTYPE Context>
 <Context>
     <Resource name="jdbc/api" auth="Container" type="javax.sql.DataSource"
-              username="%username%" password="%password%" driverClassName="com.mysql.jdbc.Driver"
-              url="jdbc:mysql://localhost:3306/database?autoReconnect=true&amp;useSSL=false"
+              username="api" password='A$ajppNE8q&amp;pNBbr' driverClassName="com.mysql.jdbc.Driver"
+              url="jdbc:mysql://mald-rdbms.cm5fqzlymdws.eu-west-2.rds.amazonaws.com/EmployeeManagement?autoReconnect=true&amp;useSSL=false"
               maxActive="15" maxIdle="3" />
 </Context>
