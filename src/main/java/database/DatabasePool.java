@@ -4,6 +4,11 @@
 package database;
 
 import java.beans.PropertyVetoException;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
@@ -18,10 +23,10 @@ final public class DatabasePool {
 	public static final String DATABASE_CONNECTION = "jdbc:mysql://mald-rdbms.cm5fqzlymdws.eu-west-2.rds.amazonaws.com/EmployeeManagement";
 
 	/** Constant for the database password. */
-	public static final String DATABASE_PASSWORD = "wingedEyebrows";
+	public static final String DATABASE_PASSWORD = "A$ajppNE8q&pNBbr";
 
 	/** Constant for the database username. */
-	public static final String DATABASE_USERNAME = "maldAdmin";
+	public static final String DATABASE_USERNAME = "api";
 	
 	/** Constant for the JDBC Driver. */
 	public static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
@@ -36,15 +41,23 @@ final public class DatabasePool {
 	 */
 	private DatabasePool() 
 	{
+		Properties prop = new Properties();
+		InputStream input = null;
+
 		try 
 		{
+			input = new FileInputStream("config.properties");
+
+			// load a properties file
+			prop.load(input);
+			
 			pool = new ComboPooledDataSource();
 		   
-			pool.setDriverClass(JDBC_DRIVER);
+			pool.setDriverClass(prop.getProperty("jdbcdriver"));
 	
-			pool.setJdbcUrl(DATABASE_CONNECTION);
-			pool.setUser(DATABASE_USERNAME);
-			pool.setPassword(DATABASE_PASSWORD);
+			pool.setJdbcUrl(prop.getProperty("dburl"));
+			pool.setUser(prop.getProperty("dbuser"));
+			pool.setPassword(prop.getProperty("dbpass"));
 	
 	//	   // the settings below are optional -- c3p0 can work with defaults
 	//	   pool.setMinPoolSize(5);
@@ -52,7 +65,7 @@ final public class DatabasePool {
 	//	   pool.setMaxPoolSize(20);
 		   
 		} 
-		catch (PropertyVetoException e) 
+		catch (PropertyVetoException | IOException e) 
 		{
 			e.printStackTrace();
 		}
