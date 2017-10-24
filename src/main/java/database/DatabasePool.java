@@ -27,7 +27,7 @@ final public class DatabasePool {
 	private static DatabasePool instance;
 	
 	/** The datasource object **/
-	private static DataSource dataSource;
+	private DataSource dataSource;
 
 	/**
 	 * CLASS CONSTRUCTOR
@@ -57,6 +57,6 @@ final public class DatabasePool {
 		{
 			instance = new DatabasePool();
 		}
-		return dataSource.getConnection();
+		return instance.dataSource.getConnection();
 	}
 }
