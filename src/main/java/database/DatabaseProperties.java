@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
+
 /**
  * Singleton file for handling the properties of the database. The database.properties file
  * should be edited before this.
@@ -17,6 +19,9 @@ public final class DatabaseProperties {
 
 	/** This singletons instance **/
 	private static DatabaseProperties instance;
+	
+	/** Logger **/
+	final static Logger logger = Logger.getLogger(DatabaseProperties.class);
 	
 	/** The database URL **/
 	private String dburl;
@@ -46,7 +51,7 @@ public final class DatabaseProperties {
 		catch (IOException e) 
 		{
 			// Unable to load the file specified.
-			e.printStackTrace();
+			logger.error("Unable to load the database properties.", e);
 		}
 		
 		this.jdbcdriver = prop.getProperty("jdbcdriver");

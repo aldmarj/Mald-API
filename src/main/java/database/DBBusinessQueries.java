@@ -8,6 +8,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.apache.log4j.Logger;
+
 import com.mysql.jdbc.Statement;
 
 /**
@@ -16,6 +18,9 @@ import com.mysql.jdbc.Statement;
  * @author Lawrence
  */
 public abstract class DBBusinessQueries {
+	
+	/** Logger **/
+	final static Logger logger = Logger.getLogger(DBBusinessQueries.class);
 
 	/**
 	 * Creates a business in the database with the given name and tag.
@@ -51,8 +56,7 @@ public abstract class DBBusinessQueries {
 		} 
 	    catch (SQLException e) 
 	    {
-			// Something went wrong with our query.
-			e.printStackTrace();
+			logger.error("Failed to create new business");
 		}
 	    finally
 	    {
@@ -63,8 +67,7 @@ public abstract class DBBusinessQueries {
 			} 
 			catch (SQLException e) 
 			{
-				// SQL objects refused to close.
-				e.printStackTrace();
+				logger.error("Failed to close SQL resources");
 			}
 	    }
 	    

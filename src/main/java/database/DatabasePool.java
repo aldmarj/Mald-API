@@ -5,6 +5,8 @@ package database;
 
 import java.beans.PropertyVetoException;
 
+import org.apache.log4j.Logger;
+
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 /**
@@ -19,6 +21,9 @@ final public class DatabasePool {
 	
 	/** The connection pool **/
 	private static ComboPooledDataSource pool;
+	
+	/** Logger **/
+	final static Logger logger = Logger.getLogger(DatabasePool.class);
 	
 	/**
 	 * CLASS CONSTRUCTOR
@@ -46,7 +51,7 @@ final public class DatabasePool {
 		catch (PropertyVetoException e) 
 		{
 			// The pool was not set up correctly
-			e.printStackTrace();
+			logger.error("The pool was not set up correctly", e);
 		}
 	}
 	
@@ -61,7 +66,6 @@ final public class DatabasePool {
 		{
 			instance = new DatabasePool();
 		}
-		
 		return pool;
 	}
 }
