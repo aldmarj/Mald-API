@@ -25,7 +25,7 @@ public abstract class DBBusinessQueries {
 	 * @param businessTag - the tag of the new business.
 	 * @return - the id of the new business.
 	 */
-	public int createBusiness(String businessName, String businessTag)
+	public static int createBusiness(String businessName, String businessTag)
 	{
 		int businessID = -1;
 		
