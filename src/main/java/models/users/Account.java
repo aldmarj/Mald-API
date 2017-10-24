@@ -1,4 +1,7 @@
-package models;
+package models.users;
+
+import java.util.Collection;
+import java.util.Collections;
 
 public abstract class Account
 {
@@ -8,11 +11,14 @@ public abstract class Account
 
     private final String storedPassword;
 
+    private final Collection<Role> roles;
+
     public Account(final int accountId, final String username, final String storedPassword)
     {
         this.accountId = accountId;
         this.userName = username;
         this.storedPassword = storedPassword;
+        this.roles = Collections.singleton(Role.USER); //TODO change if/when we have more than one type of user.
     }
 
     public final int getAccountId()

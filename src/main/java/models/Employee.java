@@ -1,5 +1,10 @@
 package models;
 
+import models.users.Account;
+import models.users.Role;
+
+import java.util.Collections;
+
 public class Employee extends Account
 {
     private final String firstName;
