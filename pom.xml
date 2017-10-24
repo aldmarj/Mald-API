@@ -5,7 +5,7 @@
   <artifactId>API</artifactId>
   <packaging>war</packaging>
   <version>1.0-SNAPSHOT</version>
-  <name>API Maven Webapp</name>
+  <name>MALD-API</name>
   <url>http://maven.apache.org</url>
   <dependencies>
     <dependency>
@@ -14,8 +14,18 @@
       <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <!-- Apache commons db-utils -->
+      <groupId>commons-dbutils</groupId>
+      <artifactId>commons-dbutils</artifactId>
+      <version>1.6</version>
+    </dependency>
   </dependencies>
   <build>
     <finalName>API</finalName>
   </build>
+  <properties>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+  </properties>
 </project>
