@@ -1,0 +1,21 @@
+stages:
+  - build
+  - test
+
+maven-build:
+  stage: build
+  only:
+    - master
+  tags:
+    - maven
+  script:
+    - mvn compile
+
+maven-test:
+  stage: test
+  only:
+    - master
+  tags:
+    - maven
+  script:
+    - mvn verify
