@@ -24,8 +24,8 @@ cache:
 
 maven-build:
   stage: build
-  only:
-    - master
+#  only:
+#    - master
   tags:
     - maven
   script:
