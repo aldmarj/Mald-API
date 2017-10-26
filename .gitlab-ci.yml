@@ -26,8 +26,6 @@ maven-build:
   stage: build
 #  only:
 #    - master
-  tags:
-    - maven
   script:
     - mvn $MAVEN_CLI_OPTS compile
   artifacts:
@@ -38,7 +36,5 @@ maven-test:
   stage: test
   only:
     - master
-  tags:
-    - maven
   script:
     - mvn $MAVEN_CLI_OPTS verify
