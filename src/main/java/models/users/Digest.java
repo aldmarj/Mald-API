@@ -27,6 +27,12 @@ public class Digest
         }
     }
 
+    /**
+     * creates a new Digest by first mutating the input plain text.
+     *
+     * @param text - the plain text to change into the equivalent stored credentials.
+     * @return the digest representing the input plain text.
+     */
     public static Digest fromPlainText(final String text)
     {
         return fromDigested(ch.mutate(text));
