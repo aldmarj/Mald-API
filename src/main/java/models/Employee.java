@@ -1,9 +1,7 @@
 package models;
 
 import models.users.Account;
-import models.users.Role;
-
-import java.util.Collections;
+import models.users.Password;
 
 public class Employee extends Account
 {
@@ -18,7 +16,7 @@ public class Employee extends Account
     private final String jobRole;
 
 
-    public Employee(final int accountId, final String username, final String storedPassword,
+    public Employee(final int accountId, final String username, final Password storedPassword,
                     final String firstName, final String surName, final Business business,
                     final Employee parent, final String jobRole)
     {

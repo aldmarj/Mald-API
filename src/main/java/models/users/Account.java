@@ -9,11 +9,11 @@ public abstract class Account
 
     private final String userName;
 
-    private final String storedPassword;
+    private final Password storedPassword;
 
     private final Collection<Role> roles;
 
-    public Account(final int accountId, final String username, final String storedPassword)
+    public Account(final int accountId, final String username, final Password storedPassword)
     {
         this.accountId = accountId;
         this.userName = username;
@@ -31,7 +31,7 @@ public abstract class Account
         return this.userName;
     }
 
-    public final String getStoredPassword()
+    public final Password getStoredPassword()
     {
         return this.storedPassword;
     }
