@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Context>
+<Context>
+    <Resource name="jdbc/api" auth="Container" type="javax.sql.DataSource"
+              username="api" password='A$ajppNE8q&amp;pNBbr' driverClassName="com.mysql.jdbc.Driver"
+              url="jdbc:mysql://mald-rdbms.cm5fqzlymdws.eu-west-2.rds.amazonaws.com/EmployeeManagement?autoReconnect=true&amp;useSSL=false"
+              maxActive="15" maxIdle="3" />
+</Context>
