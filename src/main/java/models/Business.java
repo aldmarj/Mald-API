@@ -1,23 +1,22 @@
 package models;
 
+import org.json.JSONObject;
+
+/**
+ * Class representing 
+ * 
+ * @author Lawrence
+ */
 public class Business
 {
-    private final int businessId;
+    private final String businessTag;
 
     private final String businessName;
 
-    private final String businessTag;
-
-    public Business(final int businessId, final String businessName, final String businessTag)
+    public Business(final String businessTag, final String businessName)
     {
-        this.businessId = businessId;
         this.businessName = businessName;
         this.businessTag = businessTag;
-    }
-
-    public int getBusinessId()
-    {
-        return this.businessId;
     }
 
     public String getBusinessName()
@@ -28,5 +27,17 @@ public class Business
     public String getBusinessTag()
     {
         return this.businessTag;
+    }
+    
+    public JSONObject getJsonObject()
+    {
+		return new JSONObject()
+				.put("businessTag", businessTag)
+				.put("businessName", businessName);
+    }
+    
+    public String getJsonString()
+    {
+		return getJsonObject().toString();
     }
 }
