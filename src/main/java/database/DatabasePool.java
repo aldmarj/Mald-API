@@ -31,8 +31,10 @@ final public class DatabasePool {
 
 	/**
 	 * CLASS CONSTRUCTOR
+	 * 
+	 * @throws SQLException if the configured details do not correspond with a database.
 	 */
-	private DatabasePool() 
+	private DatabasePool() throws SQLException 
 	{
 		try 
 		{
@@ -42,6 +44,7 @@ final public class DatabasePool {
 		catch (NamingException e) 
 		{
 			logger.error("The pool was not set up correctly", e);
+			throw new SQLException("The pool was not set up correctly", e);
 		}
 	}
 	
