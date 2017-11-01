@@ -3,7 +3,6 @@
  */
 package database;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -30,11 +29,11 @@ public abstract class DBClientQueries {
 	 * 
 	 * @param clientName - the tag of the new client.
 	 * @param businessTag - the name of the owning business.
-	 * @throws IllegalArgumentException - If the given key is not unique.
-	 * @throws IOException - If a connection cannot be made to the store.
+	 * @throws BadKeyException - If the given key is invalid.
+	 * @throws NoDataStoreConnectionException - If a connection cannot be made to the store.
 	 */
 	public static void createClient(String clientName, String businessTag) 
-			throws DuplicateKeyException, NoDataStoreConnectionException
+			throws BadKeyException, NoDataStoreConnectionException
 	{		
 	    try (Connection connection = DatabasePool.getConnection())
 	    {		
@@ -49,7 +48,7 @@ public abstract class DBClientQueries {
 	    catch (SQLIntegrityConstraintViolationException e)
 	    {
 			logger.error("A business with the tag: " + businessTag + " doesn't exists.");
-			throw new DuplicateKeyException ("A business with that tag: " 
+			throw new BadKeyException ("A business with that tag: " 
 					+ businessTag + " doesn't exist. Must reference an existing business", e, businessTag);
 	    }
 	    catch (SQLException e) 

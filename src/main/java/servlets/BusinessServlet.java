@@ -13,7 +13,7 @@ import javax.servlet.http.*;
 import org.json.JSONArray;
 
 import database.DBBusinessQueries;
-import database.DuplicateKeyException;
+import database.BadKeyException;
 import database.NoDataStoreConnectionException;
 import models.Business;
 
@@ -92,7 +92,7 @@ public class BusinessServlet extends HttpServlet {
 			
 			response.setStatus(HttpServletResponse.SC_OK);
 		}
-		catch (DuplicateKeyException e)
+		catch (BadKeyException e)
 		{
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Key already exists in data store: " + e.getKey());
 		}
