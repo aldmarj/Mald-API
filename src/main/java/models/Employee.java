@@ -66,20 +66,4 @@ public class Employee
     {
     	return this.account;
     }
-    
-    public JSONObject getJsonObject()
-    {
-		return new JSONObject()
-				.put("userName", this.account.getUserName())
-				.put("firstName", this.getFirstName())
-				.put("surName", this.getSurName())
-				.put("businessTag", this.getBusiness().getJsonObject())
-				.put("parentUser", this.hasParent() ? this.parent.getJsonString() : null)
-				.put("jobRole", this.getJobRole());
-    }
-    
-    public String getJsonString()
-    {
-		return getJsonObject().toString();
-    }
 }

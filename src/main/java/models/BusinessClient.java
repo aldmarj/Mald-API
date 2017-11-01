@@ -1,7 +1,5 @@
 package models;
 
-import org.json.JSONObject;
-
 public class BusinessClient
 {
     private final int clientId;
@@ -30,18 +28,5 @@ public class BusinessClient
     public Business getBusiness()
     {
         return this.business;
-    }
-    
-    public JSONObject getJsonObject()
-    {
-		return new JSONObject()
-				.put("clientId", this.clientId)
-				.put("clientName", this.clientName)
-				.put("business", this.business.getJsonObject());
-    }
-    
-    public String getJsonString()
-    {
-		return getJsonObject().toString();
     }
 }
