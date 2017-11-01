@@ -99,8 +99,8 @@ public final class DBEmployeeQueries extends DBQueries {
 		stmt.setString(index++, employee.getUserName());
 		stmt.setString(index++, employee.getFirstName());
 		stmt.setString(index++, employee.getSurName());
-		stmt.setString(index++, employee.getBusiness().getBusinessTag());
-		stmt.setString(index++, employee.hasParent() ? employee.getParent().getUserName() : null);
+		stmt.setString(index++, employee.getBusinessTag());
+		stmt.setString(index++, employee.hasParent() ? employee.getParentUserName() : null);
 		stmt.setString(index++, employee.getJobRole());
 		
 		stmt.executeUpdate();
@@ -160,8 +160,8 @@ public final class DBEmployeeQueries extends DBQueries {
 					new DBAccountQueries().getAccount(userName),
 					this.resultSet.getString("firstName"),
 					this.resultSet.getString("surName"),
-					DBBusinessQueries.getBusiness(this.resultSet.getString("businessTag")),
-					new DBEmployeeQueries().getEmployee(this.resultSet.getString("parentUser")),
+					this.resultSet.getString("businessTag"),
+					this.resultSet.getString("parentUser"),
 					this.resultSet.getString("jobRole"));
 		}
 		
@@ -218,8 +218,8 @@ public final class DBEmployeeQueries extends DBQueries {
 					new DBAccountQueries().getAccount(this.resultSet.getString("userName")),
 					this.resultSet.getString("firstName"),
 					this.resultSet.getString("surName"),
-					DBBusinessQueries.getBusiness(this.resultSet.getString("businessTag")),
-					new DBEmployeeQueries().getEmployee(this.resultSet.getString("parentUser")),
+					this.resultSet.getString("businessTag"),
+					this.resultSet.getString("parentUser"),
 					this.resultSet.getString("jobRole")));
 		}
 		

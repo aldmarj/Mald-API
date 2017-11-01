@@ -1,29 +1,40 @@
 package models;
 
-import org.json.JSONObject;
+import javax.xml.bind.annotation.XmlRootElement;
 
+@XmlRootElement
 public class Employee
 {
-    private final String firstName;
+    private String firstName;
 
-    private final String surName;
+    private String surName;
 
-    private final Business business;
+    private String businessTag;
 
-    private final Employee parent;
+    private String parentUserName;
 
-    private final String jobRole;
+    private String jobRole;
 
-    private final Account account;
+    private Account account;
     
-    public Employee(final Account account, final String firstName, final String surName, final Business business,
-                    final Employee parent, final String jobRole)
+    public Employee()
+    {
+        this.account = new Account();
+        this.firstName = "";
+        this.surName = "";
+        this.businessTag = "";
+        this.parentUserName = null;
+        this.jobRole = "";
+    }
+    
+    public Employee(final Account account, final String firstName, final String surName, final String businessTag,
+                    final String parentUserName, final String jobRole)
     {
         this.account = account;
         this.firstName = firstName;
         this.surName = surName;
-        this.business = business;
-        this.parent = parent;
+        this.businessTag = businessTag;
+        this.parentUserName = parentUserName;
         this.jobRole = jobRole;
     }
 
@@ -37,19 +48,19 @@ public class Employee
         return this.surName;
     }
 
-    public Business getBusiness()
+    public String getBusinessTag()
     {
-        return this.business;
+        return this.businessTag;
     }
 
-    public Employee getParent()
+    public String getParentUserName()
     {
-        return this.parent;
+        return this.parentUserName;
     }
     
     public boolean hasParent()
     {
-    	return this.parent != null;
+    	return this.parentUserName != null;
     }
 
     public String getJobRole()
@@ -66,4 +77,28 @@ public class Employee
     {
     	return this.account;
     }
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public void setSurName(String surName) {
+		this.surName = surName;
+	}
+
+	public void setBusinessTag(String businessTag) {
+		this.businessTag = businessTag;
+	}
+
+	public void setParentUserName(String parentUserName) {
+		this.parentUserName = parentUserName;
+	}
+
+	public void setJobRole(String jobRole) {
+		this.jobRole = jobRole;
+	}
+
+	public void setAccount(Account account) {
+		this.account = account;
+	}    
 }
