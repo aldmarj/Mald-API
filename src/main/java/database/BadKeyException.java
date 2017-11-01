@@ -9,7 +9,7 @@ package database;
  * @author Lawrence
  */
 @SuppressWarnings("serial")
-public class DuplicateKeyException extends Exception 
+public class BadKeyException extends Exception 
 {
 
 	/** The key object that caused the exception. **/
@@ -20,7 +20,7 @@ public class DuplicateKeyException extends Exception
      * 
      * @param The key object that caused the exception.
      */
-    public DuplicateKeyException(Object key) 
+    public BadKeyException(Object key) 
     {
         super();
         this.key = key;
@@ -32,7 +32,7 @@ public class DuplicateKeyException extends Exception
      * @param A message to store.
      * @param The key object that caused the exception.
      */
-    public DuplicateKeyException(String message, Object key) 
+    public BadKeyException(String message, Object key) 
     {
         super(message);
         this.key = key;
@@ -45,7 +45,7 @@ public class DuplicateKeyException extends Exception
      * @param The exception that caused this one.
      * @param The key object that caused the exception.
      */
-    public DuplicateKeyException(String message, Throwable cause, Object key) 
+    public BadKeyException(String message, Throwable cause, Object key) 
     {
         super(message, cause);
         this.key = key;

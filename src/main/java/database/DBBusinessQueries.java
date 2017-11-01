@@ -34,7 +34,7 @@ public abstract class DBBusinessQueries {
 	 * @throws IOException - If a connection cannot be made to the store.
 	 */
 	public static void createBusiness(String businessTag, String businessName) 
-			throws DuplicateKeyException, NoDataStoreConnectionException
+			throws BadKeyException, NoDataStoreConnectionException
 	{
 	    try (Connection connection = DatabasePool.getConnection())
 	    {		
@@ -49,7 +49,7 @@ public abstract class DBBusinessQueries {
 	    catch (SQLIntegrityConstraintViolationException e)
 	    {
 			logger.error("A business with the tag: " + businessTag + " already exists.");
-			throw new DuplicateKeyException ("A business with that tag: " 
+			throw new BadKeyException ("A business with that tag: " 
 					+ businessTag + " already exists. The tag must be unique.", e, businessTag);
 	    }
 	    catch (SQLException e) 

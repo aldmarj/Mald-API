@@ -1,26 +1,21 @@
 package models;
 
-public abstract class Account
+public final class Account
 {
-    private final int accountId;
-
     private final String userName;
 
     private final String storedPassword;
+    
+    private final String email;
 
-    public Account(final int accountId, final String username, final String storedPassword)
+    public Account(final String username, final String storedPassword, final String email)
     {
-        this.accountId = accountId;
         this.userName = username;
         this.storedPassword = storedPassword;
+        this.email = email;
     }
-
-    public final int getAccountId()
-    {
-        return this.accountId;
-    }
-
-    public final String getUserName()
+    
+    public String getUserName()
     {
         return this.userName;
     }
@@ -28,5 +23,10 @@ public abstract class Account
     public final String getStoredPassword()
     {
         return this.storedPassword;
+    }
+    
+    public final String getEmail()
+    {
+        return this.email;
     }
 }
