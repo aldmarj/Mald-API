@@ -1,5 +1,7 @@
 package models;
 
+import org.json.JSONObject;
+
 public class WorkLog
 {
     private final int workLogId;
@@ -15,7 +17,8 @@ public class WorkLog
     private final String description;
 
     public WorkLog(final int workLogId, final Employee employee, final BusinessClient client,
-                   final long startTime, final long endTime, final String description) throws IllegalArgumentException
+                   final long startTime, final long endTime, final String description) 
+                		   throws IllegalArgumentException
     {
         if (endTime < startTime)
         {
@@ -57,5 +60,21 @@ public class WorkLog
     public String getDescription()
     {
         return this.description;
+    }
+    
+    public JSONObject getJsonObject()
+    {
+		return new JSONObject()
+				.put("workLogId", this.getWorkLogId())
+				.put("employee", this.getEmployee().getJsonString())
+				.put("client", this.getClient().getJsonString())
+				.put("startTime", this.getStartTime())
+				.put("endTime", this.getEndTime())
+				.put("description", this.getDescription());
+    }
+    
+    public String getJsonString()
+    {
+		return getJsonObject().toString();
     }
 }
