@@ -1,5 +1,7 @@
 package models;
 
+import org.json.JSONObject;
+
 public final class Account
 {
     private final String userName;
@@ -28,5 +30,18 @@ public final class Account
     public final String getEmail()
     {
         return this.email;
+    }
+    
+    public JSONObject getJsonObject()
+    {
+		return new JSONObject()
+				.put("userName", this.getUserName())
+				.put("storedPassword", this.getStoredPassword())
+				.put("email", this.getEmail());
+    }
+    
+    public String getJsonString()
+    {
+		return getJsonObject().toString();
     }
 }

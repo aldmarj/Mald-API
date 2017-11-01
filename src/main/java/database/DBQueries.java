@@ -19,10 +19,17 @@ public class DBQueries {
 	/** Logger **/
 	private final static Logger logger = Logger.getLogger(DBQueries.class);
 	
+	/** The connection to the DB **/
 	protected final Connection connection;
 	
+	/** The resultSet from the query **/
 	protected ResultSet resultSet;
 	
+	/**
+	 * CLASS CONSTRUCTOR
+	 * 
+	 * @throws NoDataStoreConnectionException
+	 */
 	public DBQueries() throws NoDataStoreConnectionException
 	{
     	try 
@@ -39,6 +46,12 @@ public class DBQueries {
     	}
 	}
 	
+	/**
+	 * Log the issue and throw a more general exception.
+	 * 
+	 * @param e the original exception thrown.
+	 * @throws NoDataStoreConnectionException when the datastore cannot be reached.
+	 */
 	protected void handleSQLException(SQLException e) throws NoDataStoreConnectionException
 	{
 		logger.error("Failed to get a connection to the database" + e);
@@ -46,6 +59,12 @@ public class DBQueries {
 				+ " to the database to create the business.", e);
 	}
 	
+	/**
+	 * Log the issue and throw a more general exception.
+	 * 
+	 * @param e the original exception thrown.
+	 * @throws NoDataStoreConnectionException when the datastore cannot be reached.
+	 */
 	protected void handleIntegrityConstaitViolation(SQLIntegrityConstraintViolationException e) 
 			throws BadKeyException
 	{
@@ -53,6 +72,11 @@ public class DBQueries {
 		throw new BadKeyException ("Tried to insert a primary or foreign key that does not abide to constraints.", e);
 	}
 	
+	/**
+	 * Turn the autocommit function on and off.
+	 * 
+	 * @param toggle the on or off status of the autocommit.
+	 */
 	protected void setAutoCommit(boolean toggle)
 	{
     	try 
@@ -74,6 +98,11 @@ public class DBQueries {
 		}
 	}
 	
+	/**
+	 * Commit the changes to the database.
+	 * 
+	 * @throws NoDataStoreConnectionException
+	 */
 	protected void commit() throws NoDataStoreConnectionException
 	{
 		try 
@@ -93,6 +122,11 @@ public class DBQueries {
 		}	
 	}
 	
+	/**
+	 * Clear the changes to the database.
+	 * 
+	 * @throws NoDataStoreConnectionException
+	 */
 	protected void rollback() throws NoDataStoreConnectionException
 	{
 		try 
@@ -112,6 +146,9 @@ public class DBQueries {
 		}	
 	}
 	
+	/**
+	 * Close the resultSet.
+	 */
 	protected void closeResultSet()
 	{
 		if (resultSet != null)
@@ -127,6 +164,9 @@ public class DBQueries {
 		}
     }
 	
+	/**
+	 * Close the database connection.
+	 */
 	protected void closeConnection()
 	{
 		try 

@@ -12,8 +12,8 @@ import javax.servlet.http.*;
 
 import org.json.JSONArray;
 
-import database.DBBusinessQueries;
 import database.BadKeyException;
+import database.DBBusinessQueries;
 import database.NoDataStoreConnectionException;
 import models.Business;
 
