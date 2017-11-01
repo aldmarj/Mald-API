@@ -23,6 +23,8 @@ public class RestConfig extends Application {
         final Set<Class<?>> returnValue = new HashSet<Class<?>>();
         returnValue.add(BusinessServlet.class);
         returnValue.add(WorkLogServlet.class);
+        returnValue.add(ClientServlet.class);
+        returnValue.add(EmployeeServlet.class);
         return returnValue;
     }
 }
