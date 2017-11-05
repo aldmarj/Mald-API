@@ -4,4 +4,19 @@
 
 <web-app>
   <display-name>Archetype Created Web Application</display-name>
+  
+  <servlet>
+    <servlet-name>Jersey REST Service</servlet-name>
+    <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
+    <init-param>
+      <param-name>org.glassfish.jersey.config.property.packages</param-name>
+      <param-value>package-name</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+
+	<servlet-mapping>
+        <servlet-name>Jersey REST Service</servlet-name>
+        <url-pattern>/API/*</url-pattern>
+    </servlet-mapping>
 </web-app>

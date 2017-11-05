@@ -1,15 +1,23 @@
 package models;
 
-import org.json.JSONObject;
+import javax.xml.bind.annotation.XmlRootElement;
 
+@XmlRootElement
 public final class Account
 {
-    private final String userName;
+    private String userName;
 
-    private final String storedPassword;
+    private String storedPassword;
     
-    private final String email;
+    private String email;
 
+    public Account()
+    {
+        this.userName = "";
+        this.storedPassword = "";
+        this.email = "";    
+    }
+    
     public Account(final String username, final String storedPassword, final String email)
     {
         this.userName = username;
@@ -31,17 +39,16 @@ public final class Account
     {
         return this.email;
     }
-    
-    public JSONObject getJsonObject()
-    {
-		return new JSONObject()
-				.put("userName", this.getUserName())
-				.put("storedPassword", this.getStoredPassword())
-				.put("email", this.getEmail());
-    }
-    
-    public String getJsonString()
-    {
-		return getJsonObject().toString();
-    }
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public void setStoredPassword(String storedPassword) {
+		this.storedPassword = storedPassword;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
 }

@@ -3,14 +3,15 @@
  */
 package servlets;
 
-import java.io.*;
-import java.util.ArrayList;
-
-import javax.servlet.*;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.*;
-
-import org.json.JSONArray;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import database.BadKeyException;
 import database.DBBusinessQueries;
@@ -23,101 +24,59 @@ import models.Business;
  * Business servlet to handle business processing.
  *
  */
-@SuppressWarnings("serial")
-@WebServlet("/business")
-public class BusinessServlet extends HttpServlet {
-	
+@Path("/business")
+public class BusinessServlet
+{
 	/**
 	 * Get a business from the API, will return the business for the given tag
 	 * or all businesses if not tag is given.
 	 * 
-	 * @throws ServletException if a general servlet exception has occurred.
-	 * @throws IOException if some I/O failure or interruption has occurred.
+	 * @return the requested business.
 	 */
-	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException 
-	{	   
-		response.setContentType("application/json");
-
-		final String businessTag = request.getParameter("businessTag");
-		
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("{businessTag}")
+	public Business getBusiness(@PathParam("businessTag") String businessTag) 
+	{	   		
 		try
 		{
-			PrintWriter out = response.getWriter();
-
-			// If there is no supplied business, return them all.
-			if (businessTag == null)
+			Business result = DBBusinessQueries.getBusiness(businessTag);
+			
+			if (result != null)
 			{
-				JSONArray jsArray = getAllBusinessesAsJSONArray();
-				
-				out.println(jsArray.toString());
+				return result;
 			}
 			else
 			{
-				Business result = DBBusinessQueries.getBusiness(businessTag);
-				
-				if (result != null)
-				{
-					// Returns the json object to the caller.
-					out.println(result.getJsonString());
-				}
-				else
-				{
-					response.sendError(HttpServletResponse.SC_NOT_FOUND, "Could not find the selected entity");
-				}
+				throw new WebApplicationException(Response.Status.NOT_FOUND);
 			}
 		}
 		catch (NoDataStoreConnectionException e) 
 		{
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Could not find output stream");
+			throw new WebApplicationException(Response.Status.BAD_GATEWAY);		
 		}
 	}
 	
 	/**
-	 * Create a new business with the given business tag and business name.
-	 * 
-	 * @throws ServletException if a general servlet exception has occurred.
-	 * @throws IOException if some I/O failure or interruption has occurred.
+	 * Create a new business in the database with the given business object.
 	 */
-	@Override
-	protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException 
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response putBusiness(Business business)
 	{
-		response.setContentType("text/html");
-		
-		final String businessTag = request.getParameter("businessTag");
-		final String businessName = request.getParameter("businessName");
-
 		try 
 		{
-			DBBusinessQueries.createBusiness(businessTag, businessName);
+			DBBusinessQueries.createBusiness(business.getBusinessTag(), business.getBusinessName());
 			
-			response.setStatus(HttpServletResponse.SC_OK);
+			return Response.status(200).entity("").build();
 		}
 		catch (BadKeyException e)
 		{
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Key already exists in data store: " + e.getKey());
+			return Response.status(400).entity("Tag already exists").build();
 		}
 		catch (NoDataStoreConnectionException e)
 		{
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Could not find output stream");
+			return Response.status(400).entity("No data store found").build();
 		}
-	}
-	
-	/**
-	 * Utility function to get all businesses as a json array.
-	 * 
-	 * @return returns all the businesses as a json array. 
-	 * @throws NoDataStoreConnectionException if a connection cannot be made.
-	 */
-	private static JSONArray getAllBusinessesAsJSONArray() throws NoDataStoreConnectionException
-	{
-		ArrayList<Business> businesses = DBBusinessQueries.getAllBusinesses();
-		JSONArray jsonArray = new JSONArray();
-		
-		for (Business business : businesses)
-		{
-			jsonArray.put(business.getJsonObject());
-		}
-		
-		return jsonArray;
 	}
 }

@@ -151,8 +151,8 @@ public final class DBEmployeeQueries extends DBQueries
 		stmt.setString(index++, employee.getUserName());
 		stmt.setString(index++, employee.getFirstName());
 		stmt.setString(index++, employee.getSurName());
-		stmt.setString(index++, employee.getBusiness().getBusinessTag());
-		stmt.setString(index++, employee.hasParent() ? employee.getParent().getUserName() : null);
+		stmt.setString(index++, employee.getBusinessTag());
+		stmt.setString(index++, employee.hasParent() ? employee.getUserName() : null);
 		stmt.setString(index++, employee.getJobRole());
 		
 		stmt.executeUpdate();
@@ -184,10 +184,8 @@ public final class DBEmployeeQueries extends DBQueries
 					new DBAccountQueries().getAccount(userName),
 					queryRunner.resultSet.getString("firstName"),
 					queryRunner.resultSet.getString("surName"),
-					DBBusinessQueries.getBusiness(
-							queryRunner.resultSet.getString("businessTag")),
-					new DBEmployeeQueries().getEmployee(
-							queryRunner.resultSet.getString("parentUser")),
+					queryRunner.resultSet.getString("businessTag"),
+					queryRunner.resultSet.getString("parentUser"),
 					queryRunner.resultSet.getString("jobRole"));
 		}
 		
@@ -215,14 +213,11 @@ public final class DBEmployeeQueries extends DBQueries
 		while (queryRunner.resultSet.next())
 		{
 			result.add(new Employee(
-					new DBAccountQueries().getAccount(
-							queryRunner.resultSet.getString("userName")),
+					new DBAccountQueries().getAccount(queryRunner.resultSet.getString("userName")),
 					queryRunner.resultSet.getString("firstName"),
 					queryRunner.resultSet.getString("surName"),
-					DBBusinessQueries.getBusiness(
-							queryRunner.resultSet.getString("businessTag")),
-					new DBEmployeeQueries().getEmployee(
-							queryRunner.resultSet.getString("parentUser")),
+					queryRunner.resultSet.getString("businessTag"),
+					queryRunner.resultSet.getString("parentUser"),
 					queryRunner.resultSet.getString("jobRole")));
 		}
 		

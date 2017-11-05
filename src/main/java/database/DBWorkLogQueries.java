@@ -137,8 +137,8 @@ public class DBWorkLogQueries extends DBQueries {
 		
 		int index = 1;
 		
-		stmt.setString(index++, workLog.getEmployee().getUserName());
-		stmt.setInt(index++, workLog.getClient().getClientId());
+		stmt.setString(index++, workLog.getUserName());
+		stmt.setInt(index++, workLog.getClientId());
 		stmt.setLong(index++, workLog.getStartTime());
 		stmt.setLong(index++, workLog.getEndTime());
 		stmt.setString(index++, workLog.getDescription());
@@ -170,10 +170,8 @@ public class DBWorkLogQueries extends DBQueries {
 		{
 			result = new WorkLog(
 					workLogId,
-					new DBEmployeeQueries().getEmployee(
-							queryRunner.resultSet.getString("user")),
-					DBClientQueries.getClient(
-							queryRunner.resultSet.getInt("clientId")),
+					queryRunner.resultSet.getString("user"),
+					queryRunner.resultSet.getInt("clientId"),
 					queryRunner.resultSet.getLong("startTime"),
 					queryRunner.resultSet.getLong("endtime"),
 					queryRunner.resultSet.getString("description"));
@@ -213,10 +211,8 @@ public class DBWorkLogQueries extends DBQueries {
 		{
 			result.add(new WorkLog(
 					queryRunner.resultSet.getInt("workLogId"),
-					new DBEmployeeQueries().getEmployee(
-							queryRunner.resultSet.getString("user")),
-					DBClientQueries.getClient(
-							queryRunner.resultSet.getInt("clientId")),
+					queryRunner.resultSet.getString("user"),
+					queryRunner.resultSet.getInt("clientId"),
 					queryRunner.resultSet.getLong("startTime"),
 					queryRunner.resultSet.getLong("endtime"),
 					queryRunner.resultSet.getString("description")));
