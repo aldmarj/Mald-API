@@ -8,20 +8,15 @@ import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 
-import org.apache.log4j.Logger;
-
 import models.Employee;
 
 /**
- * Class to contain helper functions for interaction with the database.
+ * Class to contain manipulation functions for employees in the datastore.
  * 
  * @author Lawrence
  */
-public final class DBEmployeeQueries extends DBQueries {
-	
-	/** Logger **/
-	private final static Logger logger = Logger.getLogger(DBEmployeeQueries.class);
-		
+public final class DBEmployeeQueries extends DBQueries 
+{	
 	/**
 	 * CLASS CONSTRUCTOR
 	 * 
@@ -50,7 +45,7 @@ public final class DBEmployeeQueries extends DBQueries {
 			DBAccountQueries.createAccountSQL(employee.getAccount(), this);
 			
 			// create the employee
-			this.createEmployeeSQL(employee);
+			createEmployeeSQL(employee, this);
 			
 			// Account and Employee should be created as a single transaction.
 			this.commit();
@@ -79,34 +74,6 @@ public final class DBEmployeeQueries extends DBQueries {
 	}
 	
 	/**
-	 * Creates a employee in the database with the given parameters.
-	 * 
-	 * @param employee - the details of the employee to add.
-	 * @throws SQLIntegrityConstraintViolationException - If the given key is not unique.
-	 * @throws SQLException - If a connection cannot be made to the store.
-	 */
-	private void createEmployeeSQL(Employee employee) 
-			throws SQLException, SQLIntegrityConstraintViolationException
-	{
-		String query = "INSERT INTO Employee("
-				+ "userName, firstName, surName, businessTag, parentUser, jobRole) "
-				+ "VALUES (?, ?, ?, ?, ?, ?);";
-		
-		final PreparedStatement stmt = connection.prepareStatement(query);
-		
-		int index = 1;
-		
-		stmt.setString(index++, employee.getUserName());
-		stmt.setString(index++, employee.getFirstName());
-		stmt.setString(index++, employee.getSurName());
-		stmt.setString(index++, employee.getBusinessTag());
-		stmt.setString(index++, employee.hasParent() ? employee.getParentUserName() : null);
-		stmt.setString(index++, employee.getJobRole());
-		
-		stmt.executeUpdate();
-	}
-	
-	/**
 	 * Returns an employee by its given userName. 
 	 * Returns null if no employee is found.
 	 * 
@@ -120,7 +87,7 @@ public final class DBEmployeeQueries extends DBQueries {
 		
 	    try
 	    {		
-	    	result = this.getEmployeeSQL(userName);
+	    	result = getEmployeeSQL(userName, this);
 		} 
 	    catch (SQLException e) 
 	    {
@@ -136,39 +103,6 @@ public final class DBEmployeeQueries extends DBQueries {
 	}
 	
 	/**
-	 * The SQL command for the getting an employee.
-	 * 
-	 * @param userName the name of the employee to return.
-	 * @return the requested employee.
-	 * @throws SQLException If a connection cannot be made to the store.
-	 * @throws NoDataStoreConnectionException If a connection cannot be made to the store.
-	 */
-	private Employee getEmployeeSQL(String userName) throws SQLException, NoDataStoreConnectionException
-	{
-		Employee result = null;
-		
-		String query = "SELECT firstName, surName, businessTag, parentUser, jobRole "
-				+ "FROM Employee WHERE Employee.userName = ?;";
-		
-		final PreparedStatement stmt = this.connection.prepareStatement(query);
-		stmt.setString(1, userName);
-		
-		this.resultSet = stmt.executeQuery();
-		while (resultSet.next())
-		{
-			result = new Employee(
-					new DBAccountQueries().getAccount(userName),
-					this.resultSet.getString("firstName"),
-					this.resultSet.getString("surName"),
-					this.resultSet.getString("businessTag"),
-					this.resultSet.getString("parentUser"),
-					this.resultSet.getString("jobRole"));
-		}
-		
-		return result;
-	}
-	
-	/**
 	 * Returns all of the employees. 
 	 * 
 	 * @return All employees.
@@ -180,7 +114,7 @@ public final class DBEmployeeQueries extends DBQueries {
 		
 	    try
 	    {		
-	    	result = this.getAllEmployeesSQL();
+	    	result = getAllEmployeesSQL(this);
 		}
 	    catch (SQLException e) 
 	    {
@@ -196,31 +130,95 @@ public final class DBEmployeeQueries extends DBQueries {
 	}
 	
 	/**
-	 * The SQL command for returning all employees.
+	 * Creates a employee in the database with the given employee and DB runner.
 	 * 
-	 * @return a list of all employees.
-	 * @throws SQLException If a connection cannot be made to the store.
-	 * @throws NoDataStoreConnectionException If a connection cannot be made to the store.
+	 * @param employee - the employee to create in the database.
+	 * @param queryRunner - the DB query runner.
+	 * @throws SQLException if the DB cannot be reached.
+	 * @throws SQLIntegrityConstraintViolationException if a key breaks the constraints of the DB.
 	 */
-	public ArrayList<Employee> getAllEmployeesSQL() throws NoDataStoreConnectionException, SQLException
+	private static void createEmployeeSQL(Employee employee, DBQueries queryRunner) 
+			throws SQLException, SQLIntegrityConstraintViolationException
+	{
+		String query = "INSERT INTO Employee("
+				+ "userName, firstName, surName, businessTag, parentUser, jobRole) "
+				+ "VALUES (?, ?, ?, ?, ?, ?);";
+		
+		final PreparedStatement stmt = queryRunner.connection.prepareStatement(query);
+		
+		int index = 1;
+		
+		stmt.setString(index++, employee.getUserName());
+		stmt.setString(index++, employee.getFirstName());
+		stmt.setString(index++, employee.getSurName());
+		stmt.setString(index++, employee.getBusinessTag());
+		stmt.setString(index++, employee.hasParent() ? employee.getUserName() : null);
+		stmt.setString(index++, employee.getJobRole());
+		
+		stmt.executeUpdate();
+	}
+	
+	/**
+	 * Gets an employee from the database with the given userName and DB runner.
+	 * 
+	 * @param userName - the userName to search for in the database.
+	 * @param queryRunner - the DB query runner.
+	 * @throws SQLException if the DB cannot be reached.
+	 * @throws SQLIntegrityConstraintViolationException if a key breaks the constraints of the DB.
+	 */
+	private static Employee getEmployeeSQL(String userName, DBQueries queryRunner) 
+			throws SQLException, NoDataStoreConnectionException
+	{
+		Employee result = null;
+		
+		String query = "SELECT firstName, surName, businessTag, parentUser, jobRole "
+				+ "FROM Employee WHERE Employee.userName = ?;";
+		
+		final PreparedStatement stmt = queryRunner.connection.prepareStatement(query);
+		stmt.setString(1, userName);
+		
+		queryRunner.resultSet = stmt.executeQuery();
+		while (queryRunner.resultSet.next())
+		{
+			result = new Employee(
+					new DBAccountQueries().getAccount(userName),
+					queryRunner.resultSet.getString("firstName"),
+					queryRunner.resultSet.getString("surName"),
+					queryRunner.resultSet.getString("businessTag"),
+					queryRunner.resultSet.getString("parentUser"),
+					queryRunner.resultSet.getString("jobRole"));
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * Gets all employees from the database.
+	 * 
+	 * @param queryRunner - the DB query runner.
+	 * @throws SQLException if the DB cannot be reached.
+	 * @throws SQLIntegrityConstraintViolationException if a key breaks the constraints of the DB.
+	 */
+	public static ArrayList<Employee> getAllEmployeesSQL(DBQueries queryRunner) 
+			throws NoDataStoreConnectionException, SQLException
 	{
 		ArrayList<Employee> result = new ArrayList<Employee>();
 		
 		String query = "SELECT userName, firstName, surName, businessTag, parentUser, jobRole "
 				+ "FROM Employee";
 		
-		final PreparedStatement stmt = this.connection.prepareStatement(query);
+		final PreparedStatement stmt = queryRunner.connection.prepareStatement(query);
 		
-		this.resultSet = stmt.executeQuery();
-		while (resultSet.next())
+		queryRunner.resultSet = stmt.executeQuery();
+		while (queryRunner.resultSet.next())
 		{
 			result.add(new Employee(
-					new DBAccountQueries().getAccount(this.resultSet.getString("userName")),
-					this.resultSet.getString("firstName"),
-					this.resultSet.getString("surName"),
-					this.resultSet.getString("businessTag"),
-					this.resultSet.getString("parentUser"),
-					this.resultSet.getString("jobRole")));
+					new DBAccountQueries().getAccount(queryRunner.resultSet.getString("userName")),
+					queryRunner.resultSet.getString("firstName"),
+					queryRunner.resultSet.getString("surName"),
+					queryRunner.resultSet.getString("businessTag"),
+					queryRunner.resultSet.getString("parentUser"),
+					queryRunner.resultSet.getString("jobRole")));
 		}
 		
 		return result;

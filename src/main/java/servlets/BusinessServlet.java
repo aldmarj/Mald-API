@@ -13,8 +13,8 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import database.DBBusinessQueries;
 import database.BadKeyException;
+import database.DBBusinessQueries;
 import database.NoDataStoreConnectionException;
 import models.Business;
 
