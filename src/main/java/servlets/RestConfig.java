@@ -25,6 +25,7 @@ public class RestConfig extends Application {
         returnValue.add(WorkLogServlet.class);
         returnValue.add(ClientServlet.class);
         returnValue.add(EmployeeServlet.class);
+        returnValue.add(LoginServlet.class);
         return returnValue;
     }
 }

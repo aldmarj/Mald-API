@@ -1,5 +1,7 @@
 package models;
 
+import models.users.Password;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
@@ -7,18 +9,18 @@ public final class Account
 {
     private String userName;
 
-    private String storedPassword;
+    private Password storedPassword;
     
     private String email;
 
     public Account()
     {
         this.userName = "";
-        this.storedPassword = "";
+        this.storedPassword = Password.fromHash("");
         this.email = "";    
     }
     
-    public Account(final String username, final String storedPassword, final String email)
+    public Account(final String username, final Password storedPassword, final String email)
     {
         this.userName = username;
         this.storedPassword = storedPassword;
@@ -30,7 +32,7 @@ public final class Account
         return this.userName;
     }
 
-    public final String getStoredPassword()
+    public final Password getStoredPassword()
     {
         return this.storedPassword;
     }
@@ -44,7 +46,7 @@ public final class Account
 		this.userName = userName;
 	}
 
-	public void setStoredPassword(String storedPassword) {
+	public void setStoredPassword(Password storedPassword) {
 		this.storedPassword = storedPassword;
 	}
 

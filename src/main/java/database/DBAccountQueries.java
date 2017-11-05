@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 
 import models.Account;
+import models.users.Password;
 
 /**
  * Class to contain manipulation functions for accounts in the datastore.
@@ -103,7 +104,7 @@ public class DBAccountQueries extends DBQueries {
 		int index = 1;
 		
 		stmt.setString(index++, account.getUserName());
-		stmt.setString(index++, account.getStoredPassword());
+		stmt.setString(index++, account.getStoredPassword().toString());
 		stmt.setString(index++, account.getEmail());
 		
 		stmt.executeUpdate();
@@ -134,7 +135,7 @@ public class DBAccountQueries extends DBQueries {
 		{
 			result = new Account(
 					queryRunner.resultSet.getString("userName"),
-					queryRunner.resultSet.getString("userPassword"),
+					Password.fromHash(queryRunner.resultSet.getString("userPassword")),
 					queryRunner.resultSet.getString("email"));
 		}
 		
