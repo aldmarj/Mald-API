@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
 
-import models.BusinessClient;
+import models.Client;
 
 /**
  * Class to contain helper functions for interaction with the database.
@@ -67,9 +67,9 @@ public abstract class DBClientQueries {
 	 * @return The requested client.
 	 * @throws NoDataStoreConnectionException If a connection cannot be made to the store.
 	 */
-	public static BusinessClient getClient(int clientId) throws NoDataStoreConnectionException
+	public static Client getClient(int clientId) throws NoDataStoreConnectionException
 	{
-		BusinessClient result = null;
+		Client result = null;
 		
 		ResultSet resultSet = null;
 	    try (Connection connection = DatabasePool.getConnection())
@@ -82,10 +82,10 @@ public abstract class DBClientQueries {
 			resultSet = stmt.executeQuery();
 			while (resultSet.next())
 			{
-				result = new BusinessClient(
+				result = new Client(
 						clientId,
 						resultSet.getString("clientName"),
-						DBBusinessQueries.getBusiness(resultSet.getString("businessTag")));
+						resultSet.getString("businessTag"));
 			}
 		} 
 	    catch (SQLException e) 
@@ -115,9 +115,9 @@ public abstract class DBClientQueries {
 	 * @return All businesses.
 	 * @throws NoDataStoreConnectionException If a connection cannot be made to the store.
 	 */
-	public static ArrayList<BusinessClient> getAllClients() throws NoDataStoreConnectionException
+	public static ArrayList<Client> getAllClients() throws NoDataStoreConnectionException
 	{
-		ArrayList<BusinessClient> result = new ArrayList<BusinessClient>();
+		ArrayList<Client> result = new ArrayList<Client>();
 		
 		ResultSet resultSet = null;
 	    try (Connection connection = DatabasePool.getConnection())
@@ -129,10 +129,10 @@ public abstract class DBClientQueries {
 			resultSet = stmt.executeQuery();
 			while (resultSet.next())
 			{
-				result.add(new BusinessClient(
+				result.add(new Client(
 						resultSet.getInt("clientId"),
 						resultSet.getString("clientName"),
-						DBBusinessQueries.getBusiness(resultSet.getString("businessTag"))));
+						resultSet.getString("businessTag")));
 			}
 		}
 	    catch (SQLException e) 

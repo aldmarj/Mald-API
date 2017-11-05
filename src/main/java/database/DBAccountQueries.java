@@ -7,69 +7,58 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 
-import org.apache.log4j.Logger;
-
 import models.Account;
 
 /**
- * Class to contain helper functions for interaction with the database.
- *  
+ * Class to contain manipulation functions for accounts in the datastore.
+ * 
  * @author Lawrence
  */
 public class DBAccountQueries extends DBQueries {
-
-	/** Logger **/
-	private final static Logger logger = Logger.getLogger(DBAccountQueries.class);
-		
+	
+	/**
+	 * CLASS CONSTRUCTOR
+	 * 
+	 * @throws NoDataStoreConnectionException
+	 */
 	public DBAccountQueries() throws NoDataStoreConnectionException
 	{
 		super();
 	}
 
 	/**
-	 * Creates an account from the given account.
+	 * Creates the given account in the datastore.
 	 * 
-	 * @param account the account details to create.
-	 * @throws BadKeyException is the key is invalid.
-	 * @throws NoDataStoreConnectionException if a connection cannot be made.
+	 * @param account - The account details to store.
+	 * @throws BadKeyException - The key is not valid for the datastore.
+	 * @throws NoDataStoreConnectionException - The datastore cannot be reached.
 	 */
 	public void createAccount(Account account)
 			throws BadKeyException, NoDataStoreConnectionException
 	{
 		try
-		{
-			this.setAutoCommit(false);
-			
-			//createAccount(employee);
+		{    				
 			createAccountSQL(account, this);
-			
-			// Account and Employee should be created as a single transaction.
-			this.commit();
 		}
 	    catch (SQLIntegrityConstraintViolationException e)
 	    {
-	    	this.rollback();
-
 			this.handleIntegrityConstaitViolation(e);			
 	    }
 	    catch (SQLException e) 
-	    {
-	    	this.rollback();
-	    	
+	    {	    	
 	    	this.handleSQLException(e);
 		}
 	    finally
 	    {
-	    	this.setAutoCommit(true);
 	    	this.closeConnection();
 	    }
 	}
 	
 	/**
 	 * Returns an account by its given userName. 
-	 * Returns null if no employee is found.
+	 * Returns null if no account is found.
 	 * 
-	 * @param userName - The userName of the employee to find.
+	 * @param userName - The userName of the account to find.
 	 * @return The requested account.
 	 * @throws NoDataStoreConnectionException If a connection cannot be made to the store.
 	 */
