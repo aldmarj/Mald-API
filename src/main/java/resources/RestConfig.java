@@ -1,7 +1,7 @@
 /**
  * 
  */
-package servlets;
+package resources;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -21,10 +21,10 @@ public class RestConfig extends Application {
     @Override
     public Set<Class<?>> getClasses() {
         final Set<Class<?>> returnValue = new HashSet<Class<?>>();
-        returnValue.add(BusinessServlet.class);
-        returnValue.add(WorkLogServlet.class);
-        returnValue.add(ClientServlet.class);
-        returnValue.add(EmployeeServlet.class);
+        returnValue.add(BusinessResource.class);
+        returnValue.add(WorkLogResource.class);
+        returnValue.add(ClientResource.class);
+        returnValue.add(EmployeeResource.class);
         return returnValue;
     }
 }
