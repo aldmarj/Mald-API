@@ -1,11 +1,10 @@
-package models;
-
-import models.users.Password;
+package models.users;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import java.security.Principal;
 
 @XmlRootElement
-public final class Account
+public final class Account implements Principal
 {
     private String userName;
 
@@ -53,4 +52,10 @@ public final class Account
 	public void setEmail(String email) {
 		this.email = email;
 	}
+
+    @Override
+    public String getName()
+    {
+        return this.userName;
+    }
 }

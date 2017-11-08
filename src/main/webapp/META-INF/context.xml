@@ -5,13 +5,4 @@
               username="api" password='A$ajppNE8q&amp;pNBbr' driverClassName="com.mysql.jdbc.Driver"
               url="jdbc:mysql://mald-rdbms.cm5fqzlymdws.eu-west-2.rds.amazonaws.com/EmployeeManagement?autoReconnect=true&amp;useSSL=false"
               maxActive="15" maxIdle="3" />
-    <Realm className="org.apache.catalina.realm.DataSourceRealm"
-           dataSourceName="jdbc/api"
-           userTable="Account" userNameCol="userName" userCredCol="userPassword"
-           userRoleTable="Roles" roleNameCol="userRole">
-        <CredentialHandler
-                name="passwordHandler"
-                className="org.apache.catalina.realm.SecretKeyCredentialHandler"
-                algorithm="PBKDF2WithHmacSHA512" keyLength="256" />
-    </Realm>
 </Context>

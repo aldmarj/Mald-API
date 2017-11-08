@@ -12,6 +12,10 @@
       <param-name>org.glassfish.jersey.config.property.packages</param-name>
       <param-value>package-name</param-value>
     </init-param>
+    <init-param>
+      <param-name>javax.ws.rs.container.ContainerRequestFilter</param-name>
+      <param-value>servlets.auth.AuthenticationFilter</param-value>
+    </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
 
