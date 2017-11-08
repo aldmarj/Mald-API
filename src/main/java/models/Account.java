@@ -1,6 +1,7 @@
 package models;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 @XmlRootElement
 public final class Account
@@ -30,6 +31,7 @@ public final class Account
         return this.userName;
     }
 
+    @XmlTransient
     public final String getStoredPassword()
     {
         return this.storedPassword;
