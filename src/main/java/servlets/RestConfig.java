@@ -5,6 +5,7 @@ package servlets;
 
 import org.glassfish.jersey.server.ResourceConfig;
 import servlets.auth.AuthenticationFilter;
+import servlets.auth.LoginServlet;
 
 import javax.ws.rs.ApplicationPath;
 /**

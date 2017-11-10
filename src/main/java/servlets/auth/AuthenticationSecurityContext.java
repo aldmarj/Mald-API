@@ -8,7 +8,7 @@ public class AuthenticationSecurityContext implements SecurityContext
     private final Principal principal;
     private final String scheme;
 
-    public AuthenticationSecurityContext(final Principal principal, final String scheme)
+    AuthenticationSecurityContext(final Principal principal, final String scheme)
     {
         this.principal = principal;
         this.scheme = scheme;
