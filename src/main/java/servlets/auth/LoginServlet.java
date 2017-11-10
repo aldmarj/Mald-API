@@ -18,7 +18,7 @@ public class LoginServlet
     public String getName(@Context SecurityContext sc)
     {
         final Principal principal = sc.getUserPrincipal();
-        return principal == null ? null : principal.getName();
+        return principal == null ? "null" : principal.getName();
     }
 
     @POST
