@@ -40,7 +40,7 @@ public class BusinessServlet
 	{	   		
 		try
 		{
-			Business result = DBBusinessQueries.getBusiness(businessTag);
+			Business result = new DBBusinessQueries().getBusiness(businessTag);
 			
 			if (result != null)
 			{
@@ -66,7 +66,7 @@ public class BusinessServlet
 	{
 		try 
 		{
-			DBBusinessQueries.createBusiness(business.getBusinessTag(), business.getBusinessName());
+			new DBBusinessQueries().createBusiness(business);
 			
 			return Response.status(200).entity("").build();
 		}
