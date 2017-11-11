@@ -12,11 +12,13 @@ import models.Employee;
 
 /**
  * Class to contain manipulation functions for employees in the datastore.
+ * Each instance should only be used once.
  * 
  * @author Lawrence
  */
 public final class DBEmployeeQueries extends DBQueries 
 {	
+	
 	/**
 	 * CLASS CONSTRUCTOR
 	 * 
@@ -164,7 +166,7 @@ public final class DBEmployeeQueries extends DBQueries
 	 * @param userName - the userName to search for in the database.
 	 * @param queryRunner - the DB query runner.
 	 * @throws SQLException if the DB cannot be reached.
-	 * @throws SQLIntegrityConstraintViolationException if a key breaks the constraints of the DB.
+	 * @throws NoDataStoreConnectionException if the DB cannot be reached.
 	 */
 	private static Employee getEmployeeSQL(String userName, DBQueries queryRunner) 
 			throws SQLException, NoDataStoreConnectionException
@@ -197,7 +199,7 @@ public final class DBEmployeeQueries extends DBQueries
 	 * 
 	 * @param queryRunner - the DB query runner.
 	 * @throws SQLException if the DB cannot be reached.
-	 * @throws SQLIntegrityConstraintViolationException if a key breaks the constraints of the DB.
+	 * @throws NoDataStoreConnectionException if the DB cannot be reached.
 	 */
 	public static ArrayList<Employee> getAllEmployeesSQL(DBQueries queryRunner) 
 			throws NoDataStoreConnectionException, SQLException
@@ -213,7 +215,8 @@ public final class DBEmployeeQueries extends DBQueries
 		while (queryRunner.resultSet.next())
 		{
 			result.add(new Employee(
-					new DBAccountQueries().getAccount(queryRunner.resultSet.getString("userName")),
+					new DBAccountQueries().getAccount(
+							queryRunner.resultSet.getString("userName")),
 					queryRunner.resultSet.getString("firstName"),
 					queryRunner.resultSet.getString("surName"),
 					queryRunner.resultSet.getString("businessTag"),

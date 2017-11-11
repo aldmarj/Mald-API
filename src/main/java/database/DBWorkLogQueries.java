@@ -14,6 +14,7 @@ import models.WorkLog;
 
 /**
  * Class to contain manipulation functions for worklogs in the datastore.
+ * Each instance should only be used once. 
  * 
  * @author Lawrence
  */
@@ -151,8 +152,8 @@ public class DBWorkLogQueries extends DBQueries {
 	 * 
 	 * @param workLogId - the workLogId to search for.
 	 * @param queryRunner - the DB query runner.
-	 * @throws SQLException if the DB cannot be reached.
-	 * @throws SQLIntegrityConstraintViolationException if a key breaks the constraints of the DB.
+	 * @throws SQLException - if the DB cannot be reached.
+	 * @throws NoDataStoreConnectionException - if the DB cannot be reached.
 	 */
 	public static WorkLog getWorkLogSQL(int workLogId, DBQueries queryRunner) 
 			throws SQLException, NoDataStoreConnectionException
@@ -187,8 +188,8 @@ public class DBWorkLogQueries extends DBQueries {
 	 * @param startTime - the given startTime to work from.
 	 * @param endTime - the given endTime to work from.
 	 * @param queryRunner - the DB query runner.
-	 * @throws SQLException if the DB cannot be reached.
-	 * @throws SQLIntegrityConstraintViolationException if a key breaks the constraints of the DB.
+	 * @throws SQLException - if the DB cannot be reached.
+	 * @throws NoDataStoreConnectionException - if the DB cannot be reached.
 	 */
 	public static ArrayList<WorkLog> getAllWorkLogsForTimeRangeAndEmployeeSQL(
 			Employee employee, Date startTime, Date endTime, DBQueries queryRunner) 

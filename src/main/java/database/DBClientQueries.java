@@ -3,27 +3,32 @@
  */
 package database;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
-
-import org.apache.log4j.Logger;
 
 import models.Client;
 
 /**
  * Class to contain helper functions for interaction with the database.
+ * Each instance should only be used once.
  * 
  * @author Lawrence
  */
-public abstract class DBClientQueries {
+public final class DBClientQueries extends DBQueries 
+{
 	
-	/** Logger **/
-	private final static Logger logger = Logger.getLogger(DBClientQueries.class);
-
+	/**
+	 * CLASS CONSTRUCTOR
+	 * 
+	 * @throws NoDataStoreConnectionException
+	 */
+	public DBClientQueries() throws NoDataStoreConnectionException
+	{
+		super();
+	}
+	
 	/**
 	 * Creates a client in the database with the given name.
 	 * 
@@ -32,31 +37,25 @@ public abstract class DBClientQueries {
 	 * @throws BadKeyException - If the given key is invalid.
 	 * @throws NoDataStoreConnectionException - If a connection cannot be made to the store.
 	 */
-	public static void createClient(String clientName, String businessTag) 
+	public void createClient(Client client) 
 			throws BadKeyException, NoDataStoreConnectionException
 	{		
-	    try (Connection connection = DatabasePool.getConnection())
+	    try
 	    {		
-			String query = "INSERT INTO BusinessClient(clientName, businessTag) VALUES (?, ?);";
-			
-			final PreparedStatement stmt = connection.prepareStatement(query);
-			stmt.setString(1, clientName);
-			stmt.setString(2, businessTag);
-			
-			stmt.executeUpdate();
+	    	createClientSQL(client, this);
 		} 
 	    catch (SQLIntegrityConstraintViolationException e)
 	    {
-			logger.error("A business with the tag: " + businessTag + " doesn't exists.");
-			throw new BadKeyException ("A business with that tag: " 
-					+ businessTag + " doesn't exist. Must reference an existing business", e, businessTag);
+			this.handleIntegrityConstaitViolation(e);
 	    }
 	    catch (SQLException e) 
 	    {
-			logger.error("Failed to get a connection to the database" + e);
-			throw new NoDataStoreConnectionException ("Failed to get a connection"
-					+ " to the database to create the client.", e);
+	    	this.handleSQLException(e);
 		}
+	    finally
+	    {
+	    	this.closeConnection();
+	    }
 	}
 	
 	/**
@@ -67,43 +66,22 @@ public abstract class DBClientQueries {
 	 * @return The requested client.
 	 * @throws NoDataStoreConnectionException If a connection cannot be made to the store.
 	 */
-	public static Client getClient(int clientId) throws NoDataStoreConnectionException
+	public Client getClient(int clientId) throws NoDataStoreConnectionException
 	{
 		Client result = null;
 		
-		ResultSet resultSet = null;
-	    try (Connection connection = DatabasePool.getConnection())
+	    try
 	    {		
-			String query = "Select clientName, businessTag FROM BusinessClient WHERE BusinessClient.clientId = ?;";
-			
-			final PreparedStatement stmt = connection.prepareStatement(query);
-			stmt.setInt(1, clientId);
-			
-			resultSet = stmt.executeQuery();
-			while (resultSet.next())
-			{
-				result = new Client(
-						clientId,
-						resultSet.getString("clientName"),
-						resultSet.getString("businessTag"));
-			}
+	    	result = getClientSQL(clientId, this);
 		} 
 	    catch (SQLException e) 
 	    {
-			logger.error("Failed to get a connection to the database" + e);
-			throw new NoDataStoreConnectionException ("Failed to get a "
-					+ "connection to the database to create the business.", e);
+	    	this.handleSQLException(e);
 		}
 	    finally
 	    {
-	    	try 
-	    	{
-				resultSet.close();
-			} 
-	    	catch (SQLException e) 
-	    	{
-				logger.error("Database elements failed to close, resources may be leaking.", e);
-			}
+	    	this.closeResultSet();
+	    	this.closeConnection();
 	    }
 	    
 		return result;
@@ -115,44 +93,103 @@ public abstract class DBClientQueries {
 	 * @return All businesses.
 	 * @throws NoDataStoreConnectionException If a connection cannot be made to the store.
 	 */
-	public static ArrayList<Client> getAllClients() throws NoDataStoreConnectionException
+	public ArrayList<Client> getAllClients() throws NoDataStoreConnectionException
 	{
 		ArrayList<Client> result = new ArrayList<Client>();
 		
-		ResultSet resultSet = null;
-	    try (Connection connection = DatabasePool.getConnection())
+	    try
 	    {		
-			String query = "Select clientId, clientName, businessTag FROM BusinessClient;";
-			
-			final PreparedStatement stmt = connection.prepareStatement(query);
-			
-			resultSet = stmt.executeQuery();
-			while (resultSet.next())
-			{
-				result.add(new Client(
-						resultSet.getInt("clientId"),
-						resultSet.getString("clientName"),
-						resultSet.getString("businessTag")));
-			}
+	    	result = getAllClientsSQL(this);
 		}
 	    catch (SQLException e) 
 	    {
-			logger.error("Failed to get a connection to the database" + e);
-			throw new NoDataStoreConnectionException ("Failed to get a "
-					+ "connection to the database to create the business.", e);
+	    	this.handleSQLException(e);
 		}
 	    finally
 	    {
-	    	try 
-	    	{
-				resultSet.close();
-			} 
-	    	catch (SQLException e) 
-	    	{
-				logger.error("Database elements failed to close, resources may be leaking.", e);
-			}
+	    	this.closeResultSet();
+	    	this.closeConnection();
 	    }
 	    
 	    return result;
+	}
+
+	/**
+	 * Creates a client in the database with the given client and DB runner.
+	 * 
+	 * @param client - the client to create in the database.
+	 * @param queryRunner - the DB query runner.
+	 * @throws SQLException if the DB cannot be reached.
+	 * @throws SQLIntegrityConstraintViolationException if a key breaks the constraints of the DB.
+	 */
+	public static void createClientSQL(Client client, DBQueries queryRunner) 
+			throws SQLException, SQLIntegrityConstraintViolationException
+	{
+		String query = "INSERT INTO Client(clientName, businessTag) VALUES (?, ?);";
+		
+		final PreparedStatement stmt = queryRunner.connection.prepareStatement(query);
+		stmt.setString(1, client.getClientName());
+		stmt.setString(2, client.getBusinessTag());
+		
+		stmt.executeUpdate();
+	}
+	
+	/**
+	 * Gets a client from the database with the given clientId and DB runner.
+	 * 
+	 * @param client id - the client id to search for in the database.
+	 * @param queryRunner - the DB query runner.
+	 * @throws SQLException if the DB cannot be reached.
+	 * @throws NoDataStoreConnectionException if the DB cannot be reached.
+	 */
+	public static Client getClientSQL(int clientId, DBQueries queryRunner)
+			throws SQLException, NoDataStoreConnectionException
+	{
+		Client result = null;
+
+		String query = "Select clientName, businessTag FROM Client WHERE Client.clientId = ?;";
+		
+		final PreparedStatement stmt = queryRunner.connection.prepareStatement(query);
+		stmt.setInt(1, clientId);
+		
+		queryRunner.resultSet = stmt.executeQuery();
+		while (queryRunner.resultSet.next())
+		{
+			result = new Client(
+					clientId,
+					queryRunner.resultSet.getString("clientName"),
+					queryRunner.resultSet.getString("businessTag"));
+		}
+		
+		return result;
+	}
+	
+	
+	/**
+	 * Gets all clients from the database.
+	 * 
+	 * @param queryRunner - the DB query runner.
+	 * @throws SQLException if the DB cannot be reached.
+	 * @throws NoDataStoreConnectionException if the DB cannot be reached.
+	 */
+	public static ArrayList<Client> getAllClientsSQL(DBQueries queryRunner)
+			throws SQLException, NoDataStoreConnectionException
+	{
+		ArrayList<Client> result = new ArrayList<Client>();
+
+		String query = "Select clientId, clientName, businessTag FROM Client;";
+		
+		final PreparedStatement stmt = queryRunner.connection.prepareStatement(query);
+		
+		queryRunner.resultSet = stmt.executeQuery();
+		while (queryRunner.resultSet.next())
+		{
+			result.add(new Client(
+					queryRunner.resultSet.getInt("clientId"),
+					queryRunner.resultSet.getString("clientName"),
+					queryRunner.resultSet.getString("businessTag")));
+		}
+		
+		return result;
 	}
 }
