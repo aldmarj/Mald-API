@@ -8,12 +8,12 @@ import java.security.Principal;
 public class AuthenticationSecurityContext implements SecurityContext
 {
     private final Account account;
-    private final String scheme;
+    private final boolean isSecure;
 
-    AuthenticationSecurityContext(final Account account, final String scheme)
+    AuthenticationSecurityContext(final Account account, final boolean isSecure)
     {
         this.account = account;
-        this.scheme = scheme;
+        this.isSecure = isSecure;
     }
 
     @Override
@@ -25,13 +25,13 @@ public class AuthenticationSecurityContext implements SecurityContext
     @Override
     public boolean isUserInRole(final String role)
     {
-        return false;
+        return "employee".equalsIgnoreCase(role); //TODO change if/when supporting roles.
     }
 
     @Override
     public boolean isSecure()
     {
-        return "https".equalsIgnoreCase(this.scheme); //NON-NLS
+        return this.isSecure;
     }
 
     @Override

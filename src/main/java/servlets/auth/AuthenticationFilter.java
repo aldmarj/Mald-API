@@ -86,7 +86,7 @@ public class AuthenticationFilter implements ContainerRequestFilter
                 {
                     tracking.updateLastTimeUsed();
                     requestContext.setSecurityContext(
-                            new AuthenticationSecurityContext(tracking.getAccount(), this.servletRequest.getScheme()));
+                            new AuthenticationSecurityContext(tracking.getAccount(), this.servletRequest.isSecure()));
                     return;
                 }
             }
