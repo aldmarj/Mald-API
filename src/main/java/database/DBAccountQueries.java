@@ -12,6 +12,7 @@ import java.sql.SQLIntegrityConstraintViolationException;
 
 /**
  * Class to contain manipulation functions for accounts in the datastore.
+ * Each instance should only be used once. 
  * 
  * @author Lawrence
  */
@@ -116,7 +117,7 @@ public class DBAccountQueries extends DBQueries {
 	 * @param userName the name of the user.
 	 * @param queryRunner - the name of the new account.
 	 * @return the account requested.
-	 * @throws SQLIntegrityConstraintViolationException - If the given key is not unique.
+	 * @throws NoDataStoreConnectionException - If a connection cannot be made to the store.
 	 * @throws SQLException - If a connection cannot be made to the store.
 	 */
 	public static Account getAccountSQL(String userName, DBQueries queryRunner) 
