@@ -1,7 +1,7 @@
 /**
  * 
  */
-package servlets;
+package resources;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -20,7 +20,7 @@ import models.WorkLog;
  * @author Lawrence
  */
 @Path("/business/{buisnessTag}/worklog")
-public class WorkLogServlet
+public class WorkLogResource
 {
 	/**
 	 * Getter for getting a worklog by its id.

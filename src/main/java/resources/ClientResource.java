@@ -1,7 +1,7 @@
 /**
  * 
  */
-package servlets;
+package resources;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -20,7 +20,7 @@ import models.Client;
  * @author Lawrence
  */
 @Path("/business/{buisnessTag}/clientId")
-public class ClientServlet
+public class ClientResource
 {
 	/**
 	 * Getter for getting a client by its id.

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package servlets;
+package resources;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -25,7 +25,7 @@ import models.Business;
  *
  */
 @Path("/business")
-public class BusinessServlet
+public class BusinessResource
 {
 	/**
 	 * Get a business from the API, will return the business for the given tag
