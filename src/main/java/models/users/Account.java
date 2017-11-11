@@ -12,13 +12,6 @@ public final class Account implements Principal
     
     private String email;
 
-    public Account()
-    {
-        this.userName = "";
-        this.storedPassword = Password.fromHash("");
-        this.email = "";    
-    }
-    
     public Account(final String username, final Password storedPassword, final String email)
     {
         this.userName = username;
@@ -31,31 +24,39 @@ public final class Account implements Principal
         return this.userName;
     }
 
-    public final Password getStoredPassword()
+    public Password getStoredPassword()
     {
         return this.storedPassword;
     }
     
-    public final String getEmail()
+    public String getEmail()
     {
         return this.email;
     }
-
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
-
-	public void setStoredPassword(Password storedPassword) {
-		this.storedPassword = storedPassword;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
 
     @Override
     public String getName()
     {
         return this.userName;
+    }
+
+    @Override
+    public String toString()
+    {
+        return this.userName;
+    }
+
+    @Override
+    public boolean equals(final Object obj)
+    {
+        if (!(obj instanceof Account))
+        {
+            return false;
+        }
+        final Account otherAcc = (Account) obj;
+        return this.userName.equals(otherAcc.userName)
+                && this.storedPassword.equals(otherAcc.storedPassword)
+                && this.email.equals(otherAcc.email);
+
     }
 }

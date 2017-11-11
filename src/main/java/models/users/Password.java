@@ -4,6 +4,7 @@ import org.apache.catalina.CredentialHandler;
 import org.apache.catalina.realm.SecretKeyCredentialHandler;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.ResourceBundle;
 
 public class Password
 {
@@ -21,9 +22,10 @@ public class Password
     {
         if (ch == null)
         {
+            final ResourceBundle rb = ResourceBundle.getBundle("auth"); //NON-NLS
             final SecretKeyCredentialHandler skch = new SecretKeyCredentialHandler();
-            skch.setAlgorithm("PBKDF2WithHmacSHA512");
-            skch.setKeyLength(256);
+            skch.setAlgorithm(rb.getString("auth.password.algorithm")); //NON-NLS
+            skch.setKeyLength(Integer.parseInt(rb.getString("auth.password.keyLength"))); //NON-NLS
             ch = skch;
         }
         return ch;
@@ -91,11 +93,7 @@ public class Password
     @Override
     public boolean equals(final Object obj)
     {
-        if (obj instanceof Password)
-        {
-            return ((Password) obj).value.equals(this.value);
-        }
-        return false;
+        return (obj instanceof Password) && ((Password) obj).value.equals(this.value);
     }
 
     @Override

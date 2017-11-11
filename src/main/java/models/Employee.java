@@ -1,6 +1,7 @@
 package models;
 
 import models.users.Account;
+import models.users.Password;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -21,7 +22,7 @@ public class Employee
     
     public Employee()
     {
-        this.account = new Account();
+        this.account = new Account("", Password.fromHash(""),"");
         this.firstName = "";
         this.surName = "";
         this.businessTag = "";

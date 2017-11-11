@@ -1,23 +1,25 @@
 package servlets.auth;
 
+import models.users.Account;
+
 import javax.ws.rs.core.SecurityContext;
 import java.security.Principal;
 
 public class AuthenticationSecurityContext implements SecurityContext
 {
-    private final Principal principal;
+    private final Account account;
     private final String scheme;
 
-    AuthenticationSecurityContext(final Principal principal, final String scheme)
+    AuthenticationSecurityContext(final Account account, final String scheme)
     {
-        this.principal = principal;
+        this.account = account;
         this.scheme = scheme;
     }
 
     @Override
     public Principal getUserPrincipal()
     {
-        return this.principal;
+        return this.account;
     }
 
     @Override
