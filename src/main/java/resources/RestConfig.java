@@ -1,7 +1,7 @@
 /**
- * 
+ *
  */
-package servlets;
+package resources;
 
 import org.glassfish.jersey.server.ResourceConfig;
 import servlets.auth.AuthenticationFilter;
@@ -17,10 +17,10 @@ public class RestConfig extends ResourceConfig
 {
     public RestConfig()
     {
-        register(BusinessServlet.class);
-        register(WorkLogServlet.class);
-        register(ClientServlet.class);
-        register(EmployeeServlet.class);
+        register(BusinessResource.class);
+        register(WorkLogResource.class);
+        register(ClientResource.class);
+        register(EmployeeResource.class);
         register(LoginServlet.class);
         register(AuthenticationFilter.class);
     }
