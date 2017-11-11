@@ -1,4 +1,4 @@
-package servlets.auth;
+package resources.auth;
 
 import models.users.Account;
 

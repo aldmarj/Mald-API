@@ -1,4 +1,4 @@
-package servlets.auth;
+package resources.auth;
 
 import models.users.Account;
 
@@ -20,19 +20,23 @@ import java.util.*;
 @Priority(Priorities.AUTHENTICATION)
 public class AuthenticationFilter implements ContainerRequestFilter
 {
-    private static final ResourceBundle AUTH_PROPERTIES = ResourceBundle.getBundle("auth"); //NON-NLS
-    private static final String TOKEN_PARAMETER = AUTH_PROPERTIES.getString("auth.token.parameter");
-    private static final long TOKEN_TIMEOUT = Long.parseLong(AUTH_PROPERTIES.getString("auth.token.timeout"));
+    private static final ResourceBundle AUTH_RB = ResourceBundle.getBundle("auth"); //NON-NLS
+    private static final String TOKEN_PARAMETER = AUTH_RB.getString("auth.token.parameter");
+    private static final long TOKEN_TIMEOUT = Long.parseLong(AUTH_RB.getString("auth.token.timeout"));
 
     private static final Map<String, AccountTracking> AUTHENTICATED_ACCOUNTS = new HashMap<>();
-    private static final Collection<String> EXEMPT_PATHS = new ArrayList<>();
+    private static final Collection<String> EXEMPT_PATHS;
 
+    /**
+     * Static initializer to populate the Exempt_Paths collection from the resourceBundle.
+     */
     static
     {
+        EXEMPT_PATHS = new ArrayList<>();
         int i = 0;
-        while(AUTH_PROPERTIES.containsKey("auth.exempt."+i)) //NON-NLS
+        while(AUTH_RB.containsKey("auth.exempt."+i)) //NON-NLS
         {
-            EXEMPT_PATHS.add(AUTH_PROPERTIES.getString("auth.exempt."+i)); //NON-NLS
+            EXEMPT_PATHS.add(AUTH_RB.getString("auth.exempt."+i)); //NON-NLS
             i++;
         }
     }
@@ -40,14 +44,19 @@ public class AuthenticationFilter implements ContainerRequestFilter
     @Context
     private HttpServletRequest servletRequest;
 
-    private static String generateToken()
+    /**
+     *
+     * @param account
+     * @return
+     */
+    private static String generateToken(final Account account)
     {
         return UUID.randomUUID().toString().replaceAll("-","");
     }
 
     static String addAuthenticatedAccount(final Account account)
     {
-        final String token = AuthenticationFilter.generateToken();
+        final String token = AuthenticationFilter.generateToken(account);
         AuthenticationFilter.AUTHENTICATED_ACCOUNTS.put(token, new AccountTracking(account));
         return token;
     }

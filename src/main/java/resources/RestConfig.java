@@ -4,8 +4,8 @@
 package resources;
 
 import org.glassfish.jersey.server.ResourceConfig;
-import servlets.auth.AuthenticationFilter;
-import servlets.auth.LoginServlet;
+import resources.auth.AuthenticationFilter;
+import resources.auth.LoginResource;
 
 import javax.ws.rs.ApplicationPath;
 /**
@@ -21,7 +21,7 @@ public class RestConfig extends ResourceConfig
         register(WorkLogResource.class);
         register(ClientResource.class);
         register(EmployeeResource.class);
-        register(LoginServlet.class);
+        register(LoginResource.class);
         register(AuthenticationFilter.class);
     }
 }

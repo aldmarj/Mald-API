@@ -1,4 +1,4 @@
-package servlets.auth;
+package resources.auth;
 
 import models.users.Account;
 import models.users.Password;
@@ -12,7 +12,7 @@ import javax.ws.rs.core.SecurityContext;
 import java.security.Principal;
 
 @Path("/login")
-public class LoginServlet
+public class LoginResource
 {
     @GET
     public String getName(@Context SecurityContext sc)
