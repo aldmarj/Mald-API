@@ -1,14 +1,18 @@
 package resources.auth;
 
+import database.DBAccountQueries;
+import database.NoDataStoreConnectionException;
 import models.users.Account;
-import models.users.Password;
 
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
 
 @Path("/login")
@@ -24,16 +28,26 @@ public class LoginResource
     @POST
     public String login(@FormParam("u") String username, @FormParam("p") String password)
     {
-        if(isPasswordCorrect(username, password))
+        try
         {
-            return AuthenticationFilter.addAuthenticatedAccount(
-                    new Account(username, Password.fromHash(password), "email"));
+            final Account account = new DBAccountQueries().getAccount(username);
+            if (account != null && account.getStoredPassword().matches(password))
+            {
+                return AuthenticationFilter.addAuthenticatedAccount(account);
+            }
         }
-        return null;
-    }
-
-    private boolean isPasswordCorrect(final String username, final String password)
-    {
-        return true; //TODO get from database
+        catch (final NoDataStoreConnectionException e)
+        {
+            e.printStackTrace();
+            throw new WebApplicationException(
+                    "Could not connect to authentication database", e, Response.Status.SERVICE_UNAVAILABLE);
+        }
+        catch (final NoSuchAlgorithmException e)
+        {
+            e.printStackTrace();
+            throw new WebApplicationException(
+                    "Server could not authenticate password", e, Response.Status.INTERNAL_SERVER_ERROR);
+        }
+        throw new WebApplicationException("username or password is incorrect", Response.Status.FORBIDDEN);
     }
 }
