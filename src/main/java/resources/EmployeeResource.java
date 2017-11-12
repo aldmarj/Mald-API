@@ -1,4 +1,4 @@
-package servlets;
+package resources;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -17,7 +17,7 @@ import models.Employee;
  * @author Lawrence
  */
 @Path("/business/{buisnessTag}/userName")
-public class EmployeeServlet
+public class EmployeeResource
 {
 	/**
 	 * Getter for getting a employee by its username.

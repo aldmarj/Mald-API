@@ -1,7 +1,7 @@
 /**
  * 
  */
-package servlets;
+package resources;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -25,7 +25,7 @@ import models.Business;
  *
  */
 @Path("/business")
-public class BusinessServlet
+public class BusinessResource
 {
 	/**
 	 * Get a business from the API, will return the business for the given tag
@@ -40,7 +40,7 @@ public class BusinessServlet
 	{	   		
 		try
 		{
-			Business result = DBBusinessQueries.getBusiness(businessTag);
+			Business result = new DBBusinessQueries().getBusiness(businessTag);
 			
 			if (result != null)
 			{
@@ -66,7 +66,7 @@ public class BusinessServlet
 	{
 		try 
 		{
-			DBBusinessQueries.createBusiness(business.getBusinessTag(), business.getBusinessName());
+			new DBBusinessQueries().createBusiness(business);
 			
 			return Response.status(200).entity("").build();
 		}

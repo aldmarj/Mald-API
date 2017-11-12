@@ -3,61 +3,58 @@
  */
 package database;
 
-import java.io.IOException;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
-
-import org.apache.log4j.Logger;
 
 import models.Business;
 
 /**
  * Class to contain helper functions for interaction with the database.
+ * Each instance should only be used once.
  * 
  * @author Lawrence
  */
-public abstract class DBBusinessQueries {
+public final class DBBusinessQueries extends DBQueries 
+{
 	
-	/** Logger **/
-	private final static Logger logger = Logger.getLogger(DBBusinessQueries.class);
-
+	/**
+	 * CLASS CONSTRUCTOR
+	 * 
+	 * @throws NoDataStoreConnectionException
+	 */
+	public DBBusinessQueries() throws NoDataStoreConnectionException
+	{
+		super();
+	}
+	
 	/**
 	 * Creates a business in the database with the given name and tag.
 	 * 
-	 * @param businessTag - the tag of the new business.
-	 * @param businessName - the name of the new business.
-	 * @throws IllegalArgumentException - If the given key is not unique.
-	 * @throws IOException - If a connection cannot be made to the store.
+	 * @param business - The business details to add.
+	 * @throws BadKeyException in the key given is invalid.
+	 * @throws NoDataStoreConnectionException if a connection to the datastore cannot be made.
 	 */
-	public static void createBusiness(String businessTag, String businessName) 
+	public void createBusiness(Business business) 
 			throws BadKeyException, NoDataStoreConnectionException
 	{
-	    try (Connection connection = DatabasePool.getConnection())
+	    try
 	    {		
-			String query = "INSERT INTO Business(businessTag, businessName) VALUES (?, ?);";
-			
-			final PreparedStatement stmt = connection.prepareStatement(query);
-			stmt.setString(1, businessTag);
-			stmt.setString(2, businessName);
-			
-			stmt.executeUpdate();
+	    	createBusinessSQL(business, this);
 		} 
 	    catch (SQLIntegrityConstraintViolationException e)
 	    {
-			logger.error("A business with the tag: " + businessTag + " already exists.");
-			throw new BadKeyException ("A business with that tag: " 
-					+ businessTag + " already exists. The tag must be unique.", e, businessTag);
+			this.handleIntegrityConstaitViolation(e);			
 	    }
 	    catch (SQLException e) 
 	    {
-			logger.error("Failed to get a connection to the database" + e);
-			throw new NoDataStoreConnectionException ("Failed to get a connection"
-					+ " to the database to create the business.", e);
+	    	this.handleSQLException(e);
 		}
+	    finally
+	    {
+	    	this.closeConnection();
+	    }
 	}
 	
 	/**
@@ -68,42 +65,22 @@ public abstract class DBBusinessQueries {
 	 * @return The requested business.
 	 * @throws NoDataStoreConnectionException If a connection cannot be made to the store.
 	 */
-	public static Business getBusiness(String businessTag) throws NoDataStoreConnectionException
+	public Business getBusiness(String businessTag) throws NoDataStoreConnectionException
 	{
 		Business result = null;
 		
-		ResultSet resultSet = null;
-	    try (Connection connection = DatabasePool.getConnection())
+	    try
 	    {		
-			String query = "Select businessTag, businessName FROM Business WHERE Business.businessTag = ?;";
-			
-			final PreparedStatement stmt = connection.prepareStatement(query);
-			stmt.setString(1, businessTag);
-			
-			resultSet = stmt.executeQuery();
-			while (resultSet.next())
-			{
-				result = new Business(
-						resultSet.getString("businessTag"),
-						resultSet.getString("businessName"));
-			}
+	    	result = getBusinessSQL(businessTag, this);
 		} 
 	    catch (SQLException e) 
 	    {
-			logger.error("Failed to get a connection to the database" + e);
-			throw new NoDataStoreConnectionException ("Failed to get a "
-					+ "connection to the database to create the business.", e);
+	    	this.handleSQLException(e);
 		}
 	    finally
 	    {
-	    	try 
-	    	{
-				resultSet.close();
-			} 
-	    	catch (SQLException e) 
-	    	{
-				logger.error("Database elements failed to close, resources may be leaking.", e);
-			}
+	    	this.closeResultSet();
+	    	this.closeConnection();
 	    }
 	    
 		return result;
@@ -115,43 +92,100 @@ public abstract class DBBusinessQueries {
 	 * @return All businesses.
 	 * @throws NoDataStoreConnectionException If a connection cannot be made to the store.
 	 */
-	public static ArrayList<Business> getAllBusinesses() throws NoDataStoreConnectionException
+	public ArrayList<Business> getAllBusinesses() throws NoDataStoreConnectionException
 	{
 		ArrayList<Business> result = new ArrayList<Business>();
 		
-		ResultSet resultSet = null;
-	    try (Connection connection = DatabasePool.getConnection())
+	    try
 	    {		
-			String query = "Select businessTag, businessName FROM Business;";
-			
-			final PreparedStatement stmt = connection.prepareStatement(query);
-			
-			resultSet = stmt.executeQuery();
-			while (resultSet.next())
-			{
-				result.add(new Business(
-						resultSet.getString("businessTag"),
-						resultSet.getString("businessName")));
-			}
+	    	result = getAllBusinessesSQL(this);
 		}
 	    catch (SQLException e) 
 	    {
-			logger.error("Failed to get a connection to the database" + e);
-			throw new NoDataStoreConnectionException ("Failed to get a "
-					+ "connection to the database to create the business.", e);
+	    	this.handleSQLException(e);
 		}
 	    finally
 	    {
-	    	try 
-	    	{
-				resultSet.close();
-			} 
-	    	catch (SQLException e) 
-	    	{
-				logger.error("Database elements failed to close, resources may be leaking.", e);
-			}
+	    	this.closeResultSet();
+	    	this.closeConnection();
 	    }
 	    
 	    return result;
+	}
+	
+	/**
+	 * Creates a business in the database with the given business and DB runner.
+	 * 
+	 * @param business - the business to create in the database.
+	 * @param queryRunner - the DB query runner.
+	 * @throws SQLException if the DB cannot be reached.
+	 * @throws SQLIntegrityConstraintViolationException if a key breaks the constraints of the DB.
+	 */
+	private static void createBusinessSQL(Business business, DBQueries queryRunner) 
+			throws SQLException, SQLIntegrityConstraintViolationException
+	{
+		String query = "INSERT INTO Business(businessTag, businessName) VALUES (?, ?);";
+		
+		final PreparedStatement stmt = queryRunner.connection.prepareStatement(query);
+		stmt.setString(1, business.getBusinessTag());
+		stmt.setString(2, business.getBusinessName());
+		
+		stmt.executeUpdate();
+	}
+	
+	/**
+	 * Gets a business from the database with the given businessTag and DB runner.
+	 * 
+	 * @param businessTag - the businessTag to search for in the database.
+	 * @param queryRunner - the DB query runner.
+	 * @throws SQLException if the DB cannot be reached.
+	 * @throws NoDataStoreConnectionException if the DB cannot be reached.
+	 */
+	private static Business getBusinessSQL(String businessTag, DBQueries queryRunner) 
+			throws SQLException, NoDataStoreConnectionException
+	{
+		Business result = null;
+
+		String query = "Select businessTag, businessName FROM Business WHERE Business.businessTag = ?;";
+		
+		final PreparedStatement stmt = queryRunner.connection.prepareStatement(query);
+		stmt.setString(1, businessTag);
+		
+		queryRunner.resultSet = stmt.executeQuery();
+		while (queryRunner.resultSet.next())
+		{
+			result = new Business(
+					queryRunner.resultSet.getString("businessTag"),
+					queryRunner.resultSet.getString("businessName"));
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * Gets all businesses from the database.
+	 * 
+	 * @param queryRunner - the DB query runner.
+	 * @throws SQLException if the DB cannot be reached.
+	 * @throws NoDataStoreConnectionException if the DB cannot be reached.
+	 */
+	public static ArrayList<Business> getAllBusinessesSQL(DBQueries queryRunner) 
+			throws NoDataStoreConnectionException, SQLException
+	{
+		ArrayList<Business> result = new ArrayList<Business>();
+
+		String query = "Select businessTag, businessName FROM Business;";
+		
+		final PreparedStatement stmt = queryRunner.connection.prepareStatement(query);
+		
+		queryRunner.resultSet = stmt.executeQuery();
+		while (queryRunner.resultSet.next())
+		{
+			result.add(new Business(
+					queryRunner.resultSet.getString("businessTag"),
+					queryRunner.resultSet.getString("businessName")));
+		}
+		
+		return result;
 	}
 }
