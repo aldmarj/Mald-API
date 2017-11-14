@@ -5,6 +5,9 @@ import models.users.Account;
 import javax.ws.rs.core.SecurityContext;
 import java.security.Principal;
 
+/**
+ *
+ */
 public class AuthenticationSecurityContext implements SecurityContext
 {
     private final Account account;

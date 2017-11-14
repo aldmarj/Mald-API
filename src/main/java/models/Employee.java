@@ -81,27 +81,27 @@ public class Employee
     	return this.account;
     }
 
-	public void setFirstName(String firstName) {
+    public void setFirstName(String firstName) {
 		this.firstName = firstName;
 	}
 
-	public void setSurName(String surName) {
+    public void setSurName(String surName) {
 		this.surName = surName;
 	}
 
-	public void setBusinessTag(String businessTag) {
+    public void setBusinessTag(String businessTag) {
 		this.businessTag = businessTag;
 	}
 
-	public void setParentUserName(String parentUserName) {
+    public void setParentUserName(String parentUserName) {
 		this.parentUserName = parentUserName;
 	}
 
-	public void setJobRole(String jobRole) {
+    public void setJobRole(String jobRole) {
 		this.jobRole = jobRole;
 	}
 
-	public void setAccount(Account account) {
+    public void setAccount(Account account) {
 		this.account = account;
 	}    
 }

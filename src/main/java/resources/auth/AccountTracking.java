@@ -4,6 +4,11 @@ import models.users.Account;
 
 import java.util.Objects;
 
+/**
+ * Class used for linking an account to the last time that account used this API service.
+ *
+ * @author Matt Rayner
+ */
 class AccountTracking
 {
     private final Account account;
@@ -50,6 +55,18 @@ class AccountTracking
     public long getLastTimeUsed()
     {
         return this.lastTimeUsed;
+    }
+
+    /**
+     * test if the last time used is still valid by comparing it to a timeout value.
+     * <br />
+     * this is calculated as the result of:<br /><code>System.currentTimeMillis() - this.getLastTimeUser() &lt; timeout;</code>
+     * @param timeout the max age the last time used a account can have while still being valid.
+     * @return <code>true</code> if the account is still valid.
+     */
+    public boolean isTimeValid(final long timeout)
+    {
+        return System.currentTimeMillis() - this.lastTimeUsed < timeout;
     }
 
     /**

@@ -15,6 +15,12 @@ import javax.ws.rs.ext.Provider;
 import java.io.IOException;
 import java.util.*;
 
+/**
+ * Filter that all requests pass through.
+ * this allows the SecurityContext to be assigned for use by any resource.
+ *
+ * @author Matt Rayner
+ */
 @Provider
 @PreMatching
 @Priority(Priorities.AUTHENTICATION)
@@ -25,14 +31,13 @@ public class AuthenticationFilter implements ContainerRequestFilter
     private static final long TOKEN_TIMEOUT = Long.parseLong(AUTH_RB.getString("auth.token.timeout"));
 
     private static final Map<String, AccountTracking> AUTHENTICATED_ACCOUNTS = new HashMap<>();
-    private static final Collection<String> EXEMPT_PATHS;
+    private static final Collection<String> EXEMPT_PATHS = new ArrayList<>();
 
-    /**
-     * Static initializer to populate the Exempt_Paths collection from the resourceBundle.
+    /*
+      Static initializer to populate the Exempt_Paths collection from the resourceBundle.
      */
     static
     {
-        EXEMPT_PATHS = new ArrayList<>();
         int i = 0;
         while(AUTH_RB.containsKey("auth.exempt."+i)) //NON-NLS
         {
@@ -41,17 +46,28 @@ public class AuthenticationFilter implements ContainerRequestFilter
         }
     }
 
+    /**
+     * variable for the underlying {@link HttpServletRequest}.
+     * this variable is assigned by JAX-RS.
+     */
     @Context
     private HttpServletRequest servletRequest;
 
     /**
+     * generate a unique token for each account.
      *
-     * @param account
-     * @return
+     * @param account the account the token will be mapped to.
+     * @return the generated token.
      */
     private static String generateToken(final Account account)
     {
-        return UUID.randomUUID().toString().replaceAll("-","");
+        String token;
+        do
+        {
+            token = UUID.randomUUID().toString().replaceAll("-","");
+        }while(AuthenticationFilter.AUTHENTICATED_ACCOUNTS.containsKey(token)); //ensure that the token has not been used;
+
+        return token;
     }
 
     static String addAuthenticatedAccount(final Account account)
@@ -87,7 +103,7 @@ public class AuthenticationFilter implements ContainerRequestFilter
             final AccountTracking tracking = AuthenticationFilter.AUTHENTICATED_ACCOUNTS.get(token);
             if (tracking != null)
             {
-                if (System.currentTimeMillis() - tracking.getLastTimeUsed() > TOKEN_TIMEOUT)
+                if (!tracking.isTimeValid(TOKEN_TIMEOUT))
                 {
                     removeAuthenticatedAccount(token);
                 }

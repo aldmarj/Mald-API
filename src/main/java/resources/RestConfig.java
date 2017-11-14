@@ -8,9 +8,11 @@ import resources.auth.AuthenticationFilter;
 import resources.auth.LoginResource;
 
 import javax.ws.rs.ApplicationPath;
+
 /**
- * @author Lawrence
+ * config of resources to add to the application.
  *
+ * @author Lawrence
  */
 @ApplicationPath("/*")
 public class RestConfig extends ResourceConfig

@@ -12,6 +12,13 @@ public final class Account implements Principal
     
     private String email;
 
+    public Account()
+    {
+        this.userName = null;
+        this.storedPassword = null;
+        this.email = null;
+    }
+
     public Account(final String username, final Password storedPassword, final String email)
     {
         this.userName = username;
@@ -24,14 +31,29 @@ public final class Account implements Principal
         return this.userName;
     }
 
+    public void setUserName(final String userName)
+    {
+        this.userName = userName;
+    }
+
     public Password getStoredPassword()
     {
         return this.storedPassword;
     }
-    
+
+    public void setStoredPassword(final Password storedPassword)
+    {
+        this.storedPassword = storedPassword;
+    }
+
     public String getEmail()
     {
         return this.email;
+    }
+
+    public void setEmail(final String email)
+    {
+        this.email = email;
     }
 
     @Override
