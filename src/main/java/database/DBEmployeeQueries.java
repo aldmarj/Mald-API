@@ -80,16 +80,17 @@ public final class DBEmployeeQueries extends DBQueries
 	 * Returns null if no employee is found.
 	 * 
 	 * @param userName - The userName of the employee to find.
+	 * @param businessTag - The Business of the employee.
 	 * @return The requested employee.
 	 * @throws NoDataStoreConnectionException If a connection cannot be made to the store.
 	 */
-	public Employee getEmployee(String userName) throws NoDataStoreConnectionException
+	public Employee getEmployee(String userName, String businessTag) throws NoDataStoreConnectionException
 	{
 		Employee result = null;
 		
 	    try
 	    {		
-	    	result = getEmployeeSQL(userName, this);
+	    	result = getEmployeeSQL(userName, businessTag, this);
 		} 
 	    catch (SQLException e) 
 	    {
@@ -168,25 +169,27 @@ public final class DBEmployeeQueries extends DBQueries
 	 * @throws SQLException if the DB cannot be reached.
 	 * @throws NoDataStoreConnectionException if the DB cannot be reached.
 	 */
-	private static Employee getEmployeeSQL(String userName, DBQueries queryRunner) 
+	private static Employee getEmployeeSQL(String userName, String businessTag, DBQueries queryRunner) 
 			throws SQLException, NoDataStoreConnectionException
 	{
 		Employee result = null;
 		
-		String query = "SELECT firstName, surName, businessTag, parentUser, jobRole "
-				+ "FROM Employee WHERE Employee.userName = ?;";
+		String query = "SELECT firstName, surName, parentUser, jobRole "
+				+ "FROM Employee WHERE Employee.userName = ? AND Employee.businessTag = ?;";
 		
 		final PreparedStatement stmt = queryRunner.connection.prepareStatement(query);
-		stmt.setString(1, userName);
+		int i = 1;
+		stmt.setString(i++, userName);
+		stmt.setString(i++, businessTag);
 		
 		queryRunner.resultSet = stmt.executeQuery();
 		while (queryRunner.resultSet.next())
 		{
 			result = new Employee(
-					new DBAccountQueries().getAccount(userName),
+					new DBAccountQueries().getAccount(userName, businessTag),
 					queryRunner.resultSet.getString("firstName"),
 					queryRunner.resultSet.getString("surName"),
-					queryRunner.resultSet.getString("businessTag"),
+					businessTag,
 					queryRunner.resultSet.getString("parentUser"),
 					queryRunner.resultSet.getString("jobRole"));
 		}
@@ -216,7 +219,8 @@ public final class DBEmployeeQueries extends DBQueries
 		{
 			result.add(new Employee(
 					new DBAccountQueries().getAccount(
-							queryRunner.resultSet.getString("userName")),
+							queryRunner.resultSet.getString("userName"),
+							queryRunner.resultSet.getString("businessTag")),
 					queryRunner.resultSet.getString("firstName"),
 					queryRunner.resultSet.getString("surName"),
 					queryRunner.resultSet.getString("businessTag"),

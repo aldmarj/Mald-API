@@ -60,16 +60,17 @@ public class DBAccountQueries extends DBQueries {
 	 * Returns null if no account is found.
 	 * 
 	 * @param userName - The userName of the account to find.
+	 * @param businessTag - The business the account to belongs to.
 	 * @return The requested account.
 	 * @throws NoDataStoreConnectionException If a connection cannot be made to the store.
 	 */
-	public Account getAccount(String userName) throws NoDataStoreConnectionException
+	public Account getAccount(String userName, String businessTag) throws NoDataStoreConnectionException
 	{
 		Account result = null;
 		
 	    try
 	    {		
-	    	result = getAccountSQL(userName, this);
+	    	result = getAccountSQL(userName, businessTag, this);
 		} 
 	    catch (SQLException e) 
 	    {
@@ -96,8 +97,8 @@ public class DBAccountQueries extends DBQueries {
 			throws SQLException, SQLIntegrityConstraintViolationException
 	{
 		String query = "INSERT INTO Account("
-				+ "userName, userPassword, email) "
-				+ "VALUES (?, ?, ?);";
+				+ "userName, userPassword, businessTag, email) "
+				+ "VALUES (?, ?, ?, ?);";
 		
 		final PreparedStatement stmt = queryRunner.connection.prepareStatement(query);
 		
@@ -105,6 +106,7 @@ public class DBAccountQueries extends DBQueries {
 		
 		stmt.setString(index++, account.getUserName());
 		stmt.setString(index++, account.getStoredPassword());
+		stmt.setString(index++, account.getBusinessTag());
 		stmt.setString(index++, account.getEmail());
 		
 		stmt.executeUpdate();
@@ -114,21 +116,25 @@ public class DBAccountQueries extends DBQueries {
 	 * Gets an account in the database with the given parameters.
 	 * 
 	 * @param userName the name of the user.
+	 * @param businessTag the business of the user.
 	 * @param queryRunner - the name of the new account.
 	 * @return the account requested.
 	 * @throws NoDataStoreConnectionException - If a connection cannot be made to the store.
 	 * @throws SQLException - If a connection cannot be made to the store.
 	 */
-	public static Account getAccountSQL(String userName, DBQueries queryRunner) 
+	public static Account getAccountSQL(String userName, String businessTag, DBQueries queryRunner) 
 			throws SQLException, NoDataStoreConnectionException
 	{
 		Account result = null;
 		
-		String query = "SELECT userName, userPassword, email "
-				+ "FROM Account WHERE Account.userName = ?;";
+		String query = "SELECT userName, userPassword, businessTag, email "
+				+ "FROM Account WHERE Account.userName = ? AND Account.businessTag = ?;";
 		
 		final PreparedStatement stmt = queryRunner.connection.prepareStatement(query);
-		stmt.setString(1, userName);
+		
+		int i = 1;
+		stmt.setString(i++, userName);
+		stmt.setString(i++, businessTag);
 		
 		queryRunner.resultSet = stmt.executeQuery();
 		while (queryRunner.resultSet.next())
@@ -136,6 +142,7 @@ public class DBAccountQueries extends DBQueries {
 			result = new Account(
 					queryRunner.resultSet.getString("userName"),
 					queryRunner.resultSet.getString("userPassword"),
+					queryRunner.resultSet.getString("businessTag"),
 					queryRunner.resultSet.getString("email"));
 		}
 		
