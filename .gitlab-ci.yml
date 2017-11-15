@@ -1,4 +1,6 @@
-image: maven:3.5.0-jdk-8-slim
+image: docker:latest
+services:
+  - docker:dind
 
 variables:
   DOCKER_DRIVER: overlay2
@@ -10,31 +12,48 @@ variables:
   # `installAtEnd` and `deployAtEnd` are only effective with recent version of the corresponding plugins.
   MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true"
 
-
-stages:
-  - build
-  - test
-
 # Cache downloaded dependencies and plugins between builds.
 # To keep cache across branches add 'key: "$CI_JOB_REF_NAME"'
 cache:
   paths:
     - .m2/repository
 
+stages:
+  - verify
+  - push
+  - deploy
 
-maven-build:
-  stage: build
-  only:
-    - master
-  script:
-    - mvn $MAVEN_CLI_OPTS compile
+maven-verify:
+  image: maven:3.5.0-jdk-8-slim
+  stage: verify
+  script: "mvn $MAVEN_CLI_OPTS clean verify -B"
   artifacts:
-      paths:
-        - target/classes
+    paths:
+      - target/API.war
 
-maven-test:
-  stage: test
-  only:
-    - master
+docker-push:
+  stage: push
   script:
-    - mvn $MAVEN_CLI_OPTS verify
+  - docker build -t $CI_REGISTRY/$CI_PROJECT_PATH:$CI_COMMIT_SHA .
+  - docker build -t $CI_REGISTRY/$CI_PROJECT_PATH:latest .
+  - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+  - docker push $CI_REGISTRY/$CI_PROJECT_PATH:$CI_COMMIT_SHA
+  - docker push $CI_REGISTRY/$CI_PROJECT_PATH:latest
+  - docker logout $CI_REGISTRY
+#  only:
+#    - master
+
+k8s-deploy:
+  image: google/cloud-sdk
+  stage: deploy
+  script:
+  - echo "$GCLOUD_KEY" > key.json
+  - gcloud auth activate-service-account --key-file key.json
+  - gcloud config set container/use_client_certificate True
+  - gcloud container clusters get-credentials mald-api-cluster --project distributed-mald --zone europe-west2-a
+  - /bin/sh k8s-deploy.sh
+  environment: production
+#  only:
+#    - master
+  when: manual
+  allow_failure: false
