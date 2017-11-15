@@ -22,7 +22,7 @@ import java.security.Principal;
 public class LoginResource
 {
     /** Logger **/
-    private static final Logger LOGGER = Logger.getLogger(DBQueries.class);
+    private static final Logger LOGGER = Logger.getLogger(LoginResource.class);
 
     @GET
     public String getName(@Context SecurityContext sc)
