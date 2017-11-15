@@ -18,4 +18,4 @@ spec:
         - name: JAVA_OPTIONS
           value : '-Xmx100m'
       imagePullSecrets:
-        - name: registry.gitlab.com
+        - name: gitlab.registry.com
