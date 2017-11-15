@@ -6,11 +6,7 @@ import database.NoDataStoreConnectionException;
 import models.users.Account;
 import org.apache.log4j.Logger;
 
-import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
@@ -18,7 +14,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
 
 /**
- *
+ * The login resource that provides a range of authentication methods. most notably the ability to login accounts.
  *
  * @author Matt Rayner
  */
@@ -36,6 +32,7 @@ public class LoginResource
     }
 
     @POST
+    @Consumes("application/x-www-form-urlencoded")
     public String login(@FormParam("u") String username, @FormParam("p") String password)
     {
         try

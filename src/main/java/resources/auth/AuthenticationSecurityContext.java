@@ -6,7 +6,9 @@ import javax.ws.rs.core.SecurityContext;
 import java.security.Principal;
 
 /**
+ * Security context that uses an Account.
  *
+ * @author Matt Rayner
  */
 public class AuthenticationSecurityContext implements SecurityContext
 {
