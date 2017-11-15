@@ -51,7 +51,7 @@ k8s-deploy:
   - echo "$GCLOUD_KEY" > key.json
   - gcloud auth activate-service-account --key-file key.json
   - gcloud config set container/use_client_certificate True
-  - gcloud container clusters get-credentials mald-api-cluster --project distributed-mald --zone europe-west2-a
+  - gcloud container clusters get-credentials mald-api-cluster --project micro-geode-114009 --zone europe-west2-a
   - /bin/sh k8s-deploy.sh
   environment: production
 #  only:
