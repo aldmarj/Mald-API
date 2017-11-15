@@ -11,6 +11,7 @@ variables:
   # when running from the command line.
   # `installAtEnd` and `deployAtEnd` are only effective with recent version of the corresponding plugins.
   MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true"
+  IMAGE_LOCATION: "/distributed-mald/api"
 
 # Cache downloaded dependencies and plugins between builds.
 # To keep cache across branches add 'key: "$CI_JOB_REF_NAME"'
@@ -34,11 +35,11 @@ maven-verify:
 docker-push:
   stage: push
   script:
-  - docker build -t $CI_REGISTRY/$CI_PROJECT_PATH:$CI_COMMIT_SHA .
-  - docker build -t $CI_REGISTRY/$CI_PROJECT_PATH:latest .
+  - docker build -t $CI_REGISTRY/$IMAGE_LOCATION:$CI_COMMIT_SHA .
+  - docker build -t $CI_REGISTRY/$IMAGE_LOCATION:latest .
   - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
-  - docker push $CI_REGISTRY/$CI_PROJECT_PATH:$CI_COMMIT_SHA
-  - docker push $CI_REGISTRY/$CI_PROJECT_PATH:latest
+  - docker push $CI_REGISTRY/$IMAGE_LOCATION:$CI_COMMIT_SHA
+  - docker push $CI_REGISTRY/$IMAGE_LOCATION:latest
   - docker logout $CI_REGISTRY
 #  only:
 #    - master

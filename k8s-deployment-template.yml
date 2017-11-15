@@ -10,7 +10,7 @@ spec:
     spec:
       containers:
       - name: api
-        image: registry.gitlab.com/distributed-mald/API:${CI_COMMIT_SHA}
+        image: registry.gitlab.com/distributed-mald/api:${CI_COMMIT_SHA}
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
