@@ -17,5 +17,11 @@ spec:
         env:
         - name: JAVA_OPTIONS
           value : '-Xmx100m'
+        readinessProbe:
+              httpGet:
+                path: /health
+                port: 8080
+              initialDelaySeconds: 10
+              periodSeconds: 30
       imagePullSecrets:
         - name: gitlab.registry.com

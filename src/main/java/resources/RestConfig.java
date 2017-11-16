@@ -21,6 +21,7 @@ public class RestConfig extends Application {
     @Override
     public Set<Class<?>> getClasses() {
         final Set<Class<?>> returnValue = new HashSet<Class<?>>();
+        returnValue.add(HealthResource.class);
         returnValue.add(BusinessResource.class);
         returnValue.add(WorkLogResource.class);
         returnValue.add(ClientResource.class);
