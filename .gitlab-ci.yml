@@ -56,5 +56,3 @@ k8s-deploy:
   environment: production
 #  only:
 #    - master
-  when: manual
-  allow_failure: false
