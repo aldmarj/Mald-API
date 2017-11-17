@@ -1,7 +1,6 @@
 package models;
 
 import models.users.Account;
-import models.users.Password;
 
 import javax.xml.bind.annotation.XmlRootElement;
 

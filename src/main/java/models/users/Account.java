@@ -10,19 +10,24 @@ public final class Account implements Principal
 
     private Password storedPassword;
     
+    private String businessTag;
+
     private String email;
 
     public Account()
     {
         this.userName = null;
         this.storedPassword = null;
+        this.businessTag = null;
         this.email = null;
     }
 
-    public Account(final String username, final Password storedPassword, final String email)
+    public Account(final String username, final Password storedPassword,
+                   final String businessTag, final String email)
     {
         this.userName = username;
         this.storedPassword = storedPassword;
+        this.businessTag = businessTag;
         this.email = email;
     }
     
@@ -54,6 +59,16 @@ public final class Account implements Principal
     public void setEmail(final String email)
     {
         this.email = email;
+    }
+
+    public String getBusinessTag()
+    {
+        return this.businessTag;
+    }
+
+    public void setBusinessTag(String businessTag)
+    {
+        this.businessTag = businessTag;
     }
 
     @Override
