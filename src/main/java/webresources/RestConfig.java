@@ -1,7 +1,7 @@
 /**
  *
  */
-package resources;
+package webresources;
 
 import org.glassfish.jersey.server.ResourceConfig;
 import resources.auth.AuthenticationFilter;

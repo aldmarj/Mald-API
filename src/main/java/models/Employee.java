@@ -12,8 +12,6 @@ public class Employee
 
     private String surName;
 
-    private String businessTag;
-
     private String parentUserName;
 
     private String jobRole;
@@ -22,21 +20,19 @@ public class Employee
     
     public Employee()
     {
-        this.account = new Account("", Password.fromHash(""),"");
+        this.account = new Account();
         this.firstName = "";
         this.surName = "";
-        this.businessTag = "";
         this.parentUserName = null;
         this.jobRole = "";
     }
     
-    public Employee(final Account account, final String firstName, final String surName, final String businessTag,
+    public Employee(final Account account, final String firstName, final String surName,
                     final String parentUserName, final String jobRole)
     {
         this.account = account;
         this.firstName = firstName;
         this.surName = surName;
-        this.businessTag = businessTag;
         this.parentUserName = parentUserName;
         this.jobRole = jobRole;
     }
@@ -53,7 +49,7 @@ public class Employee
 
     public String getBusinessTag()
     {
-        return this.businessTag;
+        return this.account.getBusinessTag();
     }
 
     public String getParentUserName()
@@ -81,27 +77,31 @@ public class Employee
     	return this.account;
     }
 
-    public void setFirstName(String firstName) {
+	public void setFirstName(String firstName)
+	{
 		this.firstName = firstName;
 	}
 
-    public void setSurName(String surName) {
+	public void setSurName(String surName)
+	{
 		this.surName = surName;
 	}
 
-    public void setBusinessTag(String businessTag) {
-		this.businessTag = businessTag;
+	public void setBusinessTag(String businessTag)
+	{
+		this.account.setBusinessTag(businessTag);
 	}
 
-    public void setParentUserName(String parentUserName) {
+	public void setParentUserName(String parentUserName)
+	{
 		this.parentUserName = parentUserName;
 	}
 
-    public void setJobRole(String jobRole) {
+	public void setJobRole(String jobRole) {
 		this.jobRole = jobRole;
 	}
 
-    public void setAccount(Account account) {
+	public void setAccount(Account account) {
 		this.account = account;
 	}    
 }

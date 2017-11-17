@@ -1,7 +1,7 @@
 /**
  * 
  */
-package resources;
+package webresources;
 
 import java.util.ArrayList;
 
