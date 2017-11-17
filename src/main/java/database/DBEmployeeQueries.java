@@ -189,7 +189,6 @@ public final class DBEmployeeQueries extends DBQueries
 					new DBAccountQueries().getAccount(userName, businessTag),
 					queryRunner.resultSet.getString("firstName"),
 					queryRunner.resultSet.getString("surName"),
-					businessTag,
 					queryRunner.resultSet.getString("parentUser"),
 					queryRunner.resultSet.getString("jobRole"));
 		}
@@ -223,7 +222,6 @@ public final class DBEmployeeQueries extends DBQueries
 							queryRunner.resultSet.getString("businessTag")),
 					queryRunner.resultSet.getString("firstName"),
 					queryRunner.resultSet.getString("surName"),
-					queryRunner.resultSet.getString("businessTag"),
 					queryRunner.resultSet.getString("parentUser"),
 					queryRunner.resultSet.getString("jobRole")));
 		}
