@@ -1,4 +1,4 @@
-package resources;
+package webresources;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
