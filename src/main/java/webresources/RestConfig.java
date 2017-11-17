@@ -4,8 +4,8 @@
 package webresources;
 
 import org.glassfish.jersey.server.ResourceConfig;
-import resources.auth.AuthenticationFilter;
-import resources.auth.LoginResource;
+import webresources.auth.AuthenticationFilter;
+import webresources.auth.LoginResource;
 
 import javax.ws.rs.ApplicationPath;
 

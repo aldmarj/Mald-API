@@ -1,4 +1,4 @@
-package resources.auth;
+package webresources.auth;
 
 import models.users.Account;
 
@@ -30,7 +30,8 @@ public class AuthenticationSecurityContext implements SecurityContext
     @Override
     public boolean isUserInRole(final String role)
     {
-        return "employee".equalsIgnoreCase(role); //TODO change if/when supporting roles.
+        return role.equalsIgnoreCase("employee") //TODO change if/when supporting roles.
+            || role.equalsIgnoreCase(this.account.getBusinessTag());
     }
 
     @Override

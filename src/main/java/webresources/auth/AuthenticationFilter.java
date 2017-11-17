@@ -1,4 +1,4 @@
-package resources.auth;
+package webresources.auth;
 
 import models.users.Account;
 
@@ -14,6 +14,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
 import java.io.IOException;
 import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * Filter that all requests pass through.
@@ -31,7 +32,7 @@ public class AuthenticationFilter implements ContainerRequestFilter
     private static final long TOKEN_TIMEOUT = Long.parseLong(AUTH_RB.getString("auth.token.timeout"));
 
     private static final Map<String, AccountTracking> AUTHENTICATED_ACCOUNTS = new HashMap<>();
-    private static final Collection<String> EXEMPT_PATHS = new ArrayList<>();
+    private static final Collection<Pattern> EXEMPT_PATHS = new ArrayList<>();
 
     /*
       Static initializer to populate the Exempt_Paths collection from the resourceBundle.
@@ -41,7 +42,7 @@ public class AuthenticationFilter implements ContainerRequestFilter
         int i = 0;
         while(AUTH_RB.containsKey("auth.exempt."+i)) //NON-NLS
         {
-            EXEMPT_PATHS.add(AUTH_RB.getString("auth.exempt."+i)); //NON-NLS
+            EXEMPT_PATHS.add(Pattern.compile(AUTH_RB.getString("auth.exempt."+i))); //NON-NLS
             i++;
         }
     }
@@ -116,9 +117,13 @@ public class AuthenticationFilter implements ContainerRequestFilter
                 }
             }
         }
-        if (!AuthenticationFilter.EXEMPT_PATHS.contains(requestContext.getUriInfo().getPath()))
+        for (final Pattern exemptPath : EXEMPT_PATHS)
         {
-            throw new WebApplicationException(Response.Status.FORBIDDEN);
+            if (exemptPath.matcher(requestContext.getUriInfo().getPath()).matches())
+            {
+                return;
+            }
         }
+        throw new WebApplicationException(Response.Status.FORBIDDEN);
     }
 }

@@ -1,4 +1,4 @@
-package resources.auth;
+package webresources.auth;
 
 import models.users.Account;
 

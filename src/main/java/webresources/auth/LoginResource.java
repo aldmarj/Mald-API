@@ -1,7 +1,6 @@
-package resources.auth;
+package webresources.auth;
 
 import database.DBAccountQueries;
-import database.DBQueries;
 import database.NoDataStoreConnectionException;
 import models.users.Account;
 import org.apache.log4j.Logger;
@@ -18,7 +17,7 @@ import java.security.Principal;
  *
  * @author Matt Rayner
  */
-@Path("/login")
+@Path("business/{businessTag}/login")
 public class LoginResource
 {
     /** Logger **/
@@ -33,11 +32,13 @@ public class LoginResource
 
     @POST
     @Consumes("application/x-www-form-urlencoded")
-    public String login(@FormParam("u") String username, @FormParam("p") String password)
+    public String login(@PathParam("businessTag") final String businessTag,
+                        @FormParam("u") final String username,
+                        @FormParam("p") final String password)
     {
         try
         {
-            final Account account = new DBAccountQueries().getAccount(username);
+            final Account account = new DBAccountQueries().getAccount(username, businessTag);
             if (account != null && account.getStoredPassword().matches(password))
             {
                 return AuthenticationFilter.addAuthenticatedAccount(account);
