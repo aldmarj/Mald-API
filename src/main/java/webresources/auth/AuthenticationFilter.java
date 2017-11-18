@@ -10,7 +10,9 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.PreMatching;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.Provider;
 import java.io.IOException;
 import java.util.*;
@@ -95,6 +97,23 @@ public class AuthenticationFilter implements ContainerRequestFilter
         }
     }
 
+    private static String extractBusinessTag(final UriInfo uriInfo)
+    {
+        for (final Iterator<PathSegment> i = uriInfo.getPathSegments().iterator(); i.hasNext();)
+        {
+            if("business".equals(i.next().getPath()) && i.hasNext())
+            {
+                return i.next().getPath();
+            }
+        }
+        return null;
+    }
+
+    public static boolean removeInvalidAccounts()
+    {
+        return AUTHENTICATED_ACCOUNTS.entrySet().removeIf(entry -> !entry.getValue().isTimeValid(TOKEN_TIMEOUT));
+    }
+
     @Override
     public void filter(final ContainerRequestContext requestContext) throws IOException
     {
@@ -110,10 +129,13 @@ public class AuthenticationFilter implements ContainerRequestFilter
                 }
                 else
                 {
-                    tracking.updateLastTimeUsed();
-                    requestContext.setSecurityContext(
-                            new AuthenticationSecurityContext(tracking.getAccount(), this.servletRequest.isSecure()));
-                    return;
+                    if (Objects.equals(extractBusinessTag(requestContext.getUriInfo()), tracking.getAccount().getBusinessTag()))
+                    {
+                        tracking.updateLastTimeUsed();
+                        requestContext.setSecurityContext(
+                                new AuthenticationSecurityContext(tracking.getAccount(), this.servletRequest.isSecure()));
+                        return;
+                    }
                 }
             }
         }
