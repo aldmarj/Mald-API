@@ -41,8 +41,8 @@ docker-push:
   - docker push $CI_REGISTRY/$IMAGE_LOCATION:$CI_COMMIT_SHA
   - docker push $CI_REGISTRY/$IMAGE_LOCATION:latest
   - docker logout $CI_REGISTRY
-#  only:
-#    - master
+  only:
+    - master
 
 k8s-deploy:
   image: google/cloud-sdk
@@ -54,5 +54,5 @@ k8s-deploy:
   - gcloud container clusters get-credentials mald-api-cluster --project micro-geode-114009 --zone europe-west2-a
   - /bin/sh k8s-deploy.sh
   environment: production
-#  only:
-#    - master
+  only:
+    - master
