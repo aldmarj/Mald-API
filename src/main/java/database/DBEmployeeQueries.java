@@ -3,12 +3,12 @@
  */
 package database;
 
+import models.Employee;
+
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
-
-import models.Employee;
 
 /**
  * Class to contain manipulation functions for employees in the datastore.

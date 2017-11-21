@@ -1,33 +1,31 @@
 /**
- * 
+ *
  */
 package webresources;
 
-import java.util.HashSet;
-import java.util.Set;
+import org.glassfish.jersey.server.ResourceConfig;
+import resources.HealthResource;
+import webresources.auth.AuthenticationFilter;
+import webresources.auth.LoginResource;
 
 import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
 
-import resources.HealthResource;
 /**
- * @author Lawrence
+ * config of resources to add to the application.
  *
+ * @author Lawrence
  */
 @ApplicationPath("/*")
-public class RestConfig extends Application {
-
-    public RestConfig() {
-    }
-
-    @Override
-    public Set<Class<?>> getClasses() {
-        final Set<Class<?>> returnValue = new HashSet<Class<?>>();
-        returnValue.add(HealthResource.class);
-        returnValue.add(BusinessResource.class);
-        returnValue.add(WorkLogResource.class);
-        returnValue.add(ClientResource.class);
-        returnValue.add(EmployeeResource.class);
-        return returnValue;
+public class RestConfig extends ResourceConfig
+{
+    public RestConfig()
+    {
+        register(HealthResource.class);
+        register(BusinessResource.class);
+        register(WorkLogResource.class);
+        register(ClientResource.class);
+        register(EmployeeResource.class);
+        register(LoginResource.class);
+        register(AuthenticationFilter.class);
     }
 }

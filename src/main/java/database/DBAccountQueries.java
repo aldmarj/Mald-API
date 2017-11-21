@@ -3,11 +3,12 @@
  */
 package database;
 
+import models.users.Account;
+import models.users.Password;
+
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
-
-import models.Account;
 
 /**
  * Class to contain manipulation functions for accounts in the datastore.
@@ -105,7 +106,7 @@ public class DBAccountQueries extends DBQueries {
 		int index = 1;
 		
 		stmt.setString(index++, account.getUserName());
-		stmt.setString(index++, account.getStoredPassword());
+		stmt.setString(index++, account.getStoredPassword().toString());
 		stmt.setString(index++, account.getBusinessTag());
 		stmt.setString(index++, account.getEmail());
 		
@@ -122,7 +123,7 @@ public class DBAccountQueries extends DBQueries {
 	 * @throws NoDataStoreConnectionException - If a connection cannot be made to the store.
 	 * @throws SQLException - If a connection cannot be made to the store.
 	 */
-	public static Account getAccountSQL(String userName, String businessTag, DBQueries queryRunner) 
+	public static Account getAccountSQL(String userName, String businessTag, DBQueries queryRunner)
 			throws SQLException, NoDataStoreConnectionException
 	{
 		Account result = null;
@@ -131,7 +132,7 @@ public class DBAccountQueries extends DBQueries {
 				+ "FROM Account WHERE Account.userName = ? AND Account.businessTag = ?;";
 		
 		final PreparedStatement stmt = queryRunner.connection.prepareStatement(query);
-		
+
 		int i = 1;
 		stmt.setString(i++, userName);
 		stmt.setString(i++, businessTag);
@@ -141,7 +142,7 @@ public class DBAccountQueries extends DBQueries {
 		{
 			result = new Account(
 					queryRunner.resultSet.getString("userName"),
-					queryRunner.resultSet.getString("userPassword"),
+					Password.fromHash(queryRunner.resultSet.getString("userPassword")),
 					queryRunner.resultSet.getString("businessTag"),
 					queryRunner.resultSet.getString("email"));
 		}

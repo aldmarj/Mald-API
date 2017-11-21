@@ -1,5 +1,7 @@
 package models;
 
+import models.users.Account;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
@@ -74,22 +76,22 @@ public class Employee
     	return this.account;
     }
 
-	public void setFirstName(String firstName) 
+	public void setFirstName(String firstName)
 	{
 		this.firstName = firstName;
 	}
 
-	public void setSurName(String surName) 
+	public void setSurName(String surName)
 	{
 		this.surName = surName;
 	}
 
-	public void setBusinessTag(String businessTag) 
+	public void setBusinessTag(String businessTag)
 	{
 		this.account.setBusinessTag(businessTag);
 	}
 
-	public void setParentUserName(String parentUserName) 
+	public void setParentUserName(String parentUserName)
 	{
 		this.parentUserName = parentUserName;
 	}
