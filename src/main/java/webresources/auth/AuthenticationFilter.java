@@ -129,7 +129,8 @@ public class AuthenticationFilter implements ContainerRequestFilter
                 }
                 else
                 {
-                    if (Objects.equals(extractBusinessTag(requestContext.getUriInfo()), tracking.getAccount().getBusinessTag()))
+                    final String requestedBusiness = extractBusinessTag(requestContext.getUriInfo());
+                    if (requestedBusiness == null || requestedBusiness.equals(tracking.getAccount().getBusinessTag()))
                     {
                         tracking.updateLastTimeUsed();
                         requestContext.setSecurityContext(
