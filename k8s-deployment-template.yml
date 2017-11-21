@@ -1,0 +1,21 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: mald-api-deployment
+spec:
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+      - name: api
+        image: registry.gitlab.com/distributed-mald/api:${CI_COMMIT_SHA}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        env:
+        - name: JAVA_OPTIONS
+          value : '-Xmx100m'
+      imagePullSecrets:
+        - name: gitlab.registry.com
