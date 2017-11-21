@@ -4,9 +4,6 @@
 package webresources;
 
 import org.glassfish.jersey.server.ResourceConfig;
-import resources.HealthResource;
-import webresources.auth.AuthenticationFilter;
-import webresources.auth.LoginResource;
 
 import javax.ws.rs.ApplicationPath;
 
@@ -20,12 +17,6 @@ public class RestConfig extends ResourceConfig
 {
     public RestConfig()
     {
-        register(HealthResource.class);
-        register(BusinessResource.class);
-        register(WorkLogResource.class);
-        register(ClientResource.class);
-        register(EmployeeResource.class);
-        register(LoginResource.class);
-        register(AuthenticationFilter.class);
+        this.packages("webresources"); //NON-NLS
     }
 }
