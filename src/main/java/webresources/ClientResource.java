@@ -15,7 +15,7 @@ import java.util.ArrayList;
  *  
  * @author Lawrence
  */
-@Path("/business/{buisnessTag}/clientId")
+@Path("/business/{buisnessTag}/client")
 public class ClientResource
 {
 	/**
@@ -25,7 +25,7 @@ public class ClientResource
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("{clientId}")
 	public Client getWorkLog(@PathParam("buisnessTag") String businessTag,
-			@PathParam("client") int clientId)
+			@PathParam("clientId") int clientId)
 	{	
 		Client client = new Client();
 		
