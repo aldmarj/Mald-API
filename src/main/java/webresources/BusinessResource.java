@@ -1,22 +1,17 @@
 /**
  * 
  */
-package resources;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+package webresources;
 
 import database.BadKeyException;
 import database.DBBusinessQueries;
 import database.NoDataStoreConnectionException;
 import models.Business;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.util.ArrayList;
 
 /**
  * @author Lawrence
@@ -29,7 +24,6 @@ public class BusinessResource
 {
 	/**
 	 * Get a business from the API, will return the business for the given tag
-	 * or all businesses if not tag is given.
 	 * 
 	 * @return the requested business.
 	 */
@@ -55,6 +49,29 @@ public class BusinessResource
 		{
 			throw new WebApplicationException(Response.Status.BAD_GATEWAY);		
 		}
+	}
+	
+	/**
+	 * Returns all businesses if no tag is given.
+	 * 
+	 * @return the requested business.
+	 */
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public ArrayList<Business> getBusinesss() 
+	{	
+		ArrayList<Business> result = new ArrayList<Business>();
+		
+		try
+		{
+			result = new DBBusinessQueries().getAllBusinesses();
+		}
+		catch (NoDataStoreConnectionException e) 
+		{
+			throw new WebApplicationException(Response.Status.BAD_GATEWAY);		
+		}
+		
+		return result;
 	}
 	
 	/**
