@@ -56,7 +56,7 @@ public class DBQueries {
 	{
 		logger.error("Failed to get a connection to the database" + e);
 		throw new NoDataStoreConnectionException ("Failed to get a connection"
-				+ " to the database to create the business.", e);
+				+ " to the database.", e);
 	}
 	
 	/**

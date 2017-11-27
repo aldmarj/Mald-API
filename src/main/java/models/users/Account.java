@@ -2,6 +2,8 @@ package models.users;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.security.Principal;
+import javax.xml.bind.annotation.XmlTransient;
+
 
 @XmlRootElement
 public final class Account implements Principal
@@ -40,7 +42,8 @@ public final class Account implements Principal
     {
         this.userName = userName;
     }
-
+    
+    @XmlTransient
     public Password getStoredPassword()
     {
         return this.storedPassword;
