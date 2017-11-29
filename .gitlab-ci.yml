@@ -66,5 +66,5 @@ postman-deployment-test:
   script:
   - cp src/test/postman/deployment-test* /etc/postman/
   - newman run deployment-test.json -e deployment-test-environment.json
-  only:
-    - master
+#  only:
+#    - master
