@@ -61,7 +61,8 @@ k8s-deploy:
 postman-deployment-test:
   image: node:argon-alpine
   stage: test
-  before_script: npm install -g newman
+  before_script:
+  - npm install -g newman
   script:
   - cd src/test/postman/
   - newman run deployment-test.json -e deployment-test-environment.json
