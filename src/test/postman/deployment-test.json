@@ -1,0 +1,187 @@
+{
+	"info": {
+		"name": "mald-api",
+		"_postman_id": "421c6e05-72d9-c159-1d8a-5fc750068b13",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"token returned\", function ()",
+							"{",
+							"    var token = pm.response.text();",
+							"    pm.globals.set(\"token\", token);",
+							"    pm.expect(/^[0-9a-f]{32}$/.test(token)).to.eql(true);",
+							"});",
+							"",
+							"pm.test(\"Status code is 200\", function ()",
+							"{",
+							"    pm.response.to.have.status(200);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "{{userKey}}",
+							"value": "{{username}}",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "{{passKey}}",
+							"value": "{{password}}",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://lousy.me.uk/business/{{business}}/login",
+					"protocol": "https",
+					"host": [
+						"lousy",
+						"me",
+						"uk"
+					],
+					"path": [
+						"business",
+						"{{business}}",
+						"login"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "status",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status is 'UP'\", function ()",
+							"{",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.status).to.eql(\"UP\");",
+							"});",
+							"",
+							"pm.test(\"Status code is 200\", function ()",
+							"{",
+							"    pm.response.to.have.status(200);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "u",
+							"value": "test",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "p",
+							"value": "ptest",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://lousy.me.uk",
+					"protocol": "https",
+					"host": [
+						"lousy",
+						"me",
+						"uk"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "client",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"clients returned\", function ()",
+							"{",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(Array.isArray(jsonData)).to.eql(true);",
+							"});",
+							"",
+							"pm.test(\"Status code is 200\", function ()",
+							"{",
+							"    pm.response.to.have.status(200);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "https://lousy.me.uk/business/{{business}}/client?{{tokenKey}}={{token}}",
+					"protocol": "https",
+					"host": [
+						"lousy",
+						"me",
+						"uk"
+					],
+					"path": [
+						"business",
+						"{{business}}",
+						"client"
+					],
+					"query": [
+						{
+							"key": "{{tokenKey}}",
+							"value": "{{token}}",
+							"equals": true
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}

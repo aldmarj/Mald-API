@@ -1,0 +1,46 @@
+{
+  "id": "08bcb776-c4f9-db8a-dc1f-c194daa1f910",
+  "name": "CI",
+  "values": [
+    {
+      "enabled": true,
+      "key": "business",
+      "value": "cibusinesstag",
+      "type": "text"
+    },
+    {
+      "enabled": true,
+      "key": "username",
+      "value": "ciusername",
+      "type": "text"
+    },
+    {
+      "enabled": true,
+      "key": "password",
+      "value": "uipassword",
+      "type": "text"
+    },
+    {
+      "enabled": true,
+      "key": "userKey",
+      "value": "u",
+      "type": "text"
+    },
+    {
+      "enabled": true,
+      "key": "passKey",
+      "value": "p",
+      "type": "text"
+    },
+    {
+      "enabled": true,
+      "key": "tokenKey",
+      "value": "t",
+      "type": "text"
+    }
+  ],
+  "timestamp": 1511957537827,
+  "_postman_variable_scope": "environment",
+  "_postman_exported_at": "2017-11-29T12:12:51.280Z",
+  "_postman_exported_using": "Postman/5.3.2"
+}
