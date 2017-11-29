@@ -59,12 +59,11 @@ k8s-deploy:
     - master
 
 postman-deployment-test:
-  image:
-    name: postman/newman_alpine33
-    entrypoint: [""]
+  image: node:argon-alpine
   stage: test
+  before_script: npm install -g newman
   script:
-  - cp src/test/postman/deployment-test* /etc/postman/
+  - cd src/test/postman/
   - newman run deployment-test.json -e deployment-test-environment.json
 #  only:
 #    - master
