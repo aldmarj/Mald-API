@@ -23,6 +23,7 @@ stages:
   - verify
   - push
   - deploy
+  - test
 
 maven-verify:
   image: maven:3.5.0-jdk-8-slim
@@ -56,3 +57,12 @@ k8s-deploy:
   environment: production
   only:
     - master
+
+postman-deployment-test:
+  image:
+    name: postman/newman_alpine33
+    entrypoint: ['bin/sh']
+  stage: test
+  script:
+  - cp src/test/postman/deployment-test* /etc/postman/
+  - newman run deployment-test.json -e deployment-test-environment.json
