@@ -59,7 +59,9 @@ k8s-deploy:
     - master
 
 postman-deployment-test:
-  image: postman/newman_alpine33
+  image:
+    name: postman/newman_alpine33
+    entrypoint: [""]
   stage: test
   script:
   - cp src/test/postman/deployment-test* /etc/postman/
