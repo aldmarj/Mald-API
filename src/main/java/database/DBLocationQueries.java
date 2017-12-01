@@ -58,7 +58,7 @@ public class DBLocationQueries extends DBQueries {
 
 		if (resultSet.next()) 
 		{
-		    result = resultSet.getInt("locationOwnerId");
+		    result = resultSet.getInt(1);
 		}
 		
 		return result;
@@ -93,9 +93,9 @@ public class DBLocationQueries extends DBQueries {
 		
 		ResultSet resultSet = stmt.getGeneratedKeys();
 
-		if (resultSet.next()) 
+		while (resultSet.next()) 
 		{
-		    result.add(resultSet.getInt("locationId"));
+		    result.add(resultSet.getInt(1));
 		}
 
 		return result;
@@ -168,7 +168,7 @@ public class DBLocationQueries extends DBQueries {
 		
 		if (resultSet.next()) 
 		{
-		    result = resultSet.getInt("locationOwnerId");
+		    result = resultSet.getInt(1);
 		}
 		
 		return result;
@@ -199,7 +199,7 @@ public class DBLocationQueries extends DBQueries {
 		
 		ResultSet resultSet = stmt.executeQuery();
 		
-		if (resultSet.next()) 
+		while (resultSet.next()) 
 		{
 		    result.add(new Location(
 		    		resultSet.getString("postcode"),

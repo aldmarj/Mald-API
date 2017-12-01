@@ -107,6 +107,11 @@ public final class DBClientQueries extends DBQueries
 	    try
 	    {		
 	    	result = getAllClientsSQL(this);
+	    	
+	    	for (Client client : result)
+	    	{
+	    		client.setLocations(DBLocationQueries.getLocationsSQL(client, this));
+	    	}
 		}
 	    catch (SQLException e) 
 	    {
@@ -133,7 +138,7 @@ public final class DBClientQueries extends DBQueries
 	public static void createClientSQL(Client client, DBQueries queryRunner) 
 			throws SQLException, SQLIntegrityConstraintViolationException, NoDataStoreConnectionException
 	{
-		String query = "INSERT INTO Client(clientName, businessTag, locationOwnerId) VALUES (?, ?, ?);";
+		String query = "INSERT INTO BusinessClient(clientName, businessTag, locationOwnerId) VALUES (?, ?, ?);";
 		
 		final PreparedStatement stmt = queryRunner.connection.prepareStatement(query);
 		int index = 1;
@@ -158,7 +163,7 @@ public final class DBClientQueries extends DBQueries
 	{
 		Client result = null;
 
-		String query = "Select clientName, businessTag FROM Client WHERE Client.clientId = ?;";
+		String query = "SELECT clientName, businessTag FROM BusinessClient WHERE BusinessClient.clientId = ?;";
 		
 		final PreparedStatement stmt = queryRunner.connection.prepareStatement(query);
 		stmt.setInt(1, clientId);
@@ -189,7 +194,7 @@ public final class DBClientQueries extends DBQueries
 	{
 		ArrayList<Client> result = new ArrayList<Client>();
 
-		String query = "Select clientId, clientName, businessTag FROM Client;";
+		String query = "SELECT clientId, clientName, businessTag FROM BusinessClient;";
 		
 		final PreparedStatement stmt = queryRunner.connection.prepareStatement(query);
 		
