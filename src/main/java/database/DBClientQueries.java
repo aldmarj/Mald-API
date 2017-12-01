@@ -68,7 +68,7 @@ public final class DBClientQueries extends DBQueries
 	 * Returns a client by its given clientId. 
 	 * Returns null if no client is found.
 	 * 
-	 * @param clientId - The ID of the client to find.
+	 * @param clientId the ID of the client to find.
 	 * @return The requested client.
 	 * @throws NoDataStoreConnectionException If a connection cannot be made to the store.
 	 */
@@ -97,7 +97,7 @@ public final class DBClientQueries extends DBQueries
 	/**
 	 * Returns all of the clients. 
 	 * 
-	 * @return All businesses.
+	 * @return All clients.
 	 * @throws NoDataStoreConnectionException If a connection cannot be made to the store.
 	 */
 	public ArrayList<Client> getAllClients() throws NoDataStoreConnectionException
@@ -155,6 +155,7 @@ public final class DBClientQueries extends DBQueries
 	 * 
 	 * @param client id - the client id to search for in the database.
 	 * @param queryRunner - the DB query runner.
+	 * @return the client requested.
 	 * @throws SQLException if the DB cannot be reached.
 	 * @throws NoDataStoreConnectionException if the DB cannot be reached.
 	 */
@@ -186,6 +187,7 @@ public final class DBClientQueries extends DBQueries
 	 * Gets all clients from the database.
 	 * 
 	 * @param queryRunner - the DB query runner.
+	 * @return Alls clients. 
 	 * @throws SQLException if the DB cannot be reached.
 	 * @throws NoDataStoreConnectionException if the DB cannot be reached.
 	 */

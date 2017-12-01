@@ -15,10 +15,13 @@ import models.Client;
 import models.Location;
 
 /**
+ * Class to contain helper functions for interaction with the database.
+ * Each instance should only be used once.
+ * 
  * @author Lawrence
- *
  */
-public class DBLocationQueries extends DBQueries {
+public class DBLocationQueries extends DBQueries 
+{
 
 	/**
 	 * CLASS CONSTRUCTOR
@@ -30,6 +33,13 @@ public class DBLocationQueries extends DBQueries {
 		super();
 	}
 	
+	/**
+	 * Creates a location owner and returns its key.
+	 * 
+	 * @return the key of the location owner.
+	 * @throws SQLException if the DB cannot be reached.
+	 * @throws SQLIntegrityConstraintViolationException if a key breaks the constraints of the DB.
+	 */
 	public Integer createLocationOwner()
 			throws SQLException, SQLIntegrityConstraintViolationException
 	{
@@ -37,13 +47,14 @@ public class DBLocationQueries extends DBQueries {
 	}
 	
 	/**
-	 * Creates a location owner in the database with the given DB runner returns the key of the id.
+	 * Creates a location owner in the database with the given DB runner and returns the key of the id.
 	 * 
 	 * @param queryRunner - the DB query runner.
+	 * @return the key of the created location owner.
 	 * @throws SQLException if the DB cannot be reached.
 	 * @throws SQLIntegrityConstraintViolationException if a key breaks the constraints of the DB.
 	 */
-	public static Integer createLocationOwnerSQL(DBQueries queryRunner) 
+	private static Integer createLocationOwnerSQL(DBQueries queryRunner) 
 			throws SQLException, SQLIntegrityConstraintViolationException
 	{
 		Integer result = null;
@@ -67,11 +78,12 @@ public class DBLocationQueries extends DBQueries {
 	/**
 	 * Creates a location in the database.
 	 * 
-	 * @param queryRunner - the DB query runner.
+	 * @param locations - The locations to create.
+	 * @param queryRunner - The DB query runner.
 	 * @throws SQLException if the DB cannot be reached.
 	 * @throws SQLIntegrityConstraintViolationException if a key breaks the constraints of the DB.
 	 */
-	public static ArrayList<Integer> createLocationsSQL(ArrayList<Location> locations, DBQueries queryRunner) 
+	private static ArrayList<Integer> createLocationsSQL(ArrayList<Location> locations, DBQueries queryRunner) 
 			throws SQLException, SQLIntegrityConstraintViolationException
 	{		
 		ArrayList<Integer> result = new ArrayList<Integer>();
@@ -102,13 +114,15 @@ public class DBLocationQueries extends DBQueries {
 	}
 	
 	/**
-	 * Creates a location in the database.
+	 * Creates a the link between location and owner in the database.
 	 * 
+	 * @param locationIds - The IDs of the locations to marry up.
+	 * @param locationOwnerId - The ID of the location owner.
 	 * @param queryRunner - the DB query runner.
 	 * @throws SQLException if the DB cannot be reached.
 	 * @throws SQLIntegrityConstraintViolationException if a key breaks the constraints of the DB.
 	 */
-	public static void createLocationOwnerToLocationsSQL(ArrayList<Integer> locationIds, Integer locationOwnerId, DBQueries queryRunner) 
+	private static void createLocationOwnerToLocationsSQL(ArrayList<Integer> locationIds, Integer locationOwnerId, DBQueries queryRunner) 
 			throws SQLException, SQLIntegrityConstraintViolationException
 	{		
 		String query = "INSERT INTO LocationOwnertoLocation(locationOwnerId, locationId) VALUES (?, ?);";
@@ -128,31 +142,31 @@ public class DBLocationQueries extends DBQueries {
 	}
 	
 	/**
-	 * Creates a location owner in the database and returns the key.
+	 * Creates the locations for the given client in the database.
 	 * 
-	 * @return the key generated.
-	 * @throws BadKeyException - If the given key is invalid.
-	 * @throws NoDataStoreConnectionException - If a connection cannot be made to the store.
+	 * @throws SQLException - If the given key is invalid.
+	 * @throws SQLIntegrityConstraintViolationException - If a connection cannot be made to the store.
 	 */
 	public static void createLocationsForClientSQL(Client client, DBQueries queryRunner)
 			throws SQLException, SQLIntegrityConstraintViolationException
-	{		
-			    	
+	{
+		// First find the owner if of the client
     	Integer locationOwnerId = getLocationOwnerIdSQL(client, queryRunner);
+    	
+    	// Then create the lcoations for this id
     	ArrayList<Integer> locationIds = createLocationsSQL(client.getLocations(), queryRunner);
     	createLocationOwnerToLocationsSQL(locationIds, locationOwnerId, queryRunner);
-
 	}
 	
 	/**
-	 * Get the location owner if from the given client.
+	 * Get the location owner id from the given client.
 	 * 
 	 * @param client - the client to interrogate.
 	 * @param queryRunner - the DB query runner.
 	 * @throws SQLException if the DB cannot be reached.
 	 * @throws SQLIntegrityConstraintViolationException if a key breaks the constraints of the DB.
 	 */
-	public static Integer getLocationOwnerIdSQL(Client client, DBQueries queryRunner) 
+	private static Integer getLocationOwnerIdSQL(Client client, DBQueries queryRunner) 
 			throws SQLException, SQLIntegrityConstraintViolationException
 	{
 		Integer result = null;
@@ -175,14 +189,15 @@ public class DBLocationQueries extends DBQueries {
 	}
 	
 	/**
-	 * Get the locations for an owner.
+	 * Get the locations for an owner id.
 	 * 
 	 * @param locationOwnerId - the owner to locate.
 	 * @param queryRunner - the DB query runner.
+	 * @return the locations for the id.
 	 * @throws SQLException if the DB cannot be reached.
 	 * @throws SQLIntegrityConstraintViolationException if a key breaks the constraints of the DB.
 	 */
-	public static ArrayList<Location> getLocationsForIdSQL(Integer locationOwnerId, DBQueries queryRunner) 
+	private static ArrayList<Location> getLocationsForIdSQL(Integer locationOwnerId, DBQueries queryRunner) 
 			throws SQLException, SQLIntegrityConstraintViolationException
 	{
 		ArrayList<Location> result = new ArrayList<Location>();
@@ -209,6 +224,15 @@ public class DBLocationQueries extends DBQueries {
 		return result;
 	}
 	
+	/**
+	 * Get the locations for an owner id.
+	 * 
+	 * @param client - the client to get locations for.
+	 * @param queryRunner - the DB query runner.
+	 * @return the locations for the id.
+	 * @throws SQLException if the DB cannot be reached.
+	 * @throws SQLIntegrityConstraintViolationException if a key breaks the constraints of the DB.
+	 */
 	public static ArrayList<Location> getLocationsSQL(Client client, DBQueries queryRunner)
 			throws SQLException, SQLIntegrityConstraintViolationException
 	{

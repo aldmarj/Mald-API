@@ -3,7 +3,6 @@ package webresources.auth;
 import database.DBAccountQueries;
 import database.NoDataStoreConnectionException;
 import models.users.Account;
-import models.users.Password;
 
 import org.apache.log4j.Logger;
 
