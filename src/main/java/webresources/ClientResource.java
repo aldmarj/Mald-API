@@ -25,6 +25,9 @@ public class ClientResource
 {
 	/**
 	 * Getter for getting a client by its id.
+	 * 
+	 * @param businessTag the business to interrogate.
+	 * @param clientId the id of the client to return.
 	 */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -53,9 +56,9 @@ public class ClientResource
 	}
 	
 	/**
-	 * Returns all businesses if no tag is given.
+	 * Returns all clients if no tag is given.
 	 * 
-	 * @return the requested business.
+	 * @return the requested client.
 	 */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -84,6 +87,9 @@ public class ClientResource
 	
 	/**
 	 * Post method for creating a new client.
+	 * 
+	 * @param businessTag the if of the business to add to.
+	 * @param client the client to add to the datastore.
 	 */
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
