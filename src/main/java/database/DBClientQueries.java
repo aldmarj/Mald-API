@@ -235,7 +235,7 @@ public final class DBClientQueries extends DBQueries
 	 * Gets all clients from the database.
 	 * 
 	 * @param queryRunner - the DB query runner.
-	 * @return Alls clients. 
+	 * @return All clients. 
 	 * @throws SQLException if the DB cannot be reached.
 	 * @throws NoDataStoreConnectionException if the DB cannot be reached.
 	 */
