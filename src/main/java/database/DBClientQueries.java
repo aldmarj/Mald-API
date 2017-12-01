@@ -42,7 +42,12 @@ public final class DBClientQueries extends DBQueries
 	{		
 	    try
 	    {		
+	    	this.setAutoCommit(false);
+	    	
 	    	createClientSQL(client, this);
+	    	DBLocationQueries.createLocationsForClientSQL(client, this);
+	    	
+	    	this.commit();
 		} 
 	    catch (SQLIntegrityConstraintViolationException e)
 	    {
@@ -54,6 +59,7 @@ public final class DBClientQueries extends DBQueries
 		}
 	    finally
 	    {
+	    	this.setAutoCommit(true);
 	    	this.closeConnection();
 	    }
 	}
@@ -71,8 +77,9 @@ public final class DBClientQueries extends DBQueries
 		Client result = null;
 		
 	    try
-	    {		
+	    {
 	    	result = getClientSQL(clientId, this);
+	    	result.setLocations(DBLocationQueries.getLocationsSQL(result, this));
 		} 
 	    catch (SQLException e) 
 	    {
@@ -121,15 +128,19 @@ public final class DBClientQueries extends DBQueries
 	 * @param queryRunner - the DB query runner.
 	 * @throws SQLException if the DB cannot be reached.
 	 * @throws SQLIntegrityConstraintViolationException if a key breaks the constraints of the DB.
+	 * @throws NoDataStoreConnectionException if the DB cannot be reached.
 	 */
 	public static void createClientSQL(Client client, DBQueries queryRunner) 
-			throws SQLException, SQLIntegrityConstraintViolationException
+			throws SQLException, SQLIntegrityConstraintViolationException, NoDataStoreConnectionException
 	{
-		String query = "INSERT INTO Client(clientName, businessTag) VALUES (?, ?);";
+		String query = "INSERT INTO Client(clientName, businessTag, locationOwnerId) VALUES (?, ?, ?);";
 		
 		final PreparedStatement stmt = queryRunner.connection.prepareStatement(query);
-		stmt.setString(1, client.getClientName());
-		stmt.setString(2, client.getBusinessTag());
+		int index = 1;
+		
+		stmt.setString(index++, client.getClientName());
+		stmt.setString(index++, client.getBusinessTag());
+		stmt.setInt(index++, new DBLocationQueries().createLocationOwner());
 		
 		stmt.executeUpdate();
 	}
@@ -158,7 +169,8 @@ public final class DBClientQueries extends DBQueries
 			result = new Client(
 					clientId,
 					queryRunner.resultSet.getString("clientName"),
-					queryRunner.resultSet.getString("businessTag"));
+					queryRunner.resultSet.getString("businessTag")
+			);
 		}
 		
 		return result;
