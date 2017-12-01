@@ -64,6 +64,7 @@ public final class DBClientQueries extends DBQueries
 	    finally
 	    {
 	    	this.setAutoCommit(true);
+	    	this.closeResultSet();
 	    	this.closeConnection();
 	    }
 	}
@@ -181,6 +182,23 @@ public final class DBClientQueries extends DBQueries
 	}
 	
 	/**
+	 * Creates the locations for the given client in the database.
+	 * 
+	 * @throws SQLException - If the given key is invalid.
+	 * @throws SQLIntegrityConstraintViolationException - If a connection cannot be made to the store.
+	 */
+	public static void createLocationsForClientSQL(Client client, DBQueries queryRunner)
+			throws SQLException, SQLIntegrityConstraintViolationException
+	{
+		// First find the owner if of the client
+    	Integer locationOwnerId = getClientLocationOwnerIdSQL(client, queryRunner);
+    	
+    	// Then create the locations for this id
+    	List<Integer> locationIds = DBLocationQueries.createLocationsSQL(client.getLocations(), queryRunner);
+    	DBLocationQueries.createLocationOwnerToLocationsSQL(locationIds, locationOwnerId, queryRunner);
+	}
+	
+	/**
 	 * Gets a client from the database with the given clientId and DB runner.
 	 * 
 	 * @param client id - the client id to search for in the database.
@@ -270,22 +288,5 @@ public final class DBClientQueries extends DBQueries
 		}
 		
 		return result;
-	}
-	
-	/**
-	 * Creates the locations for the given client in the database.
-	 * 
-	 * @throws SQLException - If the given key is invalid.
-	 * @throws SQLIntegrityConstraintViolationException - If a connection cannot be made to the store.
-	 */
-	public static void createLocationsForClientSQL(Client client, DBQueries queryRunner)
-			throws SQLException, SQLIntegrityConstraintViolationException
-	{
-		// First find the owner if of the client
-    	Integer locationOwnerId = getClientLocationOwnerIdSQL(client, queryRunner);
-    	
-    	// Then create the locations for this id
-    	List<Integer> locationIds = DBLocationQueries.createLocationsSQL(client.getLocations(), queryRunner);
-    	DBLocationQueries.createLocationOwnerToLocationsSQL(locationIds, locationOwnerId, queryRunner);
 	}
 }

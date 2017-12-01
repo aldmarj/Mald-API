@@ -65,6 +65,7 @@ public class DBWorkLogQueries extends DBQueries {
 	    finally
 	    {
 	    	this.setAutoCommit(true);
+	    	this.closeResultSet();
 	    	this.closeConnection();
 	    }
 	}
@@ -135,6 +136,13 @@ public class DBWorkLogQueries extends DBQueries {
 		return result;
 	}
 	
+	/**
+	 * Get the owner location for the given worklog.
+	 * 
+	 * @param workLog the worklog to find the id for.
+	 * @return the owner id of the worklog.
+	 * @throws NoDataStoreConnectionException If a connection cannot be made to the store.
+	 */
 	public Integer getWorkLogLocationOwnerId(WorkLog workLog) throws NoDataStoreConnectionException
 	{
 		Integer result = null;
@@ -185,6 +193,23 @@ public class DBWorkLogQueries extends DBQueries {
 		stmt.setInt(index++, new DBLocationQueries().createLocationOwner());
 		
 		stmt.executeUpdate();
+	}
+	
+	/**
+	 * Creates the locations for the given client in the database.
+	 * 
+	 * @throws SQLException - If the given key is invalid.
+	 * @throws SQLIntegrityConstraintViolationException - If a connection cannot be made to the store.
+	 */
+	public static void createLocationForWorklogSQL(WorkLog worklog, DBQueries queryRunner)
+			throws SQLException, SQLIntegrityConstraintViolationException
+	{
+		// First find the owner if of the client
+    	Integer locationOwnerId = getWorkLogLocationOwnerIdSQL(worklog, queryRunner);
+    	
+    	// Then create the locations for this id
+    	List<Integer> locationIds = DBLocationQueries.createLocationsSQL(Arrays.asList(worklog.getLocation()), queryRunner);
+    	DBLocationQueries.createLocationOwnerToLocationsSQL(locationIds, locationOwnerId, queryRunner);
 	}
 
 	/**
@@ -290,22 +315,5 @@ public class DBWorkLogQueries extends DBQueries {
 		}
 		
 		return result;
-	}
-	
-	/**
-	 * Creates the locations for the given client in the database.
-	 * 
-	 * @throws SQLException - If the given key is invalid.
-	 * @throws SQLIntegrityConstraintViolationException - If a connection cannot be made to the store.
-	 */
-	public static void createLocationForWorklogSQL(WorkLog worklog, DBQueries queryRunner)
-			throws SQLException, SQLIntegrityConstraintViolationException
-	{
-		// First find the owner if of the client
-    	Integer locationOwnerId = getWorkLogLocationOwnerIdSQL(worklog, queryRunner);
-    	
-    	// Then create the locations for this id
-    	List<Integer> locationIds = DBLocationQueries.createLocationsSQL(Arrays.asList(worklog.getLocation()), queryRunner);
-    	DBLocationQueries.createLocationOwnerToLocationsSQL(locationIds, locationOwnerId, queryRunner);
 	}
 }
