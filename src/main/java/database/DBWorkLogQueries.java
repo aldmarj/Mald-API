@@ -229,7 +229,9 @@ public class DBWorkLogQueries extends DBQueries {
 				+ "FROM WorkLog WHERE WorkLog.workLogId = ?;";
 		
 		final PreparedStatement stmt = queryRunner.connection.prepareStatement(query);
-		stmt.setInt(1, workLogId);
+		int index = 1;
+		
+		stmt.setInt(index++, workLogId);
 		
 		queryRunner.resultSet = stmt.executeQuery();
 		while (queryRunner.resultSet.next())
@@ -305,7 +307,7 @@ public class DBWorkLogQueries extends DBQueries {
 		final PreparedStatement stmt = queryRunner.connection.prepareStatement(query);
 		int index = 1;
 		
-		stmt.setInt(index, worklog.getWorkLogId());
+		stmt.setInt(index++, worklog.getWorkLogId());
 		
 		ResultSet resultSet = stmt.executeQuery();
 		

@@ -215,7 +215,9 @@ public final class DBClientQueries extends DBQueries
 		String query = "SELECT clientName, businessTag FROM BusinessClient WHERE BusinessClient.clientId = ?;";
 		
 		final PreparedStatement stmt = queryRunner.connection.prepareStatement(query);
-		stmt.setInt(1, clientId);
+		int index = 1;
+		
+		stmt.setInt(index++, clientId);
 		
 		queryRunner.resultSet = stmt.executeQuery();
 		while (queryRunner.resultSet.next())
@@ -278,7 +280,7 @@ public final class DBClientQueries extends DBQueries
 		final PreparedStatement stmt = queryRunner.connection.prepareStatement(query);
 		int index = 1;
 		
-		stmt.setInt(index, client.getClientId());
+		stmt.setInt(index++, client.getClientId());
 		
 		ResultSet resultSet = stmt.executeQuery();
 		
