@@ -1,6 +1,7 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -18,7 +19,7 @@ public class Client
 
     private String businessTag;
 
-	private ArrayList<Location> locations;
+	private List<Location> locations;
 
     public Client()
     {
@@ -66,13 +67,13 @@ public class Client
 		this.businessTag = businessTag;
 	}
 	
-    public ArrayList<Location> getLocations() 
+    public List<Location> getLocations() 
     {
 		return locations;
 	}
 
-	public void setLocations(ArrayList<Location> locations) 
+	public void setLocations(List<Location> list) 
 	{
-		this.locations = locations;
+		this.locations = list;
 	}
 }

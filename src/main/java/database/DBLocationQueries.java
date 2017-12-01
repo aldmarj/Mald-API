@@ -8,10 +8,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
+import java.util.List;
 
 import com.mysql.jdbc.Statement;
 
-import models.Client;
 import models.Location;
 
 /**
@@ -44,6 +44,20 @@ public class DBLocationQueries extends DBQueries
 			throws SQLException, SQLIntegrityConstraintViolationException
 	{
 		return createLocationOwnerSQL(this);
+	}
+	
+	/**
+	 * Gets the locations related to the owner location id.
+	 * 
+	 * @param locationOwnerId the id to search for.
+	 * @return the locations related to the id.
+	 * @throws SQLException if the DB cannot be reached.
+	 * @throws SQLIntegrityConstraintViolationException if a key breaks the constraints of the DB.
+	 */
+	public List<Location> getLocationsForId(Integer locationOwnerId) 
+			throws SQLIntegrityConstraintViolationException, SQLException
+	{
+		return getLocationsForIdSQL(locationOwnerId, this);
 	}
 	
 	/**
@@ -83,10 +97,10 @@ public class DBLocationQueries extends DBQueries
 	 * @throws SQLException if the DB cannot be reached.
 	 * @throws SQLIntegrityConstraintViolationException if a key breaks the constraints of the DB.
 	 */
-	private static ArrayList<Integer> createLocationsSQL(ArrayList<Location> locations, DBQueries queryRunner) 
+	public static List<Integer> createLocationsSQL(List<Location> locations, DBQueries queryRunner) 
 			throws SQLException, SQLIntegrityConstraintViolationException
 	{		
-		ArrayList<Integer> result = new ArrayList<Integer>();
+		List<Integer> result = new ArrayList<Integer>();
 		
 		String query = "INSERT INTO Location(postcode, description) VALUES (?, ?);";
 		final PreparedStatement stmt = queryRunner.connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
@@ -122,7 +136,7 @@ public class DBLocationQueries extends DBQueries
 	 * @throws SQLException if the DB cannot be reached.
 	 * @throws SQLIntegrityConstraintViolationException if a key breaks the constraints of the DB.
 	 */
-	private static void createLocationOwnerToLocationsSQL(ArrayList<Integer> locationIds, Integer locationOwnerId, DBQueries queryRunner) 
+	public static void createLocationOwnerToLocationsSQL(List<Integer> locationIds, Integer locationOwnerId, DBQueries queryRunner) 
 			throws SQLException, SQLIntegrityConstraintViolationException
 	{		
 		String query = "INSERT INTO LocationOwnertoLocation(locationOwnerId, locationId) VALUES (?, ?);";
@@ -142,53 +156,6 @@ public class DBLocationQueries extends DBQueries
 	}
 	
 	/**
-	 * Creates the locations for the given client in the database.
-	 * 
-	 * @throws SQLException - If the given key is invalid.
-	 * @throws SQLIntegrityConstraintViolationException - If a connection cannot be made to the store.
-	 */
-	public static void createLocationsForClientSQL(Client client, DBQueries queryRunner)
-			throws SQLException, SQLIntegrityConstraintViolationException
-	{
-		// First find the owner if of the client
-    	Integer locationOwnerId = getLocationOwnerIdSQL(client, queryRunner);
-    	
-    	// Then create the lcoations for this id
-    	ArrayList<Integer> locationIds = createLocationsSQL(client.getLocations(), queryRunner);
-    	createLocationOwnerToLocationsSQL(locationIds, locationOwnerId, queryRunner);
-	}
-	
-	/**
-	 * Get the location owner id from the given client.
-	 * 
-	 * @param client - the client to interrogate.
-	 * @param queryRunner - the DB query runner.
-	 * @throws SQLException if the DB cannot be reached.
-	 * @throws SQLIntegrityConstraintViolationException if a key breaks the constraints of the DB.
-	 */
-	private static Integer getLocationOwnerIdSQL(Client client, DBQueries queryRunner) 
-			throws SQLException, SQLIntegrityConstraintViolationException
-	{
-		Integer result = null;
-		
-		String query = "SELECT locationOwnerId FROM BusinessClient WHERE BusinessClient.clientId = ?;";
-		
-		final PreparedStatement stmt = queryRunner.connection.prepareStatement(query);
-		int index = 1;
-		
-		stmt.setInt(index, client.getClientId());
-		
-		ResultSet resultSet = stmt.executeQuery();
-		
-		if (resultSet.next()) 
-		{
-		    result = resultSet.getInt(1);
-		}
-		
-		return result;
-	}
-	
-	/**
 	 * Get the locations for an owner id.
 	 * 
 	 * @param locationOwnerId - the owner to locate.
@@ -197,10 +164,10 @@ public class DBLocationQueries extends DBQueries
 	 * @throws SQLException if the DB cannot be reached.
 	 * @throws SQLIntegrityConstraintViolationException if a key breaks the constraints of the DB.
 	 */
-	private static ArrayList<Location> getLocationsForIdSQL(Integer locationOwnerId, DBQueries queryRunner) 
+	public static List<Location> getLocationsForIdSQL(Integer locationOwnerId, DBQueries queryRunner) 
 			throws SQLException, SQLIntegrityConstraintViolationException
 	{
-		ArrayList<Location> result = new ArrayList<Location>();
+		List<Location> result = new ArrayList<Location>();
 		
 		String query = "SELECT postcode, description FROM Location "
 				+ "LEFT JOIN LocationOwnertoLocation ON Location.locationId = LocationOwnertoLocation.locationId "
@@ -220,26 +187,6 @@ public class DBLocationQueries extends DBQueries
 		    		resultSet.getString("postcode"),
 		    		resultSet.getString("description")));
 		}
-		
-		return result;
-	}
-	
-	/**
-	 * Get the locations for an owner id.
-	 * 
-	 * @param client - the client to get locations for.
-	 * @param queryRunner - the DB query runner.
-	 * @return the locations for the id.
-	 * @throws SQLException if the DB cannot be reached.
-	 * @throws SQLIntegrityConstraintViolationException if a key breaks the constraints of the DB.
-	 */
-	public static ArrayList<Location> getLocationsSQL(Client client, DBQueries queryRunner)
-			throws SQLException, SQLIntegrityConstraintViolationException
-	{
-		ArrayList<Location> result = new ArrayList<Location>();
-
-		Integer locationOwnerId = getLocationOwnerIdSQL(client, queryRunner);
-		result = getLocationsForIdSQL(locationOwnerId, queryRunner);
 		
 		return result;
 	}

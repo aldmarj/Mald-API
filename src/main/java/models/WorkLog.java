@@ -29,8 +29,11 @@ public class WorkLog
 
     /** A description of the worklog */
     private String description;
+    
+    /** The location of the worklog. */
+    private Location location;
 
-    /**
+	/**
      * CLASS CONSTRUCTOR
      * 
      * @param workLogId - the id of the worklog.
@@ -62,6 +65,7 @@ public class WorkLog
         this.startTime = new Date().getTime();
         this.endTime = new Date().getTime();
         this.description = "";
+        this.location = null;
     }
     
     /**
@@ -179,5 +183,25 @@ public class WorkLog
 	public void setDescription(String description) 
 	{
 		this.description = description;
+	}
+
+	/**
+	 * Returns the location of the worklog.
+	 * 
+	 * @return the location of the worklog.
+	 */
+    public Location getLocation() 
+    {
+		return location;
+	}
+
+    /**
+     * Setter for the location of the worklog.
+     * 
+     * @param location the location to set.
+     */
+	public void setLocation(Location location) 
+	{
+		this.location = location;
 	}
 }

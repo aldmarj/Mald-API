@@ -4,9 +4,11 @@
 package database;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
+import java.util.List;
 
 import models.Client;
 
@@ -45,16 +47,18 @@ public final class DBClientQueries extends DBQueries
 	    	this.setAutoCommit(false);
 	    	
 	    	createClientSQL(client, this);
-	    	DBLocationQueries.createLocationsForClientSQL(client, this);
+	    	createLocationsForClientSQL(client, this);
 	    	
 	    	this.commit();
 		} 
 	    catch (SQLIntegrityConstraintViolationException e)
 	    {
+	    	this.rollback();
 			this.handleIntegrityConstaitViolation(e);
 	    }
 	    catch (SQLException e) 
 	    {
+	    	this.rollback();
 	    	this.handleSQLException(e);
 		}
 	    finally
@@ -79,7 +83,10 @@ public final class DBClientQueries extends DBQueries
 	    try
 	    {
 	    	result = getClientSQL(clientId, this);
-	    	result.setLocations(DBLocationQueries.getLocationsSQL(result, this));
+	    	
+	    	result.setLocations(
+	    			new DBLocationQueries().getLocationsForId(
+	    			new DBClientQueries().getClientLocationOwnerId(result)));
 		} 
 	    catch (SQLException e) 
 	    {
@@ -92,6 +99,27 @@ public final class DBClientQueries extends DBQueries
 	    }
 	    
 		return result;
+	}
+	
+	public Integer getClientLocationOwnerId(Client client) throws NoDataStoreConnectionException
+	{
+		Integer result = null;
+		
+	    try
+	    {		
+	    	result = getClientLocationOwnerIdSQL(client, this);
+		} 
+	    catch (SQLException e) 
+	    {
+			this.handleSQLException(e);
+		}
+	    finally
+	    {
+	    	this.closeResultSet();
+	    	this.closeConnection();
+	    }
+	    
+	    return result;
 	}
 	
 	/**
@@ -110,7 +138,9 @@ public final class DBClientQueries extends DBQueries
 	    	
 	    	for (Client client : result)
 	    	{
-	    		client.setLocations(DBLocationQueries.getLocationsSQL(client, this));
+	    		client.setLocations(
+		    			new DBLocationQueries().getLocationsForId(
+		    	    	new DBClientQueries().getClientLocationOwnerId(client)));
 	    	}
 		}
 	    catch (SQLException e) 
@@ -210,5 +240,52 @@ public final class DBClientQueries extends DBQueries
 		}
 		
 		return result;
+	}
+	
+	/**
+	 * Get the location owner id from the given client.
+	 * 
+	 * @param client - the client to interrogate.
+	 * @param queryRunner - the DB query runner.
+	 * @throws SQLException if the DB cannot be reached.
+	 * @throws SQLIntegrityConstraintViolationException if a key breaks the constraints of the DB.
+	 */
+	public static Integer getClientLocationOwnerIdSQL(Client client, DBQueries queryRunner) 
+			throws SQLException, SQLIntegrityConstraintViolationException
+	{
+		Integer result = null;
+		
+		String query = "SELECT locationOwnerId FROM BusinessClient WHERE BusinessClient.clientId = ?;";
+		
+		final PreparedStatement stmt = queryRunner.connection.prepareStatement(query);
+		int index = 1;
+		
+		stmt.setInt(index, client.getClientId());
+		
+		ResultSet resultSet = stmt.executeQuery();
+		
+		if (resultSet.next()) 
+		{
+		    result = resultSet.getInt(1);
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * Creates the locations for the given client in the database.
+	 * 
+	 * @throws SQLException - If the given key is invalid.
+	 * @throws SQLIntegrityConstraintViolationException - If a connection cannot be made to the store.
+	 */
+	public static void createLocationsForClientSQL(Client client, DBQueries queryRunner)
+			throws SQLException, SQLIntegrityConstraintViolationException
+	{
+		// First find the owner if of the client
+    	Integer locationOwnerId = getClientLocationOwnerIdSQL(client, queryRunner);
+    	
+    	// Then create the locations for this id
+    	List<Integer> locationIds = DBLocationQueries.createLocationsSQL(client.getLocations(), queryRunner);
+    	DBLocationQueries.createLocationOwnerToLocationsSQL(locationIds, locationOwnerId, queryRunner);
 	}
 }
