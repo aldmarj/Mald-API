@@ -94,6 +94,41 @@ public class WorkLogResource
 	}
 	
 	/**
+	 * Get all worklogs for an specific employee in a time range.
+	 * 
+	 * @param businessTag the id of the business to add to.
+	 * @param userName the username of the employee.
+	 * @param startTime the time to start the range from.
+	 * @param endTime the time to end the range to.
+	 */
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/range/{startTime : \\d+}/{endTime : \\d+}")
+	public List<WorkLog> getWorkLogInRange(@PathParam("buisnessTag") String businessTag,
+			@PathParam("startTime") long startTime,
+			@PathParam("endTime") long endTime)
+	{	
+		List<WorkLog> result = new ArrayList<WorkLog>();
+		try 
+		{
+			result = new DBWorkLogQueries().getAllWorkLogsForTimeRange(businessTag, startTime, endTime);
+			
+			if (result != null)
+			{
+				return result;
+			}
+			else
+			{
+				throw new WebApplicationException(Response.Status.NOT_FOUND);
+			}
+		}
+		catch (NoDataStoreConnectionException e) 
+		{
+			throw new WebApplicationException(Response.Status.BAD_GATEWAY);		
+		}
+	}
+	
+	/**
 	 * Post method for creating a new worklog.
 	 * 
 	 * @param businessTag the id of the business to add to.

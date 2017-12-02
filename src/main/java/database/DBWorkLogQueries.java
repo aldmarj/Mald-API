@@ -74,6 +74,7 @@ public class DBWorkLogQueries extends DBQueries {
 	/**
 	 * Returns all worklogs in a time range by an employee. 
 	 * 
+	 * @param businessTag - The business to find the worklogs for.
 	 * @param employee - The employee of the worklogs to find.
 	 * @param startTime - The time to start searching from.
 	 * @param endTime - The time to end searching from.
@@ -88,6 +89,37 @@ public class DBWorkLogQueries extends DBQueries {
 	    try
 	    {		
 	    	result = getAllWorkLogsForTimeRangeAndEmployeeSQL(userName, businessTag, startTime, endTime, this);
+		} 
+	    catch (SQLException e) 
+	    {
+			this.handleSQLException(e);
+		}
+	    finally
+	    {
+	    	this.closeResultSet();
+	    	this.closeConnection();
+	    }
+	    
+		return result;
+	}
+	
+	/**
+	 * Returns all worklogs in a time range. 
+	 * 
+	 * @param businessTag - The business to find the worklogs for.
+	 * @param startTime - The time to start searching from.
+	 * @param endTime - The time to end searching from.
+	 * @return The requested worklog.
+	 * @throws NoDataStoreConnectionException If a connection cannot be made to the store.
+	 */
+	public ArrayList<WorkLog> getAllWorkLogsForTimeRange(String businessTag, long startTime, long endTime) 
+			throws NoDataStoreConnectionException
+	{
+		ArrayList<WorkLog> result = null;
+		
+	    try
+	    {		
+	    	result = getAllWorkLogsForTimeRangeSQL(businessTag, startTime, endTime, this);
 		} 
 	    catch (SQLException e) 
 	    {
@@ -282,6 +314,48 @@ public class DBWorkLogQueries extends DBQueries {
 		stmt.setLong(index++, startTime);
 		stmt.setLong(index++, endTime);
 		stmt.setString(index++, userName);
+		stmt.setString(index++, businessTag);
+
+		queryRunner.resultSet = stmt.executeQuery();
+		while (queryRunner.resultSet.next())
+		{
+			result.add(new WorkLog(
+					queryRunner.resultSet.getInt("workLogId"),
+					queryRunner.resultSet.getString("userName"),
+					queryRunner.resultSet.getString("businessTag"),
+					queryRunner.resultSet.getInt("clientId"),
+					queryRunner.resultSet.getLong("startTime"),
+					queryRunner.resultSet.getLong("endtime"),
+					queryRunner.resultSet.getString("description")));
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * Gets all worklogs for the given time range.
+	 * 
+	 * @param businessTag - the given business to check.
+	 * @param startTime - the given startTime to work from.
+	 * @param endTime - the given endTime to work from.
+	 * @param queryRunner - the DB query runner.
+	 * @throws SQLException - if the DB cannot be reached.
+	 * @throws NoDataStoreConnectionException - if the DB cannot be reached.
+	 */
+	public static ArrayList<WorkLog> getAllWorkLogsForTimeRangeSQL(
+			String businessTag, long startTime, long endTime, DBQueries queryRunner) 
+			throws NoDataStoreConnectionException, SQLException
+	{
+		ArrayList<WorkLog> result = new ArrayList<WorkLog>();
+		
+		String query = "SELECT workLogId, userName, businessTag, clientId, startTime, endTime, description "
+				+ "FROM WorkLog WHERE startTime >= ? AND endTime <= ? AND businessTag = ?;";
+		
+		final PreparedStatement stmt = queryRunner.connection.prepareStatement(query);
+		int index = 1;
+		
+		stmt.setLong(index++, startTime);
+		stmt.setLong(index++, endTime);
 		stmt.setString(index++, businessTag);
 
 		queryRunner.resultSet = stmt.executeQuery();
