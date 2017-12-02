@@ -70,8 +70,8 @@ public class WorkLogResource
 	@Path("/user/{userName}/range/{startTime : \\d+}/{endTime : \\d+}")
 	public List<WorkLog> getWorkLogInRangeForEmployee(@PathParam("buisnessTag") String businessTag,
 			@PathParam("userName") String userName,
-			@PathParam("startTime") Date startTime,
-			@PathParam("endTime") Date endTime)
+			@PathParam("startTime") long startTime,
+			@PathParam("endTime") long endTime)
 	{	
 		List<WorkLog> result = new ArrayList<WorkLog>();
 		try 

@@ -13,7 +13,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import models.Employee;
 import models.Location;
 import models.WorkLog;
 
@@ -81,7 +80,7 @@ public class DBWorkLogQueries extends DBQueries {
 	 * @return The requested worklog.
 	 * @throws NoDataStoreConnectionException If a connection cannot be made to the store.
 	 */
-	public ArrayList<WorkLog> getAllWorkLogsForTimeRangeAndEmployee(String userName, String businessTag, Date startTime, Date endTime) 
+	public ArrayList<WorkLog> getAllWorkLogsForTimeRangeAndEmployee(String userName, String businessTag, long startTime, long endTime) 
 			throws NoDataStoreConnectionException
 	{
 		ArrayList<WorkLog> result = null;
@@ -269,19 +268,19 @@ public class DBWorkLogQueries extends DBQueries {
 	 * @throws NoDataStoreConnectionException - if the DB cannot be reached.
 	 */
 	public static ArrayList<WorkLog> getAllWorkLogsForTimeRangeAndEmployeeSQL(
-			String userName, String businessTag, Date startTime, Date endTime, DBQueries queryRunner) 
+			String userName, String businessTag, long startTime, long endTime, DBQueries queryRunner) 
 			throws NoDataStoreConnectionException, SQLException
 	{
 		ArrayList<WorkLog> result = new ArrayList<WorkLog>();
 		
 		String query = "SELECT workLogId, userName, businessTag, clientId, startTime, endTime, description "
-				+ "FROM WorkLog WHERE startTime > ? AND endTime < ? AND userName = ? AND businessTag = ?;";
+				+ "FROM WorkLog WHERE startTime >= ? AND endTime <= ? AND userName = ? AND businessTag = ?;";
 		
 		final PreparedStatement stmt = queryRunner.connection.prepareStatement(query);
 		int index = 1;
 		
-		stmt.setLong(index++, startTime.getTime());
-		stmt.setLong(index++, endTime.getTime());
+		stmt.setLong(index++, startTime);
+		stmt.setLong(index++, endTime);
 		stmt.setString(index++, userName);
 		stmt.setString(index++, businessTag);
 
