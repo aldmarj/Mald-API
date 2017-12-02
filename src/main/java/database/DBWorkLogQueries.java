@@ -10,9 +10,11 @@ import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import models.Employee;
+import models.Location;
 import models.WorkLog;
 
 /**
@@ -79,14 +81,14 @@ public class DBWorkLogQueries extends DBQueries {
 	 * @return The requested worklog.
 	 * @throws NoDataStoreConnectionException If a connection cannot be made to the store.
 	 */
-	public ArrayList<WorkLog> getAllWorkLogsForTimeRangeAndEmployee(Employee employee, Date startTime, Date endTime) 
+	public ArrayList<WorkLog> getAllWorkLogsForTimeRangeAndEmployee(String userName, String businessTag, Date startTime, Date endTime) 
 			throws NoDataStoreConnectionException
 	{
 		ArrayList<WorkLog> result = null;
 		
 	    try
 	    {		
-	    	result = getAllWorkLogsForTimeRangeAndEmployeeSQL(employee, startTime, endTime, this);
+	    	result = getAllWorkLogsForTimeRangeAndEmployeeSQL(userName, businessTag, startTime, endTime, this);
 		} 
 	    catch (SQLException e) 
 	    {
@@ -117,11 +119,17 @@ public class DBWorkLogQueries extends DBQueries {
 	    {		
 	    	result = getWorkLogSQL(workLogId, this);
 	    	
-	    	// Set only the first location
-	    	result.setLocation(
-	    			new DBLocationQueries().getLocationsForId(
-	    			new DBWorkLogQueries().getWorkLogLocationOwnerId(result))
-	    			.iterator().next());
+	    	if (result != null)
+	    	{
+	    		Iterator<Location> location = new DBLocationQueries().getLocationsForId(
+		    			new DBWorkLogQueries().getWorkLogLocationOwnerId(result))
+		    			.iterator();
+	    		
+	    		if (location.hasNext())
+	    		{
+	    			result.setLocation(location.next());
+	    		}
+	    	}
 		} 
 	    catch (SQLException e) 
 	    {
@@ -177,8 +185,8 @@ public class DBWorkLogQueries extends DBQueries {
 			throws SQLException, SQLIntegrityConstraintViolationException, NoDataStoreConnectionException
 	{
 		String query = "INSERT INTO WorkLog("
-				+ "user, clientId, startTime, endTime, description, locationOwnerId) "
-				+ "VALUES (?, ?, ?, ?, ?, ?);";
+				+ "userName, businessTag, clientId, startTime, endTime, description, locationOwnerId) "
+				+ "VALUES (?, ?, ?, ?, ?, ?, ?);";
 		
 		final PreparedStatement stmt = 
 				queryRunner.connection.prepareStatement(query);
@@ -186,6 +194,7 @@ public class DBWorkLogQueries extends DBQueries {
 		int index = 1;
 		
 		stmt.setString(index++, workLog.getUserName());
+		stmt.setString(index++, workLog.getBusinessTag());
 		stmt.setInt(index++, workLog.getClientId());
 		stmt.setLong(index++, workLog.getStartTime());
 		stmt.setLong(index++, workLog.getEndTime());
@@ -225,7 +234,7 @@ public class DBWorkLogQueries extends DBQueries {
 	{
 		WorkLog result = null;
 		
-		String query = "SELECT user, clientId, startTime, endTime, description "
+		String query = "SELECT userName, businessTag, clientId, startTime, endTime, description "
 				+ "FROM WorkLog WHERE WorkLog.workLogId = ?;";
 		
 		final PreparedStatement stmt = queryRunner.connection.prepareStatement(query);
@@ -238,7 +247,8 @@ public class DBWorkLogQueries extends DBQueries {
 		{
 			result = new WorkLog(
 					workLogId,
-					queryRunner.resultSet.getString("user"),
+					queryRunner.resultSet.getString("userName"),
+					queryRunner.resultSet.getString("businessTag"),
 					queryRunner.resultSet.getInt("clientId"),
 					queryRunner.resultSet.getLong("startTime"),
 					queryRunner.resultSet.getLong("endtime"),
@@ -259,27 +269,29 @@ public class DBWorkLogQueries extends DBQueries {
 	 * @throws NoDataStoreConnectionException - if the DB cannot be reached.
 	 */
 	public static ArrayList<WorkLog> getAllWorkLogsForTimeRangeAndEmployeeSQL(
-			Employee employee, Date startTime, Date endTime, DBQueries queryRunner) 
+			String userName, String businessTag, Date startTime, Date endTime, DBQueries queryRunner) 
 			throws NoDataStoreConnectionException, SQLException
 	{
 		ArrayList<WorkLog> result = new ArrayList<WorkLog>();
 		
-		String query = "SELECT workLogId, user, clientId, startTime, endTime, description "
-				+ "FROM WorkLog WHERE startTime > ? AND endTime < ? AND user = ?;";
+		String query = "SELECT workLogId, userName, businessTag, clientId, startTime, endTime, description "
+				+ "FROM WorkLog WHERE startTime > ? AND endTime < ? AND userName = ? AND businessTag = ?;";
 		
 		final PreparedStatement stmt = queryRunner.connection.prepareStatement(query);
 		int index = 1;
 		
 		stmt.setLong(index++, startTime.getTime());
 		stmt.setLong(index++, endTime.getTime());
-		stmt.setString(index++, employee.getUserName());
+		stmt.setString(index++, userName);
+		stmt.setString(index++, businessTag);
 
 		queryRunner.resultSet = stmt.executeQuery();
 		while (queryRunner.resultSet.next())
 		{
 			result.add(new WorkLog(
 					queryRunner.resultSet.getInt("workLogId"),
-					queryRunner.resultSet.getString("user"),
+					queryRunner.resultSet.getString("userName"),
+					queryRunner.resultSet.getString("businessTag"),
 					queryRunner.resultSet.getInt("clientId"),
 					queryRunner.resultSet.getLong("startTime"),
 					queryRunner.resultSet.getLong("endtime"),

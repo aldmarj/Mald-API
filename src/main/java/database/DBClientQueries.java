@@ -85,9 +85,12 @@ public final class DBClientQueries extends DBQueries
 	    {
 	    	result = getClientSQL(clientId, this);
 	    	
-	    	result.setLocations(
-	    			new DBLocationQueries().getLocationsForId(
-	    			new DBClientQueries().getClientLocationOwnerId(result)));
+	    	if (result != null)
+	    	{
+		    	result.setLocations(
+		    			new DBLocationQueries().getLocationsForId(
+		    			new DBClientQueries().getClientLocationOwnerId(result)));
+	    	}
 		} 
 	    catch (SQLException e) 
 	    {

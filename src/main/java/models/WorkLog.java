@@ -18,7 +18,10 @@ public class WorkLog
 	/** The username of the employee who submitted it */
     private String userName;
 
-    /** The client if of the client the work was done against */
+	/** The business tag of the employee who submitted it */
+    private String businessTag;
+
+	/** The client if of the client the work was done against */
     private int clientId;
 
     /** The beginning time of the worklog */
@@ -43,11 +46,12 @@ public class WorkLog
      * @param endTime - the endtime of the log.
      * @param description - a free text description of work.
      */
-    public WorkLog(final int workLogId, final String userName, final int clientId,
+    public WorkLog(final int workLogId, final String userName, final String businessTag, final int clientId,
                    final long startTime, final long endTime, final String description)
     {
         this.workLogId = workLogId;
         this.userName = userName;
+        this.businessTag = businessTag;
         this.clientId = clientId;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -61,6 +65,7 @@ public class WorkLog
     {
         this.workLogId = -1;
         this.userName = "";
+        this.businessTag = "";
         this.clientId = -1;
         this.startTime = new Date().getTime();
         this.endTime = new Date().getTime();
@@ -203,5 +208,25 @@ public class WorkLog
 	public void setLocation(Location location) 
 	{
 		this.location = location;
+	}
+	
+	/**
+	 * Returns the businessTag of the worklog.
+	 * 
+	 * @return the businessTag of the worklog.
+	 */
+    public String getBusinessTag() 
+    {
+		return businessTag;
+	}
+
+    /**
+     * Setter for the businessTag of the worklog.
+     * 
+     * @param businessTag the businessTag to set.
+     */
+	public void setBusinessTag(String businessTag) 
+	{
+		this.businessTag = businessTag;
 	}
 }

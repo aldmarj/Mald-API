@@ -88,7 +88,7 @@ public class ClientResource
 	/**
 	 * Post method for creating a new client.
 	 * 
-	 * @param businessTag the if of the business to add to.
+	 * @param businessTag the id of the business to add to.
 	 * @param client the client to add to the datastore.
 	 */
 	@POST
