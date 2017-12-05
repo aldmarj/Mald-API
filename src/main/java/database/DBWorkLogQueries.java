@@ -9,7 +9,6 @@ import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -215,6 +214,8 @@ public class DBWorkLogQueries extends DBQueries {
 	public static void createWorkLogSQL(WorkLog workLog, DBQueries queryRunner) 
 			throws SQLException, SQLIntegrityConstraintViolationException, NoDataStoreConnectionException
 	{
+		int locationOwnerId = DBLocationQueries.createLocationOwnerSQL(queryRunner);
+				
 		String query = "INSERT INTO WorkLog("
 				+ "userName, businessTag, clientId, startTime, endTime, description, locationOwnerId) "
 				+ "VALUES (?, ?, ?, ?, ?, ?, ?);";
@@ -230,7 +231,7 @@ public class DBWorkLogQueries extends DBQueries {
 		stmt.setLong(index++, workLog.getStartTime());
 		stmt.setLong(index++, workLog.getEndTime());
 		stmt.setString(index++, workLog.getDescription());
-		stmt.setInt(index++, new DBLocationQueries().createLocationOwner());
+		stmt.setInt(index++, locationOwnerId);
 		
 		stmt.executeUpdate();
 	}

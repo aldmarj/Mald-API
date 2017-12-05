@@ -68,7 +68,7 @@ public class DBLocationQueries extends DBQueries
 	 * @throws SQLException if the DB cannot be reached.
 	 * @throws SQLIntegrityConstraintViolationException if a key breaks the constraints of the DB.
 	 */
-	private static Integer createLocationOwnerSQL(DBQueries queryRunner) 
+	public static Integer createLocationOwnerSQL(DBQueries queryRunner) 
 			throws SQLException, SQLIntegrityConstraintViolationException
 	{
 		Integer result = null;

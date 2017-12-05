@@ -172,6 +172,8 @@ public final class DBClientQueries extends DBQueries
 	public static void createClientSQL(Client client, DBQueries queryRunner) 
 			throws SQLException, SQLIntegrityConstraintViolationException, NoDataStoreConnectionException
 	{
+		int locationOwnerId = DBLocationQueries.createLocationOwnerSQL(queryRunner);
+		
 		String query = "INSERT INTO BusinessClient(clientName, businessTag, locationOwnerId) VALUES (?, ?, ?);";
 		
 		final PreparedStatement stmt = queryRunner.connection.prepareStatement(query);
@@ -179,7 +181,7 @@ public final class DBClientQueries extends DBQueries
 		
 		stmt.setString(index++, client.getClientName());
 		stmt.setString(index++, client.getBusinessTag());
-		stmt.setInt(index++, new DBLocationQueries().createLocationOwner());
+		stmt.setInt(index++, locationOwnerId);
 		
 		stmt.executeUpdate();
 	}
