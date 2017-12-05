@@ -6,7 +6,6 @@ package webresources;
 import models.WorkLog;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.ws.rs.*;

@@ -34,19 +34,6 @@ public class DBLocationQueries extends DBQueries
 	}
 	
 	/**
-	 * Creates a location owner and returns its key.
-	 * 
-	 * @return the key of the location owner.
-	 * @throws SQLException if the DB cannot be reached.
-	 * @throws SQLIntegrityConstraintViolationException if a key breaks the constraints of the DB.
-	 */
-	public Integer createLocationOwner()
-			throws SQLException, SQLIntegrityConstraintViolationException
-	{
-		return createLocationOwnerSQL(this);
-	}
-	
-	/**
 	 * Gets the locations related to the owner location id.
 	 * 
 	 * @param locationOwnerId the id to search for.
