@@ -14,7 +14,7 @@ public class Password
 {
     private static CredentialHandler ch = null;
 
-    private final String value;
+    private final String hashedValue;
 
     /**
      * checks the credential handler has been created, if it has not then it creates it.
@@ -78,7 +78,7 @@ public class Password
      */
     private Password(final String hashedText)
     {
-        this.value = hashedText;
+        this.hashedValue = hashedText;
     }
 
     /**
@@ -91,18 +91,18 @@ public class Password
     public boolean matches(final String plainText) throws NoSuchAlgorithmException
     {
         checkCredentialHandler();
-        return ch.matches(plainText, this.value);
+        return ch.matches(plainText, this.hashedValue);
     }
 
     @Override
     public boolean equals(final Object obj)
     {
-        return (obj instanceof Password) && ((Password) obj).value.equals(this.value);
+        return (obj instanceof Password) && ((Password) obj).hashedValue.equals(this.hashedValue);
     }
 
     @Override
     public String toString()
     {
-        return this.value;
+        return this.hashedValue;
     }
 }
