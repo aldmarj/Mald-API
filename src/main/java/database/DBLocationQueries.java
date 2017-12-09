@@ -10,8 +10,6 @@ import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.mysql.jdbc.Statement;
-
 import models.Location;
 
 /**
@@ -62,7 +60,7 @@ public class DBLocationQueries extends DBQueries
 		
 		String query = "INSERT INTO LocationOwner() VALUES ();";
 		
-		final PreparedStatement stmt = queryRunner.connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+		final PreparedStatement stmt = queryRunner.connection.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS);
 		
 		stmt.executeUpdate();
 		
@@ -90,7 +88,7 @@ public class DBLocationQueries extends DBQueries
 		List<Integer> result = new ArrayList<Integer>();
 		
 		String query = "INSERT INTO Location(postcode, description) VALUES (?, ?);";
-		final PreparedStatement stmt = queryRunner.connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+		final PreparedStatement stmt = queryRunner.connection.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS);
 
 		for (Location location : locations)
 		{
