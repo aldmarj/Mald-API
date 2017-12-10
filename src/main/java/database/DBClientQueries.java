@@ -100,7 +100,7 @@ public final class DBClientQueries extends DBQueries {
      */
     public static void createClientSQL(Client client, DBQueries queryRunner)
         throws SQLException, SQLIntegrityConstraintViolationException {
-        String query = "INSERT INTO Client(clientName, businessTag) VALUES (?, ?);";
+        String query = "INSERT INTO BusinessClient(clientName, businessTag) VALUES (?, ?);";
 
         final PreparedStatement stmt = queryRunner.connection.prepareStatement(query);
         stmt.setString(1, client.getClientName());
@@ -121,7 +121,7 @@ public final class DBClientQueries extends DBQueries {
         throws SQLException, NoDataStoreConnectionException {
         Client result = null;
 
-        String query = "Select clientName, businessTag FROM Client WHERE Client.clientId = ?;";
+        String query = "Select clientName, businessTag FROM BusinessClient WHERE BusinessClient.clientId = ?;";
 
         final PreparedStatement stmt = queryRunner.connection.prepareStatement(query);
         stmt.setInt(1, clientId);
@@ -151,7 +151,7 @@ public final class DBClientQueries extends DBQueries {
         throws SQLException, NoDataStoreConnectionException {
         ArrayList<Client> result = new ArrayList<Client>();
 
-        String query = "Select clientId, clientName, businessTag FROM Client WHERE Client.businessTag = ?;";
+        String query = "Select clientId, clientName, businessTag FROM BusinessClient WHERE BusinessClient.businessTag = ?;";
 
         final PreparedStatement stmt = queryRunner.connection.prepareStatement(query);
         stmt.setString(1, businessTag);
