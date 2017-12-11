@@ -17,7 +17,7 @@ public class Employee
 
     private Account account;
     
-    public Employee()
+	public Employee()
     {
         this.account = new Account();
         this.firstName = "";
@@ -96,11 +96,13 @@ public class Employee
 		this.parentUserName = parentUserName;
 	}
 
-	public void setJobRole(String jobRole) {
+	public void setJobRole(String jobRole) 
+	{
 		this.jobRole = jobRole;
 	}
 
-	public void setAccount(Account account) {
+	public void setAccount(Account account) 
+	{
 		this.account = account;
 	}    
 }
