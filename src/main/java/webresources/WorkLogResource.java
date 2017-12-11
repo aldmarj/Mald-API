@@ -64,9 +64,9 @@ public class WorkLogResource
 	 */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("user/{user}")
+	@Path("/user/{username}")
 	public ArrayList<WorkLog> getWorkLog(@PathParam("buisnessTag") String businessTag,
-			@PathParam("user") String username)
+			@PathParam("username") String username)
 	{	
 		ArrayList<WorkLog> result = new ArrayList<WorkLog>();
 		try 

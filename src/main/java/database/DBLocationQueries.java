@@ -46,6 +46,38 @@ public class DBLocationQueries extends DBQueries
 	}
 	
 	/**
+	 * Create and return the location owner id.
+	 * 
+	 * @return the id of the location owner.
+	 * @throws BadKeyException 
+	 * @throws NoDataStoreConnectionException 
+	 * @throws SQLException if the DB cannot be reached.
+	 * @throws SQLIntegrityConstraintViolationException if a key breaks the constraints of the DB.
+	 */
+	public int createLocationOwner() throws BadKeyException, NoDataStoreConnectionException 
+	{
+		int result = -1;
+		try
+		{
+			result = createLocationOwnerSQL(this);
+		}
+		catch (SQLIntegrityConstraintViolationException e) 
+		{
+			this.handleIntegrityConstaitViolation(e);
+		} 
+		catch (SQLException e) 
+		{
+			this.handleSQLException(e);
+		}
+		finally
+		{
+			this.closeResultSet();
+			this.closeConnection();
+		}
+		return result;
+	}
+	
+	/**
 	 * Creates a location owner in the database with the given DB runner and returns the key of the id.
 	 * 
 	 * @param queryRunner - the DB query runner.

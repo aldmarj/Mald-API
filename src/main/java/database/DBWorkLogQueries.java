@@ -274,9 +274,10 @@ public class DBWorkLogQueries extends DBQueries {
 	 * @throws SQLException if the DB cannot be reached.
 	 * @throws SQLIntegrityConstraintViolationException if a key breaks the constraints of the DB.
 	 * @throws NoDataStoreConnectionException if the DB cannot be reached.
+	 * @throws BadKeyException 
 	 */
 	public static void createWorkLogSQL(WorkLog workLog, DBQueries queryRunner) 
-			throws SQLException, SQLIntegrityConstraintViolationException, NoDataStoreConnectionException
+			throws SQLException, SQLIntegrityConstraintViolationException, NoDataStoreConnectionException, BadKeyException
 	{
 		int locationOwnerId = DBLocationQueries.createLocationOwnerSQL(queryRunner);
 				
@@ -285,7 +286,7 @@ public class DBWorkLogQueries extends DBQueries {
 				+ "VALUES (?, ?, ?, ?, ?, ?, ?);";
 		
 		final PreparedStatement stmt = 
-				queryRunner.connection.prepareStatement(query);
+				queryRunner.connection.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS);
 		
 		int index = 1;
 		
@@ -298,6 +299,13 @@ public class DBWorkLogQueries extends DBQueries {
 		stmt.setInt(index++, locationOwnerId);
 		
 		stmt.executeUpdate();
+
+		ResultSet resultSet = stmt.getGeneratedKeys();
+
+		if (resultSet.next()) 
+		{
+		    workLog.setWorkLogId(resultSet.getInt(1));
+		}	
 	}
 	
 	/**

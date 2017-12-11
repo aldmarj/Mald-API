@@ -105,6 +105,13 @@ public final class DBClientQueries extends DBQueries
 		return result;
 	}
 	
+	/**
+	 * Return the client's location owner id.
+	 * 
+	 * @param client the client to return the location of.
+	 * @return the location owner id.
+	 * @throws NoDataStoreConnectionException if the data store cannot be reached.
+	 */
 	public Integer getClientLocationOwnerId(Client client) throws NoDataStoreConnectionException
 	{
 		Integer result = null;
@@ -176,7 +183,7 @@ public final class DBClientQueries extends DBQueries
 		
 		String query = "INSERT INTO BusinessClient(clientName, businessTag, locationOwnerId) VALUES (?, ?, ?);";
 		
-		final PreparedStatement stmt = queryRunner.connection.prepareStatement(query);
+		final PreparedStatement stmt = queryRunner.connection.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS);
 		int index = 1;
 		
 		stmt.setString(index++, client.getClientName());
@@ -184,6 +191,13 @@ public final class DBClientQueries extends DBQueries
 		stmt.setInt(index++, locationOwnerId);
 		
 		stmt.executeUpdate();
+
+		ResultSet resultSet = stmt.getGeneratedKeys();
+
+		if (resultSet.next()) 
+		{
+		    client.setClientId(resultSet.getInt(1));
+		}
 	}
 	
 	/**
