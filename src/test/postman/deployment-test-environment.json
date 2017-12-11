@@ -17,7 +17,7 @@
     {
       "enabled": true,
       "key": "password",
-      "value": "uipassword",
+      "value": "cipassword",
       "type": "text"
     },
     {
