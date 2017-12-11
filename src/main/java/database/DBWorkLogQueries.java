@@ -83,11 +83,23 @@ public class DBWorkLogQueries extends DBQueries {
 	public ArrayList<WorkLog> getAllWorkLogsForTimeRangeAndEmployee(String userName, String businessTag, long startTime, long endTime) 
 			throws NoDataStoreConnectionException
 	{
-		ArrayList<WorkLog> result = null;
+		ArrayList<WorkLog> result = new ArrayList<WorkLog>();
 		
 	    try
 	    {		
 	    	result = getAllWorkLogsForTimeRangeAndEmployeeSQL(userName, businessTag, startTime, endTime, this);
+	    	
+	    	for (WorkLog workLog : result)
+	    	{
+	    		Iterator<Location> location = new DBLocationQueries().getLocationsForId(
+		    			new DBWorkLogQueries().getWorkLogLocationOwnerId(workLog))
+		    			.iterator();
+	    		
+	    		if (location.hasNext())
+	    		{
+	    			workLog.setLocation(location.next());
+	    		}
+	    	}
 		} 
 	    catch (SQLException e) 
 	    {
@@ -114,11 +126,23 @@ public class DBWorkLogQueries extends DBQueries {
 	public ArrayList<WorkLog> getAllWorkLogsForTimeRange(String businessTag, long startTime, long endTime) 
 			throws NoDataStoreConnectionException
 	{
-		ArrayList<WorkLog> result = null;
+		ArrayList<WorkLog> result = new ArrayList<WorkLog>();
 		
 	    try
 	    {		
 	    	result = getAllWorkLogsForTimeRangeSQL(businessTag, startTime, endTime, this);
+	    	
+	    	for (WorkLog workLog : result)
+	    	{
+	    		Iterator<Location> location = new DBLocationQueries().getLocationsForId(
+		    			new DBWorkLogQueries().getWorkLogLocationOwnerId(workLog))
+		    			.iterator();
+	    		
+	    		if (location.hasNext())
+	    		{
+	    			workLog.setLocation(location.next());
+	    		}
+	    	}
 		} 
 	    catch (SQLException e) 
 	    {
@@ -158,6 +182,46 @@ public class DBWorkLogQueries extends DBQueries {
 	    		if (location.hasNext())
 	    		{
 	    			result.setLocation(location.next());
+	    		}
+	    	}
+		} 
+	    catch (SQLException e) 
+	    {
+			this.handleSQLException(e);
+		}
+	    finally
+	    {
+	    	this.closeResultSet();
+	    	this.closeConnection();
+	    }
+	    
+		return result;
+	}
+	
+	/**
+	 * Returns a worklog by a given user. 
+	 * 
+	 * @param username - The user of the worklogs to find.
+	 * @return The requested worklogs.
+	 * @throws NoDataStoreConnectionException If a connection cannot be made to the store.
+	 */
+	public ArrayList<WorkLog> getWorkLogbyUser(String username) throws NoDataStoreConnectionException
+	{
+		ArrayList<WorkLog> result = new ArrayList<WorkLog>();
+		
+	    try
+	    {		
+	    	result = getWorkLogbyUserSQL(username, this);
+	    	
+	    	for (WorkLog workLog : result)
+	    	{
+	    		Iterator<Location> location = new DBLocationQueries().getLocationsForId(
+		    			new DBWorkLogQueries().getWorkLogLocationOwnerId(workLog))
+		    			.iterator();
+	    		
+	    		if (location.hasNext())
+	    		{
+	    			workLog.setLocation(location.next());
 	    		}
 	    	}
 		} 
@@ -285,6 +349,43 @@ public class DBWorkLogQueries extends DBQueries {
 					queryRunner.resultSet.getLong("startTime"),
 					queryRunner.resultSet.getLong("endtime"),
 					queryRunner.resultSet.getString("description"));
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * Gets a WorkLog from the database with the given workLog user.
+	 * 
+	 * @param workLogUser - the user to search for.
+	 * @param queryRunner - the DB query runner.
+	 * @throws SQLException - if the DB cannot be reached.
+	 * @throws NoDataStoreConnectionException - if the DB cannot be reached.
+	 */
+	public static ArrayList<WorkLog> getWorkLogbyUserSQL(String username, DBQueries queryRunner) 
+			throws SQLException, NoDataStoreConnectionException
+	{
+		ArrayList<WorkLog> result = new ArrayList<WorkLog>();
+		
+		String query = "SELECT workLogId, userName, businessTag, clientId, startTime, endTime, description "
+				+ "FROM WorkLog WHERE WorkLog.userName = ?;";
+		
+		final PreparedStatement stmt = queryRunner.connection.prepareStatement(query);
+		int index = 1;
+		
+		stmt.setString(index++, username);
+		
+		queryRunner.resultSet = stmt.executeQuery();
+		while (queryRunner.resultSet.next())
+		{
+			result.add(new WorkLog(
+					queryRunner.resultSet.getInt("workLogId"),
+					username,
+					queryRunner.resultSet.getString("businessTag"),
+					queryRunner.resultSet.getInt("clientId"),
+					queryRunner.resultSet.getLong("startTime"),
+					queryRunner.resultSet.getLong("endtime"),
+					queryRunner.resultSet.getString("description")));
 		}
 		
 		return result;

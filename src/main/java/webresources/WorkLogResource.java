@@ -57,6 +57,38 @@ public class WorkLogResource
 	}
 	
 	/**
+	 * Getter for getting worklogs by user.
+	 * 
+	 * @param businessTag the id of the business to add to.
+	 * @param username the user of the worklogs to retrieve.
+	 */
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("user/{user}")
+	public ArrayList<WorkLog> getWorkLog(@PathParam("buisnessTag") String businessTag,
+			@PathParam("user") String username)
+	{	
+		ArrayList<WorkLog> result = new ArrayList<WorkLog>();
+		try 
+		{
+			result = new DBWorkLogQueries().getWorkLogbyUser(username);
+			
+			if (result != null)
+			{
+				return result;
+			}
+			else
+			{
+				throw new WebApplicationException(Response.Status.NOT_FOUND);
+			}
+		}
+		catch (NoDataStoreConnectionException e) 
+		{
+			throw new WebApplicationException(Response.Status.BAD_GATEWAY);		
+		}
+	}
+	
+	/**
 	 * Get all worklogs for an specific employee in a time range.
 	 * 
 	 * @param businessTag the id of the business to add to.
