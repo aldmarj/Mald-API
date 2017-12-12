@@ -33,20 +33,6 @@ public class DBLocationQueries extends DBQueries
 	}
 	
 	/**
-	 * Gets the locations related to the owner location id.
-	 * 
-	 * @param locationOwnerId the id to search for.
-	 * @return the locations related to the id.
-	 * @throws SQLException if the DB cannot be reached.
-	 * @throws SQLIntegrityConstraintViolationException if a key breaks the constraints of the DB.
-	 */
-	public List<Location> getLocationsForId(Integer locationOwnerId) 
-			throws SQLIntegrityConstraintViolationException, SQLException
-	{
-		return getLocationsForIdSQL(locationOwnerId, this);
-	}
-	
-	/**
 	 * Create and return the location owner id.
 	 * 
 	 * @return the id of the location owner.

@@ -95,8 +95,8 @@ public class DBWorkLogQueries extends DBQueries {
 	    	
 	    	for (WorkLog workLog : result)
 	    	{
-	    		Iterator<Location> location = new DBLocationQueries().getLocationsForId(
-		    			new DBWorkLogQueries().getWorkLogLocationOwnerId(workLog))
+	    		Iterator<Location> location = DBLocationQueries.getLocationsForIdSQL(
+		    			DBWorkLogQueries.getWorkLogLocationOwnerIdSQL(workLog, this), this)
 		    			.iterator();
 	    		
 	    		if (location.hasNext())
@@ -138,8 +138,8 @@ public class DBWorkLogQueries extends DBQueries {
 	    	
 	    	for (WorkLog workLog : result)
 	    	{
-	    		Iterator<Location> location = new DBLocationQueries().getLocationsForId(
-		    			new DBWorkLogQueries().getWorkLogLocationOwnerId(workLog))
+	    		Iterator<Location> location = DBLocationQueries.getLocationsForIdSQL(
+		    			DBWorkLogQueries.getWorkLogLocationOwnerIdSQL(workLog, this), this)
 		    			.iterator();
 	    		
 	    		if (location.hasNext())
@@ -179,8 +179,8 @@ public class DBWorkLogQueries extends DBQueries {
 	    	
 	    	if (result != null)
 	    	{
-	    		Iterator<Location> location = new DBLocationQueries().getLocationsForId(
-		    			new DBWorkLogQueries().getWorkLogLocationOwnerId(result))
+	    		Iterator<Location> location = DBLocationQueries.getLocationsForIdSQL(
+		    			DBWorkLogQueries.getWorkLogLocationOwnerIdSQL(result, this), this)
 		    			.iterator();
 	    		
 	    		if (location.hasNext())
@@ -219,8 +219,8 @@ public class DBWorkLogQueries extends DBQueries {
 	    	
 	    	for (WorkLog workLog : result)
 	    	{
-	    		Iterator<Location> location = new DBLocationQueries().getLocationsForId(
-		    			new DBWorkLogQueries().getWorkLogLocationOwnerId(workLog))
+	    		Iterator<Location> location = DBLocationQueries.getLocationsForIdSQL(
+		    			DBWorkLogQueries.getWorkLogLocationOwnerIdSQL(workLog, this), this)
 		    			.iterator();
 	    		
 	    		if (location.hasNext())

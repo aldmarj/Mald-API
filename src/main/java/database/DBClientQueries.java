@@ -88,8 +88,8 @@ public final class DBClientQueries extends DBQueries
 	    	if (result != null)
 	    	{
 		    	result.setLocations(
-		    			new DBLocationQueries().getLocationsForId(
-		    			new DBClientQueries().getClientLocationOwnerId(result)));
+		    			DBLocationQueries.getLocationsForIdSQL(
+		    			DBClientQueries.getClientLocationOwnerIdSQL(result, this), this));
 	    	}
 		} 
 	    catch (SQLException e) 
@@ -150,8 +150,8 @@ public final class DBClientQueries extends DBQueries
 	    	for (Client client : result)
 	    	{
 	    		client.setLocations(
-		    			new DBLocationQueries().getLocationsForId(
-		    	    	new DBClientQueries().getClientLocationOwnerId(client)));
+		    			DBLocationQueries.getLocationsForIdSQL(
+		    	    	DBClientQueries.getClientLocationOwnerIdSQL(client, this), this));
 	    	}
 		}
 	    catch (SQLException e) 
