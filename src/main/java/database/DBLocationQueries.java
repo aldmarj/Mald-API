@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import models.Location;
@@ -114,7 +115,7 @@ public class DBLocationQueries extends DBQueries
 	 * @throws SQLException if the DB cannot be reached.
 	 * @throws SQLIntegrityConstraintViolationException if a key breaks the constraints of the DB.
 	 */
-	public static List<Integer> createLocationsSQL(List<Location> locations, DBQueries queryRunner) 
+	public static List<Integer> createLocationsSQL(Collection<Location> locations, DBQueries queryRunner) 
 			throws SQLException, SQLIntegrityConstraintViolationException
 	{		
 		List<Integer> result = new ArrayList<Integer>();

@@ -9,8 +9,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
+
+import org.apache.log4j.Logger;
 
 import database.BadKeyException;
 import database.DBWorkLogQueries;
@@ -24,6 +28,9 @@ import database.NoDataStoreConnectionException;
 @Path("/business/{buisnessTag}/worklog")
 public class WorkLogResource
 {
+    /** Logger **/
+    private static final Logger LOGGER = Logger.getLogger(WorkLogResource.class);
+    
 	/**
 	 * Getter for getting a worklog by its id.
 	 * 
@@ -167,22 +174,37 @@ public class WorkLogResource
 	 */
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response putWorkLog(@PathParam("buisnessTag") String businessTag, 
+	public String putWorkLog(@PathParam("buisnessTag") String businessTag,
+			@Context SecurityContext securityContext,
 			WorkLog workLog)
 	{
 		try 
 		{
-			new DBWorkLogQueries().createWorkLog(workLog);
+			workLog.setBusinessTag(businessTag);
+			workLog.setUserName(securityContext.getUserPrincipal().getName());
 			
-			return Response.status(200).entity("").build();
+			if (workLog.isValid())
+			{
+				new DBWorkLogQueries().createWorkLog(workLog);
+				
+				return "Successfully added";
+			}
+			
+			String message = "Invalid worklog supplied";
+            LOGGER.error(message);
+            throw new WebApplicationException(message, Response.Status.BAD_REQUEST);
 		}
-		catch (BadKeyException e)
+		catch (final BadKeyException e)
 		{
-			return Response.status(404).entity("Tag already exists").build();
+			String message = "Worklog of given id already exists";
+            LOGGER.error(message);
+            throw new WebApplicationException(message, e, Response.Status.BAD_REQUEST);
 		}
-		catch (NoDataStoreConnectionException e)
+		catch (final NoDataStoreConnectionException e)
 		{
-			return Response.status(503).entity("No data store found").build();
+			String message = "No data store found";
+            LOGGER.error(message, e);
+            throw new WebApplicationException(message, e, Response.Status.SERVICE_UNAVAILABLE);
 		}
 	}
 }
