@@ -33,6 +33,8 @@ public class EmployeeResource
     
 	/**
 	 * Getter for getting a employee by its username.
+	 * 
+	 * @param username - The username of the employee to return.
 	 */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -62,7 +64,16 @@ public class EmployeeResource
 	}
 	
 	/**
-	 * Getter for getting a employees in a range those that have worked the most first.
+	 * Getter for getting the top employees in a range of time. 
+	 * Sorted by those that have worked the most first.
+	 * Does not count worklogs that aren't completely in the time period. i.e.
+	 * Start and finish in the time period.
+	 * 
+	 * @param businessTag - The tag of the business to interrogate.
+	 * @param startRange - The start of the range of employees to return, 1 for the first. (Non 0 indexed)
+	 * @param endRange - The end of the range of employees to return, x for the xth. (Non 0 indexed)
+	 * @param startTimeRange - The time in millisecond to start counting from.
+	 * @param endTimeRange - The time in millisecond to stop counting from.
 	 */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -97,6 +108,10 @@ public class EmployeeResource
 	
 	/**
 	 * Post method for creating a new employee.
+	 * 
+	 * @param businessTag - The business to add the employee to.
+	 * @param securityContext - The session information of the logged in user.
+	 * @param employee - The details of the new employee to create.
 	 */
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -141,7 +156,7 @@ public class EmployeeResource
 		}
 		catch (final BadKeyException e)
 		{
-			returnMessage = "Worklog of given id already exists";
+			returnMessage = "Employee with given username already exists";
             LOGGER.error(returnMessage);
             throw new WebApplicationException(returnMessage, e, Response.Status.BAD_REQUEST);
 		}
