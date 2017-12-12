@@ -183,24 +183,24 @@ public class WorkLogResource
 			workLog.setBusinessTag(businessTag);
 			workLog.setUserName(securityContext.getUserPrincipal().getName());
 			
-			if (workLog.getStartTime() >= workLog.getEndTime())
+			if (workLog.isValid())
 			{
-				String message = "Start time needs to be before end time";
-	            LOGGER.error(message);
-	            throw new WebApplicationException(message, Response.Status.BAD_REQUEST);
+				new DBWorkLogQueries().createWorkLog(workLog);
+				
+				return "Successfully added";
 			}
 			
-			new DBWorkLogQueries().createWorkLog(workLog);
-			
-			return "Successfully added";
+			String message = "Invalid worklog supplied";
+            LOGGER.error(message);
+            throw new WebApplicationException(message, Response.Status.BAD_REQUEST);
 		}
-		catch (BadKeyException e)
+		catch (final BadKeyException e)
 		{
 			String message = "Worklog of given id already exists";
             LOGGER.error(message);
             throw new WebApplicationException(message, e, Response.Status.BAD_REQUEST);
 		}
-		catch (NoDataStoreConnectionException e)
+		catch (final NoDataStoreConnectionException e)
 		{
 			String message = "No data store found";
             LOGGER.error(message, e);

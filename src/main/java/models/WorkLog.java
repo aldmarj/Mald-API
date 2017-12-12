@@ -229,4 +229,17 @@ public class WorkLog
 	{
 		this.businessTag = businessTag;
 	}
+	
+	/**
+	 * Determines whether the worklog is valid or not.
+	 * 
+	 * @return the validity of the worklog.
+	 */
+	public boolean isValid()
+	{
+		return (this.getStartTime() < this.getEndTime()
+				&& this.getClientId() > 0
+				&& !this.userName.isEmpty()
+				&& !this.businessTag.isEmpty());
+	}
 }
