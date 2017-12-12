@@ -4,5 +4,5 @@
     <Resource name="jdbc/api" auth="Container" type="javax.sql.DataSource"
               username="api" password='A$ajppNE8q&amp;pNBbr' driverClassName="org.mariadb.jdbc.Driver"
               url="jdbc:mysql://mald-rdbms.cm5fqzlymdws.eu-west-2.rds.amazonaws.com/EmployeeManagementv2_1?autoReconnect=true&amp;useSSL=true&amp;requireSSL=true&amp;serverSslCert=classpath:rds-combined-ca-bundle.pem"
-              maxActive="15" maxIdle="3" />
+              maxTotal="100" maxIdle="3" />
 </Context>
