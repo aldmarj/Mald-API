@@ -40,7 +40,6 @@ public class LoginResource
     {
         try
         {
-        	Password.fromPlainText(password);
             final Account account = new DBAccountQueries().getAccount(username, businessTag);
             if (account != null && account.getStoredPassword().matches(password))
             {

@@ -32,18 +32,18 @@ public class Employee
      * for dashboard purposes.
      **/
 	private int hoursWorked;
-    
+	
+    /** A optional field to request a password. Used for
+     * the post request.
+	 **/
+	private String requestedPassword;
+
 	/**
 	 * CLASS CONSTRUCTOR
 	 */
 	public Employee()
     {
-        this.account = new Account();
-        this.firstName = "";
-        this.surName = "";
-        this.parentUserName = null;
-        this.jobRole = "";
-        this.hoursWorked = -1;
+		this(new Account(), "", "", null, "", -1);
     }
 	
 	/**
@@ -58,12 +58,7 @@ public class Employee
     public Employee(final Account account, final String firstName, final String surName,
             final String parentUserName, final String jobRole)
 	{
-		this.account = account;
-		this.firstName = firstName;
-		this.surName = surName;
-		this.parentUserName = parentUserName;
-		this.jobRole = jobRole;
-		this.hoursWorked = -1;
+        this(account, firstName, surName, parentUserName, jobRole, -1);
 	}
     
 	/**
@@ -79,12 +74,13 @@ public class Employee
     public Employee(final Account account, final String firstName, final String surName,
                     final String parentUserName, final String jobRole, final Integer hoursWorked)
     {
-        this.account = account;
-        this.firstName = firstName;
-        this.surName = surName;
-        this.parentUserName = parentUserName;
-        this.jobRole = jobRole;
+		this.account = account;
+		this.firstName = firstName;
+		this.surName = surName;
+		this.parentUserName = parentUserName;
+		this.jobRole = jobRole;
         this.hoursWorked = hoursWorked;
+        this.requestedPassword = null;
     }
 
     public String getFirstName()
@@ -165,6 +161,16 @@ public class Employee
 	public void setHoursWorked(int hoursWorked) 
 	{
 		this.hoursWorked = hoursWorked;
+	}
+	
+	public String getRequestedPassword() 
+	{
+		return requestedPassword;
+	}
+
+	public void setRequestedPassword(String requestedPassword) 
+	{
+		this.requestedPassword = requestedPassword;
 	}
 	
 	/**

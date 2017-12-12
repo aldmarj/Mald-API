@@ -1,7 +1,10 @@
 package webresources;
 
 import models.Employee;
+import models.users.Password;
+import utils.PasswordUtils;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -101,34 +104,58 @@ public class EmployeeResource
 			@Context SecurityContext securityContext,
 			Employee employee)
 	{
+		String returnMessage;
+		
 		try 
 		{
 			employee.setBusinessTag(businessTag);
-			employee.getAccount().setUserName(securityContext.getUserPrincipal().getName());
 			
-			if (employee.isValid())
+			// Check the requested password is okay
+			if (employee.getRequestedPassword() != null 
+					&& PasswordUtils.conformsToSecurityRules(employee.getRequestedPassword()))
 			{
-				new DBEmployeeQueries().createEmployeeAccount(employee);
+				// Generate the salted hash for the password
+				employee.getAccount().setStoredPassword(
+						Password.fromPlainText(employee.getRequestedPassword()));
 				
-				return employee.getHoursWorked() == -1 
-						? "Successfully added" : "Warning! hours worked cannot be set";
+				//Ensure the rest of the employee is valid.
+				if (employee.isValid())
+				{
+					new DBEmployeeQueries().createEmployeeAccount(employee);
+					
+					return employee.getHoursWorked() == -1 
+							? "Successfully added" : "Warning! hours worked cannot be set";
+				}
+				else
+				{
+					returnMessage = "Invalid employee supplied";
+				}
+			}
+			else
+			{
+				returnMessage = "Password needs at least 8 characters; one upper case, one lower case and a digit";
 			}
 			
-			String message = "Invalid worklog supplied";
-            LOGGER.error(message);
-            throw new WebApplicationException(message, Response.Status.BAD_REQUEST);
+            LOGGER.error(returnMessage);
+            throw new WebApplicationException(returnMessage, Response.Status.BAD_REQUEST);
 		}
 		catch (final BadKeyException e)
 		{
-			String message = "Worklog of given id already exists";
-            LOGGER.error(message);
-            throw new WebApplicationException(message, e, Response.Status.BAD_REQUEST);
+			returnMessage = "Worklog of given id already exists";
+            LOGGER.error(returnMessage);
+            throw new WebApplicationException(returnMessage, e, Response.Status.BAD_REQUEST);
 		}
 		catch (final NoDataStoreConnectionException e)
 		{
-			String message = "No data store found";
-            LOGGER.error(message, e);
-            throw new WebApplicationException(message, e, Response.Status.SERVICE_UNAVAILABLE);
+			returnMessage = "No data store found";
+            LOGGER.error(returnMessage, e);
+            throw new WebApplicationException(returnMessage, e, Response.Status.SERVICE_UNAVAILABLE);
+		} 
+		catch (NoSuchAlgorithmException e) 
+		{
+            returnMessage = "Server could not authenticate password";
+            LOGGER.error(returnMessage, e);
+            throw new WebApplicationException(returnMessage, e, Response.Status.INTERNAL_SERVER_ERROR);
 		}
 	}
 }

@@ -107,7 +107,8 @@ public final class Account implements Principal
 	 */
     public boolean isValid()
     {
-    	return (!this.getBusinessTag().isEmpty())
-    			&& !this.getUserName().isEmpty();
+    	return (!this.getBusinessTag().isEmpty()
+    			&& !this.getUserName().isEmpty()
+    			&& this.getStoredPassword() != null);
     }
 }
