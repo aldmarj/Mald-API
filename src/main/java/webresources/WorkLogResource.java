@@ -183,7 +183,7 @@ public class WorkLogResource
 			workLog.setBusinessTag(businessTag);
 			workLog.setUserName(securityContext.getUserPrincipal().getName());
 			
-			if (workLog.getStartTime() > workLog.getEndTime())
+			if (workLog.getStartTime() >= workLog.getEndTime())
 			{
 				String message = "Start time needs to be before end time";
 	            LOGGER.error(message);
