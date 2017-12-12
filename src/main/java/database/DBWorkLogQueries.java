@@ -8,7 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -48,7 +48,11 @@ public class DBWorkLogQueries extends DBQueries {
 			this.setAutoCommit(false);
 			
 			createWorkLogSQL(workLog, this);
-	    	createLocationForWorklogSQL(workLog, this);
+			
+			if (workLog.getLocation() != null)
+			{
+				createLocationForWorklogSQL(workLog, this);
+			}
 
 	    	this.commit();
 		}
@@ -321,7 +325,8 @@ public class DBWorkLogQueries extends DBQueries {
     	Integer locationOwnerId = getWorkLogLocationOwnerIdSQL(worklog, queryRunner);
     	
     	// Then create the locations for this id
-    	List<Integer> locationIds = DBLocationQueries.createLocationsSQL(Arrays.asList(worklog.getLocation()), queryRunner);
+    	List<Integer> locationIds = 
+    			DBLocationQueries.createLocationsSQL(Collections.singleton(worklog.getLocation()), queryRunner);
     	DBLocationQueries.createLocationOwnerToLocationsSQL(locationIds, locationOwnerId, queryRunner);
 	}
 
