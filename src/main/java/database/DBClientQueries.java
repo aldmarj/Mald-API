@@ -4,9 +4,11 @@
 package database;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
+import java.util.List;
 
 import models.Client;
 
@@ -16,154 +18,297 @@ import models.Client;
  *
  * @author Lawrence
  */
-public final class DBClientQueries extends DBQueries {
+public final class DBClientQueries extends DBQueries 
+{
+	
+	/**
+	 * CLASS CONSTRUCTOR
+	 * 
+	 * @throws NoDataStoreConnectionException
+	 */
+	public DBClientQueries() throws NoDataStoreConnectionException
+	{
+		super();
+	}
+	
+	/**
+	 * Creates a client in the database with the given name.
+	 * 
+	 * @param client - the new client to add
+	 * @throws BadKeyException - If the given key is invalid.
+	 * @throws NoDataStoreConnectionException - If a connection cannot be made to the store.
+	 */
+	public void createClient(Client client) 
+			throws BadKeyException, NoDataStoreConnectionException
+	{		
+	    try
+	    {		
+	    	this.setAutoCommit(false);
+	    	
+	    	createClientSQL(client, this);
+	    	createLocationsForClientSQL(client, this);
+	    	
+	    	this.commit();
+		} 
+	    catch (SQLIntegrityConstraintViolationException e)
+	    {
+	    	this.rollback();
+			this.handleIntegrityConstaitViolation(e);
+	    }
+	    catch (SQLException e) 
+	    {
+	    	this.rollback();
+	    	this.handleSQLException(e);
+		}
+	    finally
+	    {
+	    	this.setAutoCommit(true);
+	    	this.closeResultSet();
+	    	this.closeConnection();
+	    }
+	}
+	
+	/**
+	 * Returns a client by its given clientId. 
+	 * Returns null if no client is found.
+	 * 
+	 * @param clientId the ID of the client to find.
+	 * @return The requested client.
+	 * @throws NoDataStoreConnectionException If a connection cannot be made to the store.
+	 */
+	public Client getClient(int clientId) throws NoDataStoreConnectionException
+	{
+		Client result = null;
+		
+	    try
+	    {
+	    	result = getClientSQL(clientId, this);
+	    	
+	    	if (result != null)
+	    	{
+		    	result.setLocations(
+		    			DBLocationQueries.getLocationsForIdSQL(
+		    			DBClientQueries.getClientLocationOwnerIdSQL(result, this), this));
+	    	}
+		} 
+	    catch (SQLException e) 
+	    {
+	    	this.handleSQLException(e);
+		}
+	    finally
+	    {
+	    	this.closeResultSet();
+	    	this.closeConnection();
+	    }
+	    
+		return result;
+	}
+	
+	/**
+	 * Return the client's location owner id.
+	 * 
+	 * @param client the client to return the location of.
+	 * @return the location owner id.
+	 * @throws NoDataStoreConnectionException if the data store cannot be reached.
+	 */
+	public Integer getClientLocationOwnerId(Client client) throws NoDataStoreConnectionException
+	{
+		Integer result = null;
+		
+	    try
+	    {		
+	    	result = getClientLocationOwnerIdSQL(client, this);
+		} 
+	    catch (SQLException e) 
+	    {
+			this.handleSQLException(e);
+		}
+	    finally
+	    {
+	    	this.closeResultSet();
+	    	this.closeConnection();
+	    }
+	    
+	    return result;
+	}
+	
+	/**
+	 * Returns all of the clients. 
+	 * 
+	 * @return All clients.
+	 * @throws NoDataStoreConnectionException If a connection cannot be made to the store.
+	 */
+	public ArrayList<Client> getAllClients(final String businessTag) throws NoDataStoreConnectionException
+	{
+		ArrayList<Client> result = new ArrayList<Client>();
+		
+	    try
+	    {		
+	    	result = getAllClientsSQL(businessTag, this);
+	    	
+	    	for (Client client : result)
+	    	{
+	    		client.setLocations(
+		    			DBLocationQueries.getLocationsForIdSQL(
+		    	    	DBClientQueries.getClientLocationOwnerIdSQL(client, this), this));
+	    	}
+		}
+	    catch (SQLException e) 
+	    {
+	    	this.handleSQLException(e);
+		}
+	    finally
+	    {
+	    	this.closeResultSet();
+	    	this.closeConnection();
+	    }
+	    
+	    return result;
+	}
 
-    /**
-     * CLASS CONSTRUCTOR
-     */
-    public DBClientQueries() throws NoDataStoreConnectionException {
-        super();
-    }
+	/**
+	 * Creates a client in the database with the given client and DB runner.
+	 * 
+	 * @param client - the client to create in the database.
+	 * @param queryRunner - the DB query runner.
+	 * @throws SQLException if the DB cannot be reached.
+	 * @throws SQLIntegrityConstraintViolationException if a key breaks the constraints of the DB.
+	 * @throws NoDataStoreConnectionException if the DB cannot be reached.
+	 */
+	public static void createClientSQL(Client client, DBQueries queryRunner) 
+			throws SQLException, SQLIntegrityConstraintViolationException, NoDataStoreConnectionException
+	{
+		int locationOwnerId = DBLocationQueries.createLocationOwnerSQL(queryRunner);
+		
+		String query = "INSERT INTO BusinessClient(clientName, businessTag, locationOwnerId) VALUES (?, ?, ?);";
+		
+		final PreparedStatement stmt = queryRunner.connection.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS);
+		int index = 1;
+		
+		stmt.setString(index++, client.getClientName());
+		stmt.setString(index++, client.getBusinessTag());
+		stmt.setInt(index++, locationOwnerId);
+		
+		stmt.executeUpdate();
 
-    /**
-     * Creates a client in the database with the given name.
-     *
-     * @param client - the new client to add
-     * @throws BadKeyException - If the given key is invalid.
-     * @throws NoDataStoreConnectionException - If a connection cannot be made to the store.
-     */
-    public void createClient(Client client)
-        throws BadKeyException, NoDataStoreConnectionException {
-        try {
-            createClientSQL(client, this);
-        } catch (SQLIntegrityConstraintViolationException e) {
-            this.handleIntegrityConstaitViolation(e);
-        } catch (SQLException e) {
-            this.handleSQLException(e);
-        } finally {
-            this.closeConnection();
-        }
-    }
+		ResultSet resultSet = stmt.getGeneratedKeys();
 
-    /**
-     * Returns a client by its given clientId. Returns null if no client is found.
-     *
-     * @param clientId - The ID of the client to find.
-     * @return The requested client.
-     * @throws NoDataStoreConnectionException If a connection cannot be made to the store.
-     */
-    public Client getClient(int clientId) throws NoDataStoreConnectionException {
-        Client result = null;
+		if (resultSet.next()) 
+		{
+		    client.setClientId(resultSet.getInt(1));
+		}
+	}
+	
+	/**
+	 * Creates the locations for the given client in the database.
+	 * 
+	 * @throws SQLException - If the given key is invalid.
+	 * @throws SQLIntegrityConstraintViolationException - If a connection cannot be made to the store.
+	 */
+	public static void createLocationsForClientSQL(Client client, DBQueries queryRunner)
+			throws SQLException, SQLIntegrityConstraintViolationException
+	{
+		// First find the owner if of the client
+    	Integer locationOwnerId = getClientLocationOwnerIdSQL(client, queryRunner);
+    	
+    	// Then create the locations for this id
+    	List<Integer> locationIds = DBLocationQueries.createLocationsSQL(client.getLocations(), queryRunner);
+    	DBLocationQueries.createLocationOwnerToLocationsSQL(locationIds, locationOwnerId, queryRunner);
+	}
+	
+	/**
+	 * Gets a client from the database with the given clientId and DB runner.
+	 * 
+	 * @param client id - the client id to search for in the database.
+	 * @param queryRunner - the DB query runner.
+	 * @return the client requested.
+	 * @throws SQLException if the DB cannot be reached.
+	 * @throws NoDataStoreConnectionException if the DB cannot be reached.
+	 */
+	public static Client getClientSQL(int clientId, DBQueries queryRunner)
+			throws SQLException, NoDataStoreConnectionException
+	{
+		Client result = null;
 
-        try {
-            result = getClientSQL(clientId, this);
-        } catch (SQLException e) {
-            this.handleSQLException(e);
-        } finally {
-            this.closeResultSet();
-            this.closeConnection();
-        }
+		String query = "SELECT clientName, businessTag FROM BusinessClient WHERE BusinessClient.clientId = ?;";
+		
+		final PreparedStatement stmt = queryRunner.connection.prepareStatement(query);
+		int index = 1;
+		
+		stmt.setInt(index++, clientId);
+		
+		queryRunner.resultSet = stmt.executeQuery();
+		while (queryRunner.resultSet.next())
+		{
+			result = new Client(
+					clientId,
+					queryRunner.resultSet.getString("clientName"),
+					queryRunner.resultSet.getString("businessTag")
+			);
+		}
+		
+		return result;
+	}
+	
+	
+	/**
+	 * Gets all clients from the database.
+	 * 
+	 * @param businessTag The businessTag to limit the results
+	 * @param queryRunner - the DB query runner.
+	 * @return All clients. 
+	 * @throws SQLException if the DB cannot be reached.
+	 * @throws NoDataStoreConnectionException if the DB cannot be reached.
+	 */
+	public static ArrayList<Client> getAllClientsSQL(final String businessTag, final DBQueries queryRunner)
+			throws SQLException, NoDataStoreConnectionException
+	{
+		ArrayList<Client> result = new ArrayList<Client>();
 
-        return result;
-    }
-
-    /**
-     * Returns all of the clients.
-     *
-     * @param businessTag The businessTag to limit the results
-     * @return All clients within a business.
-     * @throws NoDataStoreConnectionException If a connection cannot be made to the store.
-     */
-    public ArrayList<Client> getAllClients(final String businessTag)
-        throws NoDataStoreConnectionException {
-        ArrayList<Client> result = new ArrayList<Client>();
-
-        try {
-            result = getAllClientsSQL(businessTag, this);
-        } catch (SQLException e) {
-            this.handleSQLException(e);
-        } finally {
-            this.closeResultSet();
-            this.closeConnection();
-        }
-
-        return result;
-    }
-
-    /**
-     * Creates a client in the database with the given client and DB runner.
-     *
-     * @param client - the client to create in the database.
-     * @param queryRunner - the DB query runner.
-     * @throws SQLException if the DB cannot be reached.
-     * @throws SQLIntegrityConstraintViolationException if a key breaks the constraints of the DB.
-     */
-    public static void createClientSQL(Client client, DBQueries queryRunner)
-        throws SQLException, SQLIntegrityConstraintViolationException {
-        String query = "INSERT INTO BusinessClient(clientName, businessTag) VALUES (?, ?);";
-
-        final PreparedStatement stmt = queryRunner.connection.prepareStatement(query);
-        stmt.setString(1, client.getClientName());
-        stmt.setString(2, client.getBusinessTag());
-
-        stmt.executeUpdate();
-    }
-
-    /**
-     * Gets a client from the database with the given clientId and DB runner.
-     *
-     * @param clientId the client id to search for in the database.
-     * @param queryRunner - the DB query runner.
-     * @throws SQLException if the DB cannot be reached.
-     * @throws NoDataStoreConnectionException if the DB cannot be reached.
-     */
-    public static Client getClientSQL(int clientId, DBQueries queryRunner)
-        throws SQLException, NoDataStoreConnectionException {
-        Client result = null;
-
-        String query = "Select clientName, businessTag FROM BusinessClient WHERE BusinessClient.clientId = ?;";
-
-        final PreparedStatement stmt = queryRunner.connection.prepareStatement(query);
-        stmt.setInt(1, clientId);
-
-        queryRunner.resultSet = stmt.executeQuery();
-        while (queryRunner.resultSet.next()) {
-            result = new Client(
-                clientId,
-                queryRunner.resultSet.getString("clientName"),
-                queryRunner.resultSet.getString("businessTag"));
-        }
-
-        return result;
-    }
-
-
-    /**
-     * Gets all clients from the database.
-     *
-     * @param businessTag The businessTag to limit the results
-     * @param queryRunner the DB query runner.
-     * @throws SQLException if the DB cannot be reached.
-     * @throws NoDataStoreConnectionException if the DB cannot be reached.
-     */
-    public static ArrayList<Client> getAllClientsSQL(final String businessTag,
-        final DBQueries queryRunner)
-        throws SQLException, NoDataStoreConnectionException {
-        ArrayList<Client> result = new ArrayList<Client>();
-
-        String query = "Select clientId, clientName, businessTag FROM BusinessClient WHERE BusinessClient.businessTag = ?;";
-
-        final PreparedStatement stmt = queryRunner.connection.prepareStatement(query);
-        stmt.setString(1, businessTag);
-
-        queryRunner.resultSet = stmt.executeQuery();
-        while (queryRunner.resultSet.next()) {
-            result.add(new Client(
-                queryRunner.resultSet.getInt("clientId"),
-                queryRunner.resultSet.getString("clientName"),
-                queryRunner.resultSet.getString("businessTag")));
-        }
-
-        return result;
-    }
+		String query = "SELECT clientId, clientName, businessTag FROM BusinessClient WHERE BusinessClient.businessTag = ?;";
+		
+		final PreparedStatement stmt = queryRunner.connection.prepareStatement(query);
+		stmt.setString(1, businessTag);
+		
+		queryRunner.resultSet = stmt.executeQuery();
+		while (queryRunner.resultSet.next())
+		{
+			result.add(new Client(
+					queryRunner.resultSet.getInt("clientId"),
+					queryRunner.resultSet.getString("clientName"),
+					queryRunner.resultSet.getString("businessTag")));
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * Get the location owner id from the given client.
+	 * 
+	 * @param client - the client to interrogate.
+	 * @param queryRunner - the DB query runner.
+	 * @throws SQLException if the DB cannot be reached.
+	 * @throws SQLIntegrityConstraintViolationException if a key breaks the constraints of the DB.
+	 */
+	public static Integer getClientLocationOwnerIdSQL(Client client, DBQueries queryRunner) 
+			throws SQLException, SQLIntegrityConstraintViolationException
+	{
+		Integer result = null;
+		
+		String query = "SELECT locationOwnerId FROM BusinessClient WHERE BusinessClient.clientId = ?;";
+		
+		final PreparedStatement stmt = queryRunner.connection.prepareStatement(query);
+		int index = 1;
+		
+		stmt.setInt(index++, client.getClientId());
+		
+		ResultSet resultSet = stmt.executeQuery();
+		
+		if (resultSet.next()) 
+		{
+		    result = resultSet.getInt(1);
+		}
+		
+		return result;
+	}
 }

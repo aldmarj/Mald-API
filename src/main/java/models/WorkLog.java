@@ -18,7 +18,10 @@ public class WorkLog
 	/** The username of the employee who submitted it */
     private String userName;
 
-    /** The client if of the client the work was done against */
+	/** The business tag of the employee who submitted it */
+    private String businessTag;
+
+	/** The client if of the client the work was done against */
     private int clientId;
 
     /** The beginning time of the worklog */
@@ -29,8 +32,11 @@ public class WorkLog
 
     /** A description of the worklog */
     private String description;
+    
+    /** The location of the worklog. */
+    private Location location;
 
-    /**
+	/**
      * CLASS CONSTRUCTOR
      * 
      * @param workLogId - the id of the worklog.
@@ -40,11 +46,12 @@ public class WorkLog
      * @param endTime - the endtime of the log.
      * @param description - a free text description of work.
      */
-    public WorkLog(final int workLogId, final String userName, final int clientId,
+    public WorkLog(final int workLogId, final String userName, final String businessTag, final int clientId,
                    final long startTime, final long endTime, final String description)
     {
         this.workLogId = workLogId;
         this.userName = userName;
+        this.businessTag = businessTag;
         this.clientId = clientId;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -58,10 +65,12 @@ public class WorkLog
     {
         this.workLogId = -1;
         this.userName = "";
+        this.businessTag = "";
         this.clientId = -1;
         this.startTime = new Date().getTime();
         this.endTime = new Date().getTime();
         this.description = "";
+        this.location = null;
     }
     
     /**
@@ -179,5 +188,58 @@ public class WorkLog
 	public void setDescription(String description) 
 	{
 		this.description = description;
+	}
+
+	/**
+	 * Returns the location of the worklog.
+	 * 
+	 * @return the location of the worklog.
+	 */
+    public Location getLocation() 
+    {
+		return location;
+	}
+
+    /**
+     * Setter for the location of the worklog.
+     * 
+     * @param location the location to set.
+     */
+	public void setLocation(Location location) 
+	{
+		this.location = location;
+	}
+	
+	/**
+	 * Returns the businessTag of the worklog.
+	 * 
+	 * @return the businessTag of the worklog.
+	 */
+    public String getBusinessTag() 
+    {
+		return businessTag;
+	}
+
+    /**
+     * Setter for the businessTag of the worklog.
+     * 
+     * @param businessTag the businessTag to set.
+     */
+	public void setBusinessTag(String businessTag) 
+	{
+		this.businessTag = businessTag;
+	}
+	
+	/**
+	 * Determines whether the worklog is valid or not.
+	 * 
+	 * @return the validity of the worklog.
+	 */
+	public boolean isValid()
+	{
+		return (this.getStartTime() < this.getEndTime()
+				&& this.getClientId() > 0
+				&& !this.userName.isEmpty()
+				&& !this.businessTag.isEmpty());
 	}
 }

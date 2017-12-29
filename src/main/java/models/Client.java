@@ -1,5 +1,8 @@
 package models;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -16,11 +19,14 @@ public class Client
 
     private String businessTag;
 
+	private List<Location> locations;
+
     public Client()
     {
     	this.clientId = -1;
         this.clientName = "";
         this.businessTag = "";
+        this.locations = new ArrayList<Location>();
     }
     
     public Client(final int clientId, final String clientName, final String businessTag)
@@ -28,6 +34,7 @@ public class Client
         this.clientId = clientId;
         this.clientName = clientName;
         this.businessTag = businessTag;
+        this.locations = new ArrayList<Location>();
     }
 
     public int getClientId()
@@ -58,5 +65,15 @@ public class Client
 	public void setBusinessTag(String businessTag) 
 	{
 		this.businessTag = businessTag;
+	}
+	
+    public List<Location> getLocations() 
+    {
+		return locations;
+	}
+
+	public void setLocations(List<Location> list) 
+	{
+		this.locations = list;
 	}
 }
