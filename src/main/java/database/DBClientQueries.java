@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package database;
 
@@ -13,9 +13,9 @@ import java.util.List;
 import models.Client;
 
 /**
- * Class to contain helper functions for interaction with the database.
- * Each instance should only be used once.
- * 
+ * Class to contain helper functions for interaction with the database. Each instance should only be
+ * used once.
+ *
  * @author Lawrence
  */
 public final class DBClientQueries extends DBQueries 
@@ -34,8 +34,7 @@ public final class DBClientQueries extends DBQueries
 	/**
 	 * Creates a client in the database with the given name.
 	 * 
-	 * @param clientName - the tag of the new client.
-	 * @param businessTag - the name of the owning business.
+	 * @param client - the new client to add
 	 * @throws BadKeyException - If the given key is invalid.
 	 * @throws NoDataStoreConnectionException - If a connection cannot be made to the store.
 	 */
@@ -139,13 +138,13 @@ public final class DBClientQueries extends DBQueries
 	 * @return All clients.
 	 * @throws NoDataStoreConnectionException If a connection cannot be made to the store.
 	 */
-	public ArrayList<Client> getAllClients() throws NoDataStoreConnectionException
+	public ArrayList<Client> getAllClients(final String businessTag) throws NoDataStoreConnectionException
 	{
 		ArrayList<Client> result = new ArrayList<Client>();
 		
 	    try
 	    {		
-	    	result = getAllClientsSQL(this);
+	    	result = getAllClientsSQL(businessTag, this);
 	    	
 	    	for (Client client : result)
 	    	{
@@ -255,19 +254,21 @@ public final class DBClientQueries extends DBQueries
 	/**
 	 * Gets all clients from the database.
 	 * 
+	 * @param businessTag The businessTag to limit the results
 	 * @param queryRunner - the DB query runner.
 	 * @return All clients. 
 	 * @throws SQLException if the DB cannot be reached.
 	 * @throws NoDataStoreConnectionException if the DB cannot be reached.
 	 */
-	public static ArrayList<Client> getAllClientsSQL(DBQueries queryRunner)
+	public static ArrayList<Client> getAllClientsSQL(final String businessTag, final DBQueries queryRunner)
 			throws SQLException, NoDataStoreConnectionException
 	{
 		ArrayList<Client> result = new ArrayList<Client>();
 
-		String query = "SELECT clientId, clientName, businessTag FROM BusinessClient;";
+		String query = "SELECT clientId, clientName, businessTag FROM BusinessClient WHERE BusinessClient.businessTag = ?;";
 		
 		final PreparedStatement stmt = queryRunner.connection.prepareStatement(query);
+		stmt.setString(1, businessTag);
 		
 		queryRunner.resultSet = stmt.executeQuery();
 		while (queryRunner.resultSet.next())
