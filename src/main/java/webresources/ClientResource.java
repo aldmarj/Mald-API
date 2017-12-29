@@ -109,12 +109,21 @@ public class ClientResource
 		try 
 		{
             client.setBusinessTag(businessTag);
-			
-			new DBClientQueries().createClient(client);
-			
-			returnMessage = "Successfully added new client: " + client.getClientId();
-            LOGGER.info(returnMessage);
-			return returnMessage;
+            
+            if (client.isValid())
+            {
+            	new DBClientQueries().createClient(client);
+            	
+    			returnMessage = "Successfully added new client: " + client.getClientId();
+                LOGGER.info(returnMessage);
+    			return returnMessage;
+            }
+            else
+            {
+            	returnMessage = "Given client is not valid. Must contain a name, businessTag and no id.";
+                LOGGER.error(returnMessage);
+                throw new WebApplicationException(returnMessage, Response.Status.BAD_REQUEST);
+            }
 		}
 		catch (BadKeyException e)
 		{

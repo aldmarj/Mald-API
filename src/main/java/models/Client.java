@@ -76,4 +76,10 @@ public class Client
 	{
 		this.locations = list;
 	}
+	
+	public boolean isValid()
+	{
+		return !this.clientName.isEmpty() && !this.businessTag.isEmpty() 
+				&& this.clientId == -1;
+	}
 }
