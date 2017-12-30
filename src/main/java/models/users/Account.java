@@ -99,4 +99,16 @@ public final class Account implements Principal
                 && this.email.equals(otherAcc.email);
 
     }
+    
+	/**
+	 * Check to see if the account is valid.
+	 * 
+	 * @return true if the account is valid.
+	 */
+    public boolean isValid()
+    {
+    	return (!this.getBusinessTag().isEmpty()
+    			&& !this.getUserName().isEmpty()
+    			&& this.getStoredPassword() != null);
+    }
 }

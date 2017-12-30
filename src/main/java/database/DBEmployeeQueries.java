@@ -9,9 +9,10 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
+import java.util.Collection;
 
 /**
- * Class to contain manipulation functions for employees in the datastore.
+ * Class to contain manipulate the calling of functions for employees in the datastore.
  * Each instance should only be used once.
  * 
  * @author Lawrence
@@ -71,6 +72,7 @@ public final class DBEmployeeQueries extends DBQueries
 	    finally
 	    {
 	    	this.setAutoCommit(true);
+	    	this.closeResultSet();
 	    	this.closeConnection();
 	    }
 	}
@@ -106,18 +108,18 @@ public final class DBEmployeeQueries extends DBQueries
 	}
 	
 	/**
-	 * Returns all of the employees. 
+	 * Returns all of the employees for a given business. 
 	 * 
-	 * @return All employees.
+	 * @return All employees for a business.
 	 * @throws NoDataStoreConnectionException If a connection cannot be made to the store.
 	 */
-	public ArrayList<Employee> getAllEmployee() throws NoDataStoreConnectionException
+	public Collection<Employee> getAllEmployees(String businessTag) throws NoDataStoreConnectionException
 	{
-		ArrayList<Employee> result = new ArrayList<Employee>();
+		Collection<Employee> result = new ArrayList<Employee>();
 		
 	    try
 	    {		
-	    	result = getAllEmployeesSQL(this);
+	    	result = getAllEmployeesSQL(businessTag, this);
 		}
 	    catch (SQLException e) 
 	    {
@@ -132,6 +134,38 @@ public final class DBEmployeeQueries extends DBQueries
 	    return result;
 	}
 	
+	/**
+	 * Returns a range of employees for a given business based of how much they have worked
+	 * between two given times. 
+	 * 
+	 * @return the range of employees order by how much they have worked.
+	 * @throws NoDataStoreConnectionException If a connection cannot be made to the store.
+	 */
+	public Collection<Employee> getAllEmployeesbyMostWorkedRangeBetweenTimes(String businessTag,
+			int startRange, int endRange, long startTimeRange, int endTimeRange) 
+					throws NoDataStoreConnectionException
+	{
+		Collection<Employee> result = new ArrayList<Employee>();
+		
+	    try
+	    {		
+	    	result = 
+	    		getAllEmployeesbyMostWorkedRangeBetweenTimesSQL(
+	    				businessTag, startRange, endRange, startTimeRange, endTimeRange, this);
+		}
+	    catch (SQLException e) 
+	    {
+			this.handleSQLException(e);
+		}
+	    finally
+	    {
+	    	this.closeResultSet();
+	    	this.closeConnection();
+	    }
+	    
+	    return result;
+	}
+
 	/**
 	 * Creates a employee in the database with the given employee and DB runner.
 	 * 
@@ -174,8 +208,9 @@ public final class DBEmployeeQueries extends DBQueries
 	{
 		Employee result = null;
 		
-		String query = "SELECT firstName, surName, parentUser, jobRole "
-				+ "FROM Employee WHERE Employee.userName = ? AND Employee.businessTag = ?;";
+		String query = "SELECT userName, firstName, surName, parentUser, jobRole "
+				+ "FROM Employee WHERE Employee.userName = ? AND Employee.businessTag = ? "
+				+ "ORDER BY userName ASC;";
 		
 		final PreparedStatement stmt = queryRunner.connection.prepareStatement(query);
 		int i = 1;
@@ -197,21 +232,22 @@ public final class DBEmployeeQueries extends DBQueries
 	}
 	
 	/**
-	 * Gets all employees from the database.
+	 * Get employees from the database from a business within a range by most worked.
 	 * 
 	 * @param queryRunner - the DB query runner.
 	 * @throws SQLException if the DB cannot be reached.
 	 * @throws NoDataStoreConnectionException if the DB cannot be reached.
 	 */
-	public static ArrayList<Employee> getAllEmployeesSQL(DBQueries queryRunner) 
+	public static ArrayList<Employee> getAllEmployeesSQL(String businessTag, DBQueries queryRunner) 
 			throws NoDataStoreConnectionException, SQLException
 	{
 		ArrayList<Employee> result = new ArrayList<Employee>();
 		
 		String query = "SELECT userName, firstName, surName, businessTag, parentUser, jobRole "
-				+ "FROM Employee";
+				+ "FROM Employee WHERE Employee.businessTag = ? ORDER BY userName ASC;";
 		
 		final PreparedStatement stmt = queryRunner.connection.prepareStatement(query);
+		stmt.setString(1, businessTag);
 		
 		queryRunner.resultSet = stmt.executeQuery();
 		while (queryRunner.resultSet.next())
@@ -224,6 +260,59 @@ public final class DBEmployeeQueries extends DBQueries
 					queryRunner.resultSet.getString("surName"),
 					queryRunner.resultSet.getString("parentUser"),
 					queryRunner.resultSet.getString("jobRole")));
+		}
+		
+		return result;
+	}
+	
+	
+	/**
+	 * Get employees from the database from a business within a range given by most worked.
+	 * 
+	 * @param businessTag - The business to interrogate.
+	 * @param startrange - The start of the range to return.
+	 * @param endRange - The end of the range to return.
+	 * @param queryRunner - the DB query runner.
+	 * @throws SQLException if a key constraint is violated.
+	 * @throws NoDataStoreConnectionException if the DB cannot be reached.
+	 */
+	private Collection<Employee> getAllEmployeesbyMostWorkedRangeBetweenTimesSQL(
+			String businessTag, int startRange, int endRange, long startTimeRange, long endTimeRange,
+			DBQueries queryRunner) throws SQLException, NoDataStoreConnectionException 
+	{
+		Collection<Employee> result = new ArrayList<Employee>();
+		
+		String query = "SELECT Employee.userName, firstName, surName, Employee.businessTag, parentUser, jobRole, "
+			+ "SUM(WorkLog.endTime - WorkLog.startTime) as hoursWorked "
+			+ "FROM Employee "
+			+ "LEFT JOIN WorkLog ON Employee.userName = WorkLog.userName AND Employee.businessTag = WorkLog.businessTag "
+			+ "AND WorkLog.startTime >= ? AND WorkLog.endTime <= ? "
+			+ "WHERE Employee.businessTag = ? "
+			+ "GROUP BY Employee.userName "
+			+ "ORDER BY hoursWorked DESC "
+			+ "LIMIT ? OFFSET ?;";
+		
+		final PreparedStatement stmt = queryRunner.connection.prepareStatement(query);
+		int columnIndex = 1;
+		
+		stmt.setLong(columnIndex++, startTimeRange);
+		stmt.setLong(columnIndex++, endTimeRange);
+		stmt.setString(columnIndex++, businessTag);
+		stmt.setInt(columnIndex++, endRange - startRange);
+		stmt.setInt(columnIndex++, startRange);
+		
+		queryRunner.resultSet = stmt.executeQuery();
+		while (queryRunner.resultSet.next())
+		{
+			result.add(new Employee(
+					new DBAccountQueries().getAccount(
+							queryRunner.resultSet.getString("userName"),
+							queryRunner.resultSet.getString("businessTag")),
+					queryRunner.resultSet.getString("firstName"),
+					queryRunner.resultSet.getString("surName"),
+					queryRunner.resultSet.getString("parentUser"),
+					queryRunner.resultSet.getString("jobRole"),
+					queryRunner.resultSet.getInt("hoursWorked")));
 		}
 		
 		return result;
