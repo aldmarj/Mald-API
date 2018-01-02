@@ -115,7 +115,7 @@ public class EmployeeResource
 	 */
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
-	public String putEmployee(@PathParam("buisnessTag") String businessTag, 
+	public String postEmployee(@PathParam("buisnessTag") String businessTag, 
 			@Context SecurityContext securityContext,
 			Employee employee)
 	{

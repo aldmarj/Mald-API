@@ -7,21 +7,31 @@ import database.BadKeyException;
 import database.DBBusinessQueries;
 import database.NoDataStoreConnectionException;
 import models.Business;
+import models.Employee;
+import models.users.Password;
+import utils.PasswordUtils;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import org.apache.log4j.Logger;
+
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
 /**
  * @author Lawrence
  * 
- * Business servlet to handle business processing.
+ * Business resource to handle business processing.
  *
  */
 @Path("/business")
 public class BusinessResource
 {
+    /** Logger **/
+    private static final Logger LOGGER = Logger.getLogger(BusinessResource.class);
+    
 	/**
 	 * Get a business from the API, will return the business for the given tag
 	 * 
@@ -79,21 +89,61 @@ public class BusinessResource
 	 */
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response putBusiness(Business business)
+	public String putBusiness(Business business)
 	{
+		String returnMessage;
+		
 		try 
 		{
-			new DBBusinessQueries().createBusiness(business);
+			Employee employee = business.getDefaultEmployee();
 			
-			return Response.status(200).entity("").build();
+			employee.setBusinessTag(business.getBusinessTag());
+
+			// Check the requested password is okay
+			if (employee.getRequestedPassword() != null 
+					&& PasswordUtils.conformsToSecurityRules(employee.getRequestedPassword()))
+			{
+				// Generate the salted hash for the password
+				employee.getAccount().setStoredPassword(
+						Password.fromPlainText(employee.getRequestedPassword()));
+				
+				if (business.isValid())
+				{
+					new DBBusinessQueries().createBusiness(business);
+					
+					returnMessage = "Business created succesfully";
+		            LOGGER.info(returnMessage);
+		            return returnMessage;
+				}
+				{
+					returnMessage = "Invalid business supplied";
+				}
+			}
+			else
+			{
+				returnMessage = "Password needs at least 8 characters; one upper case, one lower case and a digit";
+			}
+			
+            LOGGER.error(returnMessage);
+            throw new WebApplicationException(returnMessage, Response.Status.BAD_REQUEST);
 		}
-		catch (BadKeyException e)
+		catch (final BadKeyException e)
 		{
-			return Response.status(400).entity("Tag already exists").build();
+			returnMessage = "Business with given businessTag already exists";
+            LOGGER.error(returnMessage);
+            throw new WebApplicationException(returnMessage, e, Response.Status.BAD_REQUEST);
 		}
-		catch (NoDataStoreConnectionException e)
+		catch (final NoDataStoreConnectionException e)
 		{
-			return Response.status(400).entity("No data store found").build();
+			returnMessage = "No data store found";
+            LOGGER.error(returnMessage, e);
+            throw new WebApplicationException(returnMessage, e, Response.Status.SERVICE_UNAVAILABLE);
+		} 
+		catch (NoSuchAlgorithmException e) 
+		{
+            returnMessage = "Server could not authenticate password";
+            LOGGER.error(returnMessage, e);
+            throw new WebApplicationException(returnMessage, e, Response.Status.INTERNAL_SERVER_ERROR);
 		}
 	}
 }

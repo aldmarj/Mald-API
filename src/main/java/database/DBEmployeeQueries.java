@@ -174,7 +174,7 @@ public final class DBEmployeeQueries extends DBQueries
 	 * @throws SQLException if the DB cannot be reached.
 	 * @throws SQLIntegrityConstraintViolationException if a key breaks the constraints of the DB.
 	 */
-	private static void createEmployeeSQL(Employee employee, DBQueries queryRunner) 
+	public static void createEmployeeSQL(Employee employee, DBQueries queryRunner) 
 			throws SQLException, SQLIntegrityConstraintViolationException
 	{
 		String query = "INSERT INTO Employee("
@@ -276,7 +276,7 @@ public final class DBEmployeeQueries extends DBQueries
 	 * @throws SQLException if a key constraint is violated.
 	 * @throws NoDataStoreConnectionException if the DB cannot be reached.
 	 */
-	private Collection<Employee> getAllEmployeesbyMostWorkedRangeBetweenTimesSQL(
+	private static Collection<Employee> getAllEmployeesbyMostWorkedRangeBetweenTimesSQL(
 			String businessTag, int startRange, int endRange, long startTimeRange, long endTimeRange,
 			DBQueries queryRunner) throws SQLException, NoDataStoreConnectionException 
 	{
