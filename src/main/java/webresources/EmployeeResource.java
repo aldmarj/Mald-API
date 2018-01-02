@@ -13,6 +13,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import javax.ws.rs.core.Response.Status;
 
 import org.apache.log4j.Logger;
 
@@ -152,25 +153,29 @@ public class EmployeeResource
 			}
 			
             LOGGER.error(returnMessage);
-            throw new WebApplicationException(returnMessage, Response.Status.BAD_REQUEST);
+            throw new WebApplicationException(returnMessage, 
+            		Response.status(Status.BAD_REQUEST).entity(returnMessage).build());
 		}
 		catch (final BadKeyException e)
 		{
 			returnMessage = "Employee with given username already exists";
             LOGGER.error(returnMessage);
-            throw new WebApplicationException(returnMessage, e, Response.Status.BAD_REQUEST);
+            throw new WebApplicationException(returnMessage, e, 
+            		Response.status(Status.BAD_REQUEST).entity(returnMessage).build());
 		}
 		catch (final NoDataStoreConnectionException e)
 		{
 			returnMessage = "No data store found";
             LOGGER.error(returnMessage, e);
-            throw new WebApplicationException(returnMessage, e, Response.Status.SERVICE_UNAVAILABLE);
+            throw new WebApplicationException(returnMessage, e, 
+            		Response.status(Status.SERVICE_UNAVAILABLE).entity(returnMessage).build());
 		} 
 		catch (NoSuchAlgorithmException e) 
 		{
             returnMessage = "Server could not authenticate password";
             LOGGER.error(returnMessage, e);
-            throw new WebApplicationException(returnMessage, e, Response.Status.INTERNAL_SERVER_ERROR);
+            throw new WebApplicationException(returnMessage, e, 
+            		Response.status(Status.INTERNAL_SERVER_ERROR).entity(returnMessage).build());
 		}
 	}
 }
