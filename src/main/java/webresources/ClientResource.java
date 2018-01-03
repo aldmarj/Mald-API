@@ -17,6 +17,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.apache.log4j.Logger;
 
@@ -27,7 +28,7 @@ import models.Client;
  *
  * @author Lawrence
  */
-@Path("/business/{buisnessTag}/client")
+@Path("/business/{businessTag}/client")
 public class ClientResource
 {
     /** Logger **/
@@ -65,6 +66,7 @@ public class ClientResource
 	
 	/**
 	 * Returns all clients.
+	 * 
 	 * @param The business tag to get clients for.
 	 * @return the requested client.
 	 */
@@ -122,20 +124,23 @@ public class ClientResource
             {
             	returnMessage = "Given client is not valid. Must contain a name, businessTag and no id.";
                 LOGGER.error(returnMessage);
-                throw new WebApplicationException(returnMessage, Response.Status.BAD_REQUEST);
+                throw new WebApplicationException(returnMessage,
+                		Response.status(Status.BAD_REQUEST).entity(returnMessage).build());
             }
 		}
 		catch (BadKeyException e)
 		{
 			returnMessage = "A key used already exists in the database";
             LOGGER.error(returnMessage, e);
-            throw new WebApplicationException(returnMessage, Response.Status.BAD_REQUEST);
+            throw new WebApplicationException(returnMessage, e,
+            		Response.status(Status.BAD_REQUEST).entity(returnMessage).build());
 		}
 		catch (NoDataStoreConnectionException e)
 		{
 			returnMessage = "No datastore found";
             LOGGER.error(returnMessage, e);
-            throw new WebApplicationException(returnMessage, e, Response.Status.SERVICE_UNAVAILABLE);
+            throw new WebApplicationException(returnMessage, e,
+            		Response.status(Status.SERVICE_UNAVAILABLE).entity(returnMessage).build());
 		}
 	}
 }

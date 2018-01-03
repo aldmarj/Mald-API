@@ -189,7 +189,7 @@ public final class DBEmployeeQueries extends DBQueries
 		stmt.setString(index++, employee.getFirstName());
 		stmt.setString(index++, employee.getSurName());
 		stmt.setString(index++, employee.getBusinessTag());
-		stmt.setString(index++, employee.hasParent() ? employee.getUserName() : null);
+		stmt.setString(index++, employee.hasParent() ? employee.getParentUserName() : null);
 		stmt.setString(index++, employee.getJobRole());
 		
 		stmt.executeUpdate();

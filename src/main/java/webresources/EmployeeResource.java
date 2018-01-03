@@ -12,8 +12,8 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.SecurityContext;
 
 import org.apache.log4j.Logger;
 
@@ -176,6 +176,7 @@ public class EmployeeResource
             LOGGER.error(returnMessage, e);
             throw new WebApplicationException(returnMessage, e, 
             		Response.status(Status.INTERNAL_SERVER_ERROR).entity(returnMessage).build());
+
 		}
 	}
 }
