@@ -27,7 +27,7 @@ import models.Client;
  *
  * @author Lawrence
  */
-@Path("/business/{buisnessTag}/client")
+@Path("/business/{businessTag}/client")
 public class ClientResource
 {
     /** Logger **/
