@@ -1,7 +1,7 @@
 /**
  * 
  */
-package database;
+package exceptions;
 
 /**
  * Generic duplicate key exception to mask how the datastore is working.

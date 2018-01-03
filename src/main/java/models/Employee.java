@@ -1,7 +1,5 @@
 package models;
 
-import models.users.Account;
-
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**

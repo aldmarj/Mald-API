@@ -17,9 +17,9 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.log4j.Logger;
 
-import database.BadKeyException;
 import database.DBWorkLogQueries;
-import database.NoDataStoreConnectionException;
+import exceptions.BadKeyException;
+import exceptions.NoDataStoreConnectionException;
 
 /**
  * WorkLog servlet to handle worklog processing.
