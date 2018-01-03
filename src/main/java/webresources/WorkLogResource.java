@@ -13,6 +13,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import javax.ws.rs.core.Response.Status;
 
 import org.apache.log4j.Logger;
 
@@ -192,19 +193,22 @@ public class WorkLogResource
 			
 			String message = "Invalid worklog supplied";
             LOGGER.error(message);
-            throw new WebApplicationException(message, Response.Status.BAD_REQUEST);
+            throw new WebApplicationException(message,
+            		Response.status(Status.BAD_REQUEST).entity(message).build());
 		}
 		catch (final BadKeyException e)
 		{
 			String message = "Worklog of given id already exists";
             LOGGER.error(message);
-            throw new WebApplicationException(message, e, Response.Status.BAD_REQUEST);
+            throw new WebApplicationException(message, e,
+            		Response.status(Status.BAD_REQUEST).entity(message).build());
 		}
 		catch (final NoDataStoreConnectionException e)
 		{
 			String message = "No data store found";
             LOGGER.error(message, e);
-            throw new WebApplicationException(message, e, Response.Status.SERVICE_UNAVAILABLE);
+            throw new WebApplicationException(message, e,
+            		Response.status(Status.SERVICE_UNAVAILABLE).entity(message).build());
 		}
 	}
 }

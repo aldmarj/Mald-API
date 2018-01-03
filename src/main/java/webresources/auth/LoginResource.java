@@ -10,6 +10,8 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import javax.ws.rs.core.Response.Status;
+
 import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
 
@@ -24,6 +26,12 @@ public class LoginResource
     /** Logger **/
     private static final Logger LOGGER = Logger.getLogger(LoginResource.class);
 
+    /**
+     * Get current user's name or null if there is no one logged in.
+     * 
+     * @param sc - the security context.
+     * @return the name of the current user.
+     */
     @GET
     public String getName(@Context SecurityContext sc)
     {
@@ -31,6 +39,14 @@ public class LoginResource
         return principal == null ? "null" : principal.getName();
     }
 
+    /**
+     * Attempt to login to the API.
+     * 
+     * @param businessTag - The business context to login to.
+     * @param username - The user to login to.
+     * @param password - The password of the user to attempt to match.
+     * @return a session key to use to access the API.
+     */
     @POST
     @Consumes("application/x-www-form-urlencoded")
     public String login(@PathParam("businessTag") final String businessTag,
@@ -49,15 +65,19 @@ public class LoginResource
         {
             final String msg = "Could not connect to authentication database"; //todo externalise
             LOGGER.error(msg, e);
-            throw new WebApplicationException(msg, e, Response.Status.SERVICE_UNAVAILABLE);
+            throw new WebApplicationException(msg, e, 
+            		Response.status(Status.SERVICE_UNAVAILABLE).entity(msg).build());
         }
         catch (final NoSuchAlgorithmException e)
         {
             final String msg = "Server could not authenticate password"; //todo externalise
             LOGGER.error(msg, e);
-            throw new WebApplicationException(msg, e, Response.Status.INTERNAL_SERVER_ERROR);
+            throw new WebApplicationException(msg, e, 
+            		Response.status(Status.INTERNAL_SERVER_ERROR).entity(msg).build());
         }
+        final String msg = "username or password is incorrect";
         LOGGER.info("user '" + username + "' failed to login"); //NON-NLS
-        throw new WebApplicationException("username or password is incorrect", Response.Status.FORBIDDEN);
+        throw new WebApplicationException(msg,
+        		Response.status(Status.FORBIDDEN).entity(msg).build());
     }
 }
