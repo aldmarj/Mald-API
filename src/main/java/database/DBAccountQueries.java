@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 
 import exceptions.BadKeyException;
-import exceptions.NoDataStoreConnectionException;
+import exceptions.DataAccessException;
 import models.Account;
 import models.Password;
 
@@ -23,9 +23,9 @@ public class DBAccountQueries extends DBQueries {
 	/**
 	 * CLASS CONSTRUCTOR
 	 * 
-	 * @throws NoDataStoreConnectionException
+	 * @throws DataAccessException
 	 */
-	public DBAccountQueries() throws NoDataStoreConnectionException
+	public DBAccountQueries() throws DataAccessException
 	{
 		super();
 	}
@@ -35,10 +35,10 @@ public class DBAccountQueries extends DBQueries {
 	 * 
 	 * @param account - The account details to store.
 	 * @throws BadKeyException - The key is not valid for the datastore.
-	 * @throws NoDataStoreConnectionException - The datastore cannot be reached.
+	 * @throws DataAccessException - The datastore cannot be reached.
 	 */
 	public void createAccount(Account account)
-			throws BadKeyException, NoDataStoreConnectionException
+			throws BadKeyException, DataAccessException
 	{
 		try
 		{    				
@@ -65,9 +65,9 @@ public class DBAccountQueries extends DBQueries {
 	 * @param userName - The userName of the account to find.
 	 * @param businessTag - The business the account to belongs to.
 	 * @return The requested account.
-	 * @throws NoDataStoreConnectionException If a connection cannot be made to the store.
+	 * @throws DataAccessException If a connection cannot be made to the store.
 	 */
-	public Account getAccount(String userName, String businessTag) throws NoDataStoreConnectionException
+	public Account getAccount(String userName, String businessTag) throws DataAccessException
 	{
 		Account result = null;
 		
@@ -122,11 +122,11 @@ public class DBAccountQueries extends DBQueries {
 	 * @param businessTag the business of the user.
 	 * @param queryRunner - the name of the new account.
 	 * @return the account requested.
-	 * @throws NoDataStoreConnectionException - If a connection cannot be made to the store.
+	 * @throws DataAccessException - If a connection cannot be made to the store.
 	 * @throws SQLException - If a connection cannot be made to the store.
 	 */
 	public static Account getAccountSQL(String userName, String businessTag, DBQueries queryRunner)
-			throws SQLException, NoDataStoreConnectionException
+			throws SQLException, DataAccessException
 	{
 		Account result = null;
 		

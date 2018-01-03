@@ -10,7 +10,7 @@ package exceptions;
  *
  */
 @SuppressWarnings("serial")
-public class NoDataStoreConnectionException extends Exception {
+public class DataAccessException extends Exception {
 
 	/**
 	 * CLASS CONSTRUCTOR
@@ -18,7 +18,7 @@ public class NoDataStoreConnectionException extends Exception {
 	 * @param message - a message to describe the error.
 	 * @param cause - the original error we are abstracting.
 	 */
-    public NoDataStoreConnectionException(String message, Throwable cause) 
+    public DataAccessException(String message, Throwable cause) 
     {
         super(message, cause);
     }

@@ -5,7 +5,7 @@ package webresources;
 
 import database.DBClientQueries;
 import exceptions.BadKeyException;
-import exceptions.NoDataStoreConnectionException;
+import exceptions.DataAccessException;
 
 import java.util.ArrayList;
 import javax.ws.rs.Consumes;
@@ -58,7 +58,7 @@ public class ClientResource
 				throw new WebApplicationException(Response.Status.NOT_FOUND);
 			}
 		}
-		catch (NoDataStoreConnectionException e) 
+		catch (DataAccessException e) 
 		{
 			throw new WebApplicationException(Response.Status.BAD_GATEWAY);		
 		}
@@ -89,7 +89,7 @@ public class ClientResource
 				throw new WebApplicationException(Response.Status.NOT_FOUND);
 			}
 		}
-		catch (NoDataStoreConnectionException e) 
+		catch (DataAccessException e) 
 		{
 			throw new WebApplicationException(Response.Status.BAD_GATEWAY);		
 		}
@@ -135,7 +135,7 @@ public class ClientResource
             throw new WebApplicationException(returnMessage, e,
             		Response.status(Status.BAD_REQUEST).entity(returnMessage).build());
 		}
-		catch (NoDataStoreConnectionException e)
+		catch (DataAccessException e)
 		{
 			returnMessage = "No datastore found";
             LOGGER.error(returnMessage, e);

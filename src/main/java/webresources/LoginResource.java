@@ -1,7 +1,7 @@
 package webresources;
 
 import database.DBAccountQueries;
-import exceptions.NoDataStoreConnectionException;
+import exceptions.DataAccessException;
 import models.Account;
 
 import org.apache.log4j.Logger;
@@ -63,7 +63,7 @@ public class LoginResource
                 return AuthenticationFilter.addAuthenticatedAccount(account);
             }
         }
-        catch (final NoDataStoreConnectionException e)
+        catch (final DataAccessException e)
         {
             final String msg = "Could not connect to authentication database"; //todo externalise
             LOGGER.error(msg, e);

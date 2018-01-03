@@ -9,7 +9,7 @@ import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 
 import exceptions.BadKeyException;
-import exceptions.NoDataStoreConnectionException;
+import exceptions.DataAccessException;
 import models.Business;
 
 /**
@@ -24,9 +24,9 @@ public final class DBBusinessQueries extends DBQueries
 	/**
 	 * CLASS CONSTRUCTOR
 	 * 
-	 * @throws NoDataStoreConnectionException
+	 * @throws DataAccessException
 	 */
-	public DBBusinessQueries() throws NoDataStoreConnectionException
+	public DBBusinessQueries() throws DataAccessException
 	{
 		super();
 	}
@@ -36,10 +36,10 @@ public final class DBBusinessQueries extends DBQueries
 	 * 
 	 * @param business - The business details to add.
 	 * @throws BadKeyException in the key given is invalid.
-	 * @throws NoDataStoreConnectionException if a connection to the datastore cannot be made.
+	 * @throws DataAccessException if a connection to the datastore cannot be made.
 	 */
 	public void createBusiness(Business business) 
-			throws BadKeyException, NoDataStoreConnectionException
+			throws BadKeyException, DataAccessException
 	{
 	    try
 	    {		
@@ -74,9 +74,9 @@ public final class DBBusinessQueries extends DBQueries
 	 * 
 	 * @param businessTag - The tag of the business to find.
 	 * @return The requested business.
-	 * @throws NoDataStoreConnectionException If a connection cannot be made to the store.
+	 * @throws DataAccessException If a connection cannot be made to the store.
 	 */
-	public Business getBusiness(String businessTag) throws NoDataStoreConnectionException
+	public Business getBusiness(String businessTag) throws DataAccessException
 	{
 		Business result = null;
 		
@@ -101,9 +101,9 @@ public final class DBBusinessQueries extends DBQueries
 	 * Returns all of the business. 
 	 * 
 	 * @return All businesses.
-	 * @throws NoDataStoreConnectionException If a connection cannot be made to the store.
+	 * @throws DataAccessException If a connection cannot be made to the store.
 	 */
-	public ArrayList<Business> getAllBusinesses() throws NoDataStoreConnectionException
+	public ArrayList<Business> getAllBusinesses() throws DataAccessException
 	{
 		ArrayList<Business> result = new ArrayList<Business>();
 		
@@ -150,10 +150,10 @@ public final class DBBusinessQueries extends DBQueries
 	 * @param businessTag - the businessTag to search for in the database.
 	 * @param queryRunner - the DB query runner.
 	 * @throws SQLException if the DB cannot be reached.
-	 * @throws NoDataStoreConnectionException if the DB cannot be reached.
+	 * @throws DataAccessException if the DB cannot be reached.
 	 */
 	private static Business getBusinessSQL(String businessTag, DBQueries queryRunner) 
-			throws SQLException, NoDataStoreConnectionException
+			throws SQLException, DataAccessException
 	{
 		Business result = null;
 
@@ -178,10 +178,10 @@ public final class DBBusinessQueries extends DBQueries
 	 * 
 	 * @param queryRunner - the DB query runner.
 	 * @throws SQLException if the DB cannot be reached.
-	 * @throws NoDataStoreConnectionException if the DB cannot be reached.
+	 * @throws DataAccessException if the DB cannot be reached.
 	 */
 	public static ArrayList<Business> getAllBusinessesSQL(DBQueries queryRunner) 
-			throws NoDataStoreConnectionException, SQLException
+			throws DataAccessException, SQLException
 	{
 		ArrayList<Business> result = new ArrayList<Business>();
 

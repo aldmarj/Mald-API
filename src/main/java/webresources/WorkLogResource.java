@@ -19,7 +19,7 @@ import org.apache.log4j.Logger;
 
 import database.DBWorkLogQueries;
 import exceptions.BadKeyException;
-import exceptions.NoDataStoreConnectionException;
+import exceptions.DataAccessException;
 
 /**
  * WorkLog servlet to handle worklog processing.
@@ -58,7 +58,7 @@ public class WorkLogResource
 				throw new WebApplicationException(Response.Status.NOT_FOUND);
 			}
 		}
-		catch (NoDataStoreConnectionException e) 
+		catch (DataAccessException e) 
 		{
 			throw new WebApplicationException(Response.Status.BAD_GATEWAY);		
 		}
@@ -90,7 +90,7 @@ public class WorkLogResource
 				throw new WebApplicationException(Response.Status.NOT_FOUND);
 			}
 		}
-		catch (NoDataStoreConnectionException e) 
+		catch (DataAccessException e) 
 		{
 			throw new WebApplicationException(Response.Status.BAD_GATEWAY);		
 		}
@@ -126,7 +126,7 @@ public class WorkLogResource
 				throw new WebApplicationException(Response.Status.NOT_FOUND);
 			}
 		}
-		catch (NoDataStoreConnectionException e) 
+		catch (DataAccessException e) 
 		{
 			throw new WebApplicationException(Response.Status.BAD_GATEWAY);		
 		}
@@ -161,7 +161,7 @@ public class WorkLogResource
 				throw new WebApplicationException(Response.Status.NOT_FOUND);
 			}
 		}
-		catch (NoDataStoreConnectionException e) 
+		catch (DataAccessException e) 
 		{
 			throw new WebApplicationException(Response.Status.BAD_GATEWAY);		
 		}
@@ -203,7 +203,7 @@ public class WorkLogResource
             throw new WebApplicationException(message, e,
             		Response.status(Status.BAD_REQUEST).entity(message).build());
 		}
-		catch (final NoDataStoreConnectionException e)
+		catch (final DataAccessException e)
 		{
 			String message = "No data store found";
             LOGGER.error(message, e);

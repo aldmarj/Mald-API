@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import exceptions.BadKeyException;
-import exceptions.NoDataStoreConnectionException;
+import exceptions.DataAccessException;
 import models.Client;
 
 /**
@@ -26,9 +26,9 @@ public final class DBClientQueries extends DBQueries
 	/**
 	 * CLASS CONSTRUCTOR
 	 * 
-	 * @throws NoDataStoreConnectionException
+	 * @throws DataAccessException
 	 */
-	public DBClientQueries() throws NoDataStoreConnectionException
+	public DBClientQueries() throws DataAccessException
 	{
 		super();
 	}
@@ -38,10 +38,10 @@ public final class DBClientQueries extends DBQueries
 	 * 
 	 * @param client - the new client to add
 	 * @throws BadKeyException - If the given key is invalid.
-	 * @throws NoDataStoreConnectionException - If a connection cannot be made to the store.
+	 * @throws DataAccessException - If a connection cannot be made to the store.
 	 */
 	public void createClient(Client client) 
-			throws BadKeyException, NoDataStoreConnectionException
+			throws BadKeyException, DataAccessException
 	{		
 	    try
 	    {		
@@ -76,9 +76,9 @@ public final class DBClientQueries extends DBQueries
 	 * 
 	 * @param clientId the ID of the client to find.
 	 * @return The requested client.
-	 * @throws NoDataStoreConnectionException If a connection cannot be made to the store.
+	 * @throws DataAccessException If a connection cannot be made to the store.
 	 */
-	public Client getClient(int clientId) throws NoDataStoreConnectionException
+	public Client getClient(int clientId) throws DataAccessException
 	{
 		Client result = null;
 		
@@ -111,9 +111,9 @@ public final class DBClientQueries extends DBQueries
 	 * 
 	 * @param client the client to return the location of.
 	 * @return the location owner id.
-	 * @throws NoDataStoreConnectionException if the data store cannot be reached.
+	 * @throws DataAccessException if the data store cannot be reached.
 	 */
-	public Integer getClientLocationOwnerId(Client client) throws NoDataStoreConnectionException
+	public Integer getClientLocationOwnerId(Client client) throws DataAccessException
 	{
 		Integer result = null;
 		
@@ -138,9 +138,9 @@ public final class DBClientQueries extends DBQueries
 	 * Returns all of the clients. 
 	 * 
 	 * @return All clients.
-	 * @throws NoDataStoreConnectionException If a connection cannot be made to the store.
+	 * @throws DataAccessException If a connection cannot be made to the store.
 	 */
-	public ArrayList<Client> getAllClients(final String businessTag) throws NoDataStoreConnectionException
+	public ArrayList<Client> getAllClients(final String businessTag) throws DataAccessException
 	{
 		ArrayList<Client> result = new ArrayList<Client>();
 		
@@ -175,10 +175,10 @@ public final class DBClientQueries extends DBQueries
 	 * @param queryRunner - the DB query runner.
 	 * @throws SQLException if the DB cannot be reached.
 	 * @throws SQLIntegrityConstraintViolationException if a key breaks the constraints of the DB.
-	 * @throws NoDataStoreConnectionException if the DB cannot be reached.
+	 * @throws DataAccessException if the DB cannot be reached.
 	 */
 	public static void createClientSQL(Client client, DBQueries queryRunner) 
-			throws SQLException, SQLIntegrityConstraintViolationException, NoDataStoreConnectionException
+			throws SQLException, SQLIntegrityConstraintViolationException, DataAccessException
 	{
 		int locationOwnerId = DBLocationQueries.createLocationOwnerSQL(queryRunner);
 		
@@ -225,10 +225,10 @@ public final class DBClientQueries extends DBQueries
 	 * @param queryRunner - the DB query runner.
 	 * @return the client requested.
 	 * @throws SQLException if the DB cannot be reached.
-	 * @throws NoDataStoreConnectionException if the DB cannot be reached.
+	 * @throws DataAccessException if the DB cannot be reached.
 	 */
 	public static Client getClientSQL(int clientId, DBQueries queryRunner)
-			throws SQLException, NoDataStoreConnectionException
+			throws SQLException, DataAccessException
 	{
 		Client result = null;
 
@@ -260,10 +260,10 @@ public final class DBClientQueries extends DBQueries
 	 * @param queryRunner - the DB query runner.
 	 * @return All clients. 
 	 * @throws SQLException if the DB cannot be reached.
-	 * @throws NoDataStoreConnectionException if the DB cannot be reached.
+	 * @throws DataAccessException if the DB cannot be reached.
 	 */
 	public static ArrayList<Client> getAllClientsSQL(final String businessTag, final DBQueries queryRunner)
-			throws SQLException, NoDataStoreConnectionException
+			throws SQLException, DataAccessException
 	{
 		ArrayList<Client> result = new ArrayList<Client>();
 
