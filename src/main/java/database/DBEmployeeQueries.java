@@ -11,6 +11,9 @@ import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import exceptions.BadKeyException;
+import exceptions.NoDataStoreConnectionException;
+
 /**
  * Class to contain manipulate the calling of functions for employees in the datastore.
  * Each instance should only be used once.

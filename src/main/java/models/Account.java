@@ -1,4 +1,4 @@
-package models.users;
+package models;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.security.Principal;

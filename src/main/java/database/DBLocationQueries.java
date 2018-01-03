@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import exceptions.BadKeyException;
+import exceptions.NoDataStoreConnectionException;
 import models.Location;
 
 /**

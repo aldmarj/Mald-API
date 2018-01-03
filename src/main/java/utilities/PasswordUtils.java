@@ -1,7 +1,7 @@
 /**
  * 
  */
-package utils;
+package utilities;
 
 /**
  * Utility class to help with password validation.
