@@ -15,6 +15,9 @@ public class Business
 
     /** The full name of the business */
     private String businessName;
+
+    /** The initial employee for the business **/
+	private Employee initialEmployee;
     
     /**
      * CLASS CONSTRUCTOR
@@ -76,4 +79,36 @@ public class Business
     {
         this.businessTag = businessTag;
     }
+    
+    /**
+     * Get the initial employee.
+     * 
+     * @return the initial employee.
+     */
+    public Employee getDefaultEmployee() 
+    {
+		return initialEmployee;
+	}
+
+    /**
+     * Set the initial employee.
+     * 
+     * @param initialEmployee.
+     */
+	public void setDefaultEmployee(Employee initialEmployee) 
+	{
+		this.initialEmployee = initialEmployee;
+	}
+	
+	/**
+	 * True if the business is valid.
+	 * 
+	 * @return the validity of the business.
+	 */
+	public boolean isValid()
+	{
+		return !this.businessName.isEmpty() 
+				&& !this.businessTag.isEmpty()
+				&& this.initialEmployee.isValid();
+	}
 }

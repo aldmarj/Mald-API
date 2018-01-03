@@ -57,7 +57,7 @@ public class DBQueries {
 	 */
 	protected void handleSQLException(SQLException e) throws NoDataStoreConnectionException
 	{
-		logger.error("Failed to get a connection to the database" + e);
+		logger.error("Failed to get a connection to the database");
 		throw new NoDataStoreConnectionException ("Failed to get a connection"
 				+ " to the database.", e);
 	}
@@ -71,7 +71,7 @@ public class DBQueries {
 	protected void handleIntegrityConstaitViolation(SQLIntegrityConstraintViolationException e) 
 			throws BadKeyException
 	{
-		logger.error("Tried to insert a primary or foreign key that does not abide to constraints.", e);
+		logger.error("Tried to insert a primary or foreign key that does not abide to constraints.");
 		throw new BadKeyException ("Tried to insert a primary or foreign key that does not abide to constraints.", e);
 	}
 	

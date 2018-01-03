@@ -43,18 +43,27 @@ public final class DBBusinessQueries extends DBQueries
 	{
 	    try
 	    {		
+	    	this.setAutoCommit(false);
+	    	
 	    	createBusinessSQL(business, this);
+			DBAccountQueries.createAccountSQL(business.getDefaultEmployee().getAccount(), this);
+	    	DBEmployeeQueries.createEmployeeSQL(business.getDefaultEmployee(), this);
+	    	
+	    	this.commit();
 		} 
 	    catch (SQLIntegrityConstraintViolationException e)
 	    {
-			this.handleIntegrityConstaitViolation(e);			
+			this.handleIntegrityConstaitViolation(e);
+			this.rollback();
 	    }
 	    catch (SQLException e) 
 	    {
 	    	this.handleSQLException(e);
+	    	this.rollback();
 		}
 	    finally
 	    {
+	    	this.setAutoCommit(true);
 	    	this.closeConnection();
 	    }
 	}
@@ -148,7 +157,7 @@ public final class DBBusinessQueries extends DBQueries
 	{
 		Business result = null;
 
-		String query = "Select businessTag, businessName FROM Business WHERE Business.businessTag = ?;";
+		String query = "SELECT businessTag, businessName FROM Business WHERE Business.businessTag = ?;";
 		
 		final PreparedStatement stmt = queryRunner.connection.prepareStatement(query);
 		stmt.setString(1, businessTag);
@@ -176,7 +185,7 @@ public final class DBBusinessQueries extends DBQueries
 	{
 		ArrayList<Business> result = new ArrayList<Business>();
 
-		String query = "Select businessTag, businessName FROM Business;";
+		String query = "SELECT businessTag, businessName FROM Business ORDER BY businessTag ASC;";
 		
 		final PreparedStatement stmt = queryRunner.connection.prepareStatement(query);
 		

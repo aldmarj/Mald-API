@@ -116,7 +116,7 @@ public class EmployeeResource
 	 */
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
-	public String putEmployee(@PathParam("buisnessTag") String businessTag, 
+	public String postEmployee(@PathParam("buisnessTag") String businessTag, 
 			@Context SecurityContext securityContext,
 			Employee employee)
 	{
@@ -174,7 +174,7 @@ public class EmployeeResource
 		{
             returnMessage = "Server could not authenticate password";
             LOGGER.error(returnMessage, e);
-            throw new WebApplicationException(returnMessage, e,
+            throw new WebApplicationException(returnMessage, e, 
             		Response.status(Status.INTERNAL_SERVER_ERROR).entity(returnMessage).build());
 
 		}
