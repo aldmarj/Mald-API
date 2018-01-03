@@ -8,8 +8,8 @@ import exceptions.BadKeyException;
 import exceptions.NoDataStoreConnectionException;
 import models.Business;
 import models.Employee;
-import models.users.Password;
-import utils.PasswordUtils;
+import models.Password;
+import utilities.PasswordUtils;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
