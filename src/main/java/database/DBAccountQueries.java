@@ -3,12 +3,14 @@
  */
 package database;
 
-import models.users.Account;
-import models.users.Password;
-
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
+
+import exceptions.BadKeyException;
+import exceptions.NoDataStoreConnectionException;
+import models.Account;
+import models.Password;
 
 /**
  * Class to contain manipulation functions for accounts in the datastore.

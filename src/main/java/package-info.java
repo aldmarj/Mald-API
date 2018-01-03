@@ -1,3 +1,0 @@
-/**
- * java classes go here
- */

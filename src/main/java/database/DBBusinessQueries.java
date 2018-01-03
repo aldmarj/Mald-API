@@ -8,6 +8,8 @@ import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 
+import exceptions.BadKeyException;
+import exceptions.NoDataStoreConnectionException;
 import models.Business;
 
 /**

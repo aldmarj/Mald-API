@@ -1,8 +1,8 @@
 package webresources;
 
 import models.Employee;
-import models.users.Password;
-import utils.PasswordUtils;
+import models.Password;
+import utilities.PasswordUtils;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -17,9 +17,9 @@ import javax.ws.rs.core.SecurityContext;
 
 import org.apache.log4j.Logger;
 
-import database.BadKeyException;
 import database.DBEmployeeQueries;
-import database.NoDataStoreConnectionException;
+import exceptions.BadKeyException;
+import exceptions.NoDataStoreConnectionException;
 
 /**
  * Employee servlet to handle employee processing.

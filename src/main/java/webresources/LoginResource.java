@@ -1,10 +1,12 @@
-package webresources.auth;
+package webresources;
 
 import database.DBAccountQueries;
-import database.NoDataStoreConnectionException;
-import models.users.Account;
+import exceptions.NoDataStoreConnectionException;
+import models.Account;
 
 import org.apache.log4j.Logger;
+
+import authentication.AuthenticationFilter;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;

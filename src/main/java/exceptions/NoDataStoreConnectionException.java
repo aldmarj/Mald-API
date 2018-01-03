@@ -1,7 +1,7 @@
 /**
  * 
  */
-package database;
+package exceptions;
 
 /**
  * Generic no data store connection to mask the datastore backend.

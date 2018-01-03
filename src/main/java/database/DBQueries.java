@@ -10,6 +10,9 @@ import java.sql.SQLIntegrityConstraintViolationException;
 
 import org.apache.log4j.Logger;
 
+import exceptions.BadKeyException;
+import exceptions.NoDataStoreConnectionException;
+
 /**
  * @author Lawrence
  *

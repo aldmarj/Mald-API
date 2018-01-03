@@ -10,6 +10,8 @@ import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
 
+import exceptions.BadKeyException;
+import exceptions.NoDataStoreConnectionException;
 import models.Client;
 
 /**

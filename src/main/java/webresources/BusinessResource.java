@@ -3,9 +3,9 @@
  */
 package webresources;
 
-import database.BadKeyException;
 import database.DBBusinessQueries;
-import database.NoDataStoreConnectionException;
+import exceptions.BadKeyException;
+import exceptions.NoDataStoreConnectionException;
 import models.Business;
 import models.Employee;
 import models.users.Password;

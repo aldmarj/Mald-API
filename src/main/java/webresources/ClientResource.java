@@ -3,9 +3,9 @@
  */
 package webresources;
 
-import database.BadKeyException;
 import database.DBClientQueries;
-import database.NoDataStoreConnectionException;
+import exceptions.BadKeyException;
+import exceptions.NoDataStoreConnectionException;
 
 import java.util.ArrayList;
 import javax.ws.rs.Consumes;
