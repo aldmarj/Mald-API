@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import exceptions.BadKeyException;
-import exceptions.NoDataStoreConnectionException;
+import exceptions.DataAccessException;
 
 /**
  * Class to contain manipulate the calling of functions for employees in the datastore.
@@ -26,9 +26,9 @@ public final class DBEmployeeQueries extends DBQueries
 	/**
 	 * CLASS CONSTRUCTOR
 	 * 
-	 * @throws NoDataStoreConnectionException
+	 * @throws DataAccessException
 	 */
-	public DBEmployeeQueries() throws NoDataStoreConnectionException
+	public DBEmployeeQueries() throws DataAccessException
 	{
 		super();
 	}
@@ -38,10 +38,10 @@ public final class DBEmployeeQueries extends DBQueries
 	 * 
 	 * @param employee the employee details to add.
 	 * @throws BadKeyException in the key given is invalid.
-	 * @throws NoDataStoreConnectionException if a connection to the datastore cannot be made.
+	 * @throws DataAccessException if a connection to the datastore cannot be made.
 	 */
 	public void createEmployeeAccount(Employee employee)
-			throws BadKeyException, NoDataStoreConnectionException
+			throws BadKeyException, DataAccessException
 	{
 		try
 		{
@@ -87,9 +87,9 @@ public final class DBEmployeeQueries extends DBQueries
 	 * @param userName - The userName of the employee to find.
 	 * @param businessTag - The Business of the employee.
 	 * @return The requested employee.
-	 * @throws NoDataStoreConnectionException If a connection cannot be made to the store.
+	 * @throws DataAccessException If a connection cannot be made to the store.
 	 */
-	public Employee getEmployee(String userName, String businessTag) throws NoDataStoreConnectionException
+	public Employee getEmployee(String userName, String businessTag) throws DataAccessException
 	{
 		Employee result = null;
 		
@@ -114,9 +114,9 @@ public final class DBEmployeeQueries extends DBQueries
 	 * Returns all of the employees for a given business. 
 	 * 
 	 * @return All employees for a business.
-	 * @throws NoDataStoreConnectionException If a connection cannot be made to the store.
+	 * @throws DataAccessException If a connection cannot be made to the store.
 	 */
-	public Collection<Employee> getAllEmployees(String businessTag) throws NoDataStoreConnectionException
+	public Collection<Employee> getAllEmployees(String businessTag) throws DataAccessException
 	{
 		Collection<Employee> result = new ArrayList<Employee>();
 		
@@ -142,11 +142,11 @@ public final class DBEmployeeQueries extends DBQueries
 	 * between two given times. 
 	 * 
 	 * @return the range of employees order by how much they have worked.
-	 * @throws NoDataStoreConnectionException If a connection cannot be made to the store.
+	 * @throws DataAccessException If a connection cannot be made to the store.
 	 */
 	public Collection<Employee> getAllEmployeesbyMostWorkedRangeBetweenTimes(String businessTag,
 			int startRange, int endRange, long startTimeRange, int endTimeRange) 
-					throws NoDataStoreConnectionException
+					throws DataAccessException
 	{
 		Collection<Employee> result = new ArrayList<Employee>();
 		
@@ -204,10 +204,10 @@ public final class DBEmployeeQueries extends DBQueries
 	 * @param userName - the userName to search for in the database.
 	 * @param queryRunner - the DB query runner.
 	 * @throws SQLException if the DB cannot be reached.
-	 * @throws NoDataStoreConnectionException if the DB cannot be reached.
+	 * @throws DataAccessException if the DB cannot be reached.
 	 */
 	private static Employee getEmployeeSQL(String userName, String businessTag, DBQueries queryRunner) 
-			throws SQLException, NoDataStoreConnectionException
+			throws SQLException, DataAccessException
 	{
 		Employee result = null;
 		
@@ -239,10 +239,10 @@ public final class DBEmployeeQueries extends DBQueries
 	 * 
 	 * @param queryRunner - the DB query runner.
 	 * @throws SQLException if the DB cannot be reached.
-	 * @throws NoDataStoreConnectionException if the DB cannot be reached.
+	 * @throws DataAccessException if the DB cannot be reached.
 	 */
 	public static ArrayList<Employee> getAllEmployeesSQL(String businessTag, DBQueries queryRunner) 
-			throws NoDataStoreConnectionException, SQLException
+			throws DataAccessException, SQLException
 	{
 		ArrayList<Employee> result = new ArrayList<Employee>();
 		
@@ -277,11 +277,11 @@ public final class DBEmployeeQueries extends DBQueries
 	 * @param endRange - The end of the range to return.
 	 * @param queryRunner - the DB query runner.
 	 * @throws SQLException if a key constraint is violated.
-	 * @throws NoDataStoreConnectionException if the DB cannot be reached.
+	 * @throws DataAccessException if the DB cannot be reached.
 	 */
 	private static Collection<Employee> getAllEmployeesbyMostWorkedRangeBetweenTimesSQL(
 			String businessTag, int startRange, int endRange, long startTimeRange, long endTimeRange,
-			DBQueries queryRunner) throws SQLException, NoDataStoreConnectionException 
+			DBQueries queryRunner) throws SQLException, DataAccessException 
 	{
 		Collection<Employee> result = new ArrayList<Employee>();
 		

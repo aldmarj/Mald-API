@@ -11,7 +11,7 @@ import java.sql.SQLIntegrityConstraintViolationException;
 import org.apache.log4j.Logger;
 
 import exceptions.BadKeyException;
-import exceptions.NoDataStoreConnectionException;
+import exceptions.DataAccessException;
 
 /**
  * @author Lawrence
@@ -31,9 +31,9 @@ public class DBQueries {
 	/**
 	 * CLASS CONSTRUCTOR
 	 * 
-	 * @throws NoDataStoreConnectionException
+	 * @throws DataAccessException
 	 */
-	public DBQueries() throws NoDataStoreConnectionException
+	public DBQueries() throws DataAccessException
 	{
     	try 
     	{
@@ -44,7 +44,7 @@ public class DBQueries {
     	catch (SQLException e) 
     	{
     		logger.error("Failed to get a connection to the database" + e);
-    		throw new NoDataStoreConnectionException ("Failed to get a connection"
+    		throw new DataAccessException ("Failed to get a connection"
     				+ " to the database.", e);
     	}
 	}
@@ -53,12 +53,12 @@ public class DBQueries {
 	 * Log the issue and throw a more general exception.
 	 * 
 	 * @param e the original exception thrown.
-	 * @throws NoDataStoreConnectionException when the datastore cannot be reached.
+	 * @throws DataAccessException when the datastore cannot be reached.
 	 */
-	protected void handleSQLException(SQLException e) throws NoDataStoreConnectionException
+	protected void handleSQLException(SQLException e) throws DataAccessException
 	{
 		logger.error("Failed to get a connection to the database");
-		throw new NoDataStoreConnectionException ("Failed to get a connection"
+		throw new DataAccessException ("Failed to get a connection"
 				+ " to the database.", e);
 	}
 	
@@ -66,7 +66,7 @@ public class DBQueries {
 	 * Log the issue and throw a more general exception.
 	 * 
 	 * @param e the original exception thrown.
-	 * @throws NoDataStoreConnectionException when the datastore cannot be reached.
+	 * @throws DataAccessException when the datastore cannot be reached.
 	 */
 	protected void handleIntegrityConstaitViolation(SQLIntegrityConstraintViolationException e) 
 			throws BadKeyException
@@ -104,9 +104,9 @@ public class DBQueries {
 	/**
 	 * Commit the changes to the database.
 	 * 
-	 * @throws NoDataStoreConnectionException
+	 * @throws DataAccessException
 	 */
-	protected void commit() throws NoDataStoreConnectionException
+	protected void commit() throws DataAccessException
 	{
 		try 
 		{
@@ -128,9 +128,9 @@ public class DBQueries {
 	/**
 	 * Clear the changes to the database.
 	 * 
-	 * @throws NoDataStoreConnectionException
+	 * @throws DataAccessException
 	 */
-	protected void rollback() throws NoDataStoreConnectionException
+	protected void rollback() throws DataAccessException
 	{
 		try 
 		{

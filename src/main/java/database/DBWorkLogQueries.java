@@ -13,7 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import exceptions.BadKeyException;
-import exceptions.NoDataStoreConnectionException;
+import exceptions.DataAccessException;
 import models.Location;
 import models.WorkLog;
 
@@ -28,9 +28,9 @@ public class DBWorkLogQueries extends DBQueries {
 	/**
 	 * CLASS CONSTRUCTOR
 	 * 
-	 * @throws NoDataStoreConnectionException
+	 * @throws DataAccessException
 	 */
-	public DBWorkLogQueries() throws NoDataStoreConnectionException
+	public DBWorkLogQueries() throws DataAccessException
 	{
 		super();
 	}
@@ -40,10 +40,10 @@ public class DBWorkLogQueries extends DBQueries {
 	 * 
 	 * @param worklog - The worklog details to store.
 	 * @throws BadKeyException - The key is not valid for the datastore.
-	 * @throws NoDataStoreConnectionException - The datastore cannot be reached.
+	 * @throws DataAccessException - The datastore cannot be reached.
 	 */
 	public void createWorkLog(WorkLog workLog)
-			throws BadKeyException, NoDataStoreConnectionException
+			throws BadKeyException, DataAccessException
 	{
 		try
 		{			
@@ -84,10 +84,10 @@ public class DBWorkLogQueries extends DBQueries {
 	 * @param startTime - The time to start searching from.
 	 * @param endTime - The time to end searching from.
 	 * @return The requested worklog.
-	 * @throws NoDataStoreConnectionException If a connection cannot be made to the store.
+	 * @throws DataAccessException If a connection cannot be made to the store.
 	 */
 	public ArrayList<WorkLog> getAllWorkLogsForTimeRangeAndEmployee(String userName, String businessTag, long startTime, long endTime) 
-			throws NoDataStoreConnectionException
+			throws DataAccessException
 	{
 		ArrayList<WorkLog> result = new ArrayList<WorkLog>();
 		
@@ -127,10 +127,10 @@ public class DBWorkLogQueries extends DBQueries {
 	 * @param startTime - The time to start searching from.
 	 * @param endTime - The time to end searching from.
 	 * @return The requested worklog.
-	 * @throws NoDataStoreConnectionException If a connection cannot be made to the store.
+	 * @throws DataAccessException If a connection cannot be made to the store.
 	 */
 	public ArrayList<WorkLog> getAllWorkLogsForTimeRange(String businessTag, long startTime, long endTime) 
-			throws NoDataStoreConnectionException
+			throws DataAccessException
 	{
 		ArrayList<WorkLog> result = new ArrayList<WorkLog>();
 		
@@ -169,9 +169,9 @@ public class DBWorkLogQueries extends DBQueries {
 	 * 
 	 * @param worklogId - The workLogId of the worklog to find.
 	 * @return The requested worklog.
-	 * @throws NoDataStoreConnectionException If a connection cannot be made to the store.
+	 * @throws DataAccessException If a connection cannot be made to the store.
 	 */
-	public WorkLog getWorkLog(int workLogId) throws NoDataStoreConnectionException
+	public WorkLog getWorkLog(int workLogId) throws DataAccessException
 	{
 		WorkLog result = null;
 		
@@ -209,9 +209,9 @@ public class DBWorkLogQueries extends DBQueries {
 	 * 
 	 * @param username - The user of the worklogs to find.
 	 * @return The requested worklogs.
-	 * @throws NoDataStoreConnectionException If a connection cannot be made to the store.
+	 * @throws DataAccessException If a connection cannot be made to the store.
 	 */
-	public ArrayList<WorkLog> getWorkLogbyUser(String username) throws NoDataStoreConnectionException
+	public ArrayList<WorkLog> getWorkLogbyUser(String username) throws DataAccessException
 	{
 		ArrayList<WorkLog> result = new ArrayList<WorkLog>();
 		
@@ -249,9 +249,9 @@ public class DBWorkLogQueries extends DBQueries {
 	 * 
 	 * @param workLog the worklog to find the id for.
 	 * @return the owner id of the worklog.
-	 * @throws NoDataStoreConnectionException If a connection cannot be made to the store.
+	 * @throws DataAccessException If a connection cannot be made to the store.
 	 */
-	public Integer getWorkLogLocationOwnerId(WorkLog workLog) throws NoDataStoreConnectionException
+	public Integer getWorkLogLocationOwnerId(WorkLog workLog) throws DataAccessException
 	{
 		Integer result = null;
 		
@@ -279,11 +279,11 @@ public class DBWorkLogQueries extends DBQueries {
 	 * @param queryRunner - the DB query runner.
 	 * @throws SQLException if the DB cannot be reached.
 	 * @throws SQLIntegrityConstraintViolationException if a key breaks the constraints of the DB.
-	 * @throws NoDataStoreConnectionException if the DB cannot be reached.
+	 * @throws DataAccessException if the DB cannot be reached.
 	 * @throws BadKeyException 
 	 */
 	public static void createWorkLogSQL(WorkLog workLog, DBQueries queryRunner) 
-			throws SQLException, SQLIntegrityConstraintViolationException, NoDataStoreConnectionException, BadKeyException
+			throws SQLException, SQLIntegrityConstraintViolationException, DataAccessException, BadKeyException
 	{
 		int locationOwnerId = DBLocationQueries.createLocationOwnerSQL(queryRunner);
 				
@@ -338,10 +338,10 @@ public class DBWorkLogQueries extends DBQueries {
 	 * @param workLogId - the workLogId to search for.
 	 * @param queryRunner - the DB query runner.
 	 * @throws SQLException - if the DB cannot be reached.
-	 * @throws NoDataStoreConnectionException - if the DB cannot be reached.
+	 * @throws DataAccessException - if the DB cannot be reached.
 	 */
 	public static WorkLog getWorkLogSQL(int workLogId, DBQueries queryRunner) 
-			throws SQLException, NoDataStoreConnectionException
+			throws SQLException, DataAccessException
 	{
 		WorkLog result = null;
 		
@@ -375,10 +375,10 @@ public class DBWorkLogQueries extends DBQueries {
 	 * @param workLogUser - the user to search for.
 	 * @param queryRunner - the DB query runner.
 	 * @throws SQLException - if the DB cannot be reached.
-	 * @throws NoDataStoreConnectionException - if the DB cannot be reached.
+	 * @throws DataAccessException - if the DB cannot be reached.
 	 */
 	public static ArrayList<WorkLog> getWorkLogbyUserSQL(String username, DBQueries queryRunner) 
-			throws SQLException, NoDataStoreConnectionException
+			throws SQLException, DataAccessException
 	{
 		ArrayList<WorkLog> result = new ArrayList<WorkLog>();
 		
@@ -414,11 +414,11 @@ public class DBWorkLogQueries extends DBQueries {
 	 * @param endTime - the given endTime to work from.
 	 * @param queryRunner - the DB query runner.
 	 * @throws SQLException - if the DB cannot be reached.
-	 * @throws NoDataStoreConnectionException - if the DB cannot be reached.
+	 * @throws DataAccessException - if the DB cannot be reached.
 	 */
 	public static ArrayList<WorkLog> getAllWorkLogsForTimeRangeAndEmployeeSQL(
 			String userName, String businessTag, long startTime, long endTime, DBQueries queryRunner) 
-			throws NoDataStoreConnectionException, SQLException
+			throws DataAccessException, SQLException
 	{
 		ArrayList<WorkLog> result = new ArrayList<WorkLog>();
 		
@@ -457,11 +457,11 @@ public class DBWorkLogQueries extends DBQueries {
 	 * @param endTime - the given endTime to work from.
 	 * @param queryRunner - the DB query runner.
 	 * @throws SQLException - if the DB cannot be reached.
-	 * @throws NoDataStoreConnectionException - if the DB cannot be reached.
+	 * @throws DataAccessException - if the DB cannot be reached.
 	 */
 	public static ArrayList<WorkLog> getAllWorkLogsForTimeRangeSQL(
 			String businessTag, long startTime, long endTime, DBQueries queryRunner) 
-			throws NoDataStoreConnectionException, SQLException
+			throws DataAccessException, SQLException
 	{
 		ArrayList<WorkLog> result = new ArrayList<WorkLog>();
 		

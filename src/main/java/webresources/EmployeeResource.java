@@ -19,7 +19,7 @@ import org.apache.log4j.Logger;
 
 import database.DBEmployeeQueries;
 import exceptions.BadKeyException;
-import exceptions.NoDataStoreConnectionException;
+import exceptions.DataAccessException;
 
 /**
  * Employee servlet to handle employee processing.
@@ -58,7 +58,7 @@ public class EmployeeResource
 				throw new WebApplicationException(Response.Status.NOT_FOUND);
 			}
 		}
-		catch (NoDataStoreConnectionException e) 
+		catch (DataAccessException e) 
 		{
 			throw new WebApplicationException(Response.Status.BAD_GATEWAY);		
 		}
@@ -101,7 +101,7 @@ public class EmployeeResource
 				throw new WebApplicationException(Response.Status.NOT_FOUND);
 			}
 		}
-		catch (NoDataStoreConnectionException e) 
+		catch (DataAccessException e) 
 		{
 			throw new WebApplicationException(Response.Status.BAD_GATEWAY);		
 		}
@@ -163,7 +163,7 @@ public class EmployeeResource
             throw new WebApplicationException(returnMessage, e, 
             		Response.status(Status.BAD_REQUEST).entity(returnMessage).build());
 		}
-		catch (final NoDataStoreConnectionException e)
+		catch (final DataAccessException e)
 		{
 			returnMessage = "No data store found";
             LOGGER.error(returnMessage, e);

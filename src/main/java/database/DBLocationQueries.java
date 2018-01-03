@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.List;
 
 import exceptions.BadKeyException;
-import exceptions.NoDataStoreConnectionException;
+import exceptions.DataAccessException;
 import models.Location;
 
 /**
@@ -27,9 +27,9 @@ public class DBLocationQueries extends DBQueries
 	/**
 	 * CLASS CONSTRUCTOR
 	 * 
-	 * @throws NoDataStoreConnectionException
+	 * @throws DataAccessException
 	 */
-	public DBLocationQueries() throws NoDataStoreConnectionException 
+	public DBLocationQueries() throws DataAccessException 
 	{
 		super();
 	}
@@ -39,11 +39,11 @@ public class DBLocationQueries extends DBQueries
 	 * 
 	 * @return the id of the location owner.
 	 * @throws BadKeyException 
-	 * @throws NoDataStoreConnectionException 
+	 * @throws DataAccessException 
 	 * @throws SQLException if the DB cannot be reached.
 	 * @throws SQLIntegrityConstraintViolationException if a key breaks the constraints of the DB.
 	 */
-	public int createLocationOwner() throws BadKeyException, NoDataStoreConnectionException 
+	public int createLocationOwner() throws BadKeyException, DataAccessException 
 	{
 		int result = -1;
 		try
