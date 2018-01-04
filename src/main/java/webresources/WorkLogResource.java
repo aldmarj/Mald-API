@@ -176,13 +176,11 @@ public class WorkLogResource
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	public String putWorkLog(@PathParam("buisnessTag") String businessTag,
-			@Context SecurityContext securityContext,
 			WorkLog workLog)
 	{
 		try 
 		{
 			workLog.setBusinessTag(businessTag);
-			workLog.setUserName(securityContext.getUserPrincipal().getName());
 			
 			if (workLog.isValid())
 			{
