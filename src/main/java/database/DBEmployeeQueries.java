@@ -145,7 +145,7 @@ public final class DBEmployeeQueries extends DBQueries
 	 * @throws DataAccessException If a connection cannot be made to the store.
 	 */
 	public Collection<Employee> getAllEmployeesbyMostWorkedRangeBetweenTimes(String businessTag,
-			int startRange, int endRange, long startTimeRange, int endTimeRange) 
+			int startRange, int endRange, long startTimeRange, long endTimeRange) 
 					throws DataAccessException
 	{
 		Collection<Employee> result = new ArrayList<Employee>();
