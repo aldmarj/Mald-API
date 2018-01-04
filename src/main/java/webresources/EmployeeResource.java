@@ -81,7 +81,7 @@ public class EmployeeResource
 	@Path("mostWorked/top/{startRange : \\d+}/{endRange : \\d+}/between/{startTimeRange : \\d+}/{endTimeRange : \\d+}")
 	public Collection<Employee> getEmployeebyMostWorkedRange(@PathParam("buisnessTag") String businessTag,
 			@PathParam("startRange") int startRange, @PathParam("endRange") int endRange,
-			@PathParam("startTimeRange") long startTimeRange, @PathParam("endTimeRange") int endTimeRange)
+			@PathParam("startTimeRange") long startTimeRange, @PathParam("endTimeRange") long endTimeRange)
 	{	
 		Collection<Employee> employees = new ArrayList<Employee>();
 		
