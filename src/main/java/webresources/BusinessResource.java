@@ -20,6 +20,7 @@ import org.apache.log4j.Logger;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Lawrence
@@ -151,4 +152,29 @@ public class BusinessResource
             		Response.status(Status.INTERNAL_SERVER_ERROR).entity(returnMessage).build());
 		}
 	}
+	
+	/**
+	 * Create new businesses in the database with the given business objects.
+	 */
+	@POST
+	@Path("/import")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public String postBusinesses(List<Business> businesses)
+	{
+		for (Business business : businesses)
+		{
+			try {
+				postBusiness(business);
+			}
+			catch (WebApplicationException e)
+			{
+				LOGGER.info("Failed to add: " + business);
+				LOGGER.info(e.getMessage());
+			}
+		}
+
+		String returnMessage = "All businesses created succesfully";
+        LOGGER.info(returnMessage);
+        return returnMessage;
+    }
 }

@@ -6,6 +6,8 @@ import org.apache.catalina.realm.SecretKeyCredentialHandler;
 import java.security.NoSuchAlgorithmException;
 import java.util.ResourceBundle;
 
+import javax.xml.bind.annotation.XmlElement;
+
 /**
  * Class representing a users stored password. i.e. after the plain text has been hashed.
  * this allows central setting of algorithm and easier comparisons to other passwords.

@@ -1,5 +1,6 @@
 package models;
 
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -12,28 +13,35 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Employee
 {
 	/** The first name of the employee. **/
+	@XmlElement
     private String firstName;
 
 	/** The surname of the employee. **/
+	@XmlElement
     private String surName;
 
 	/** The manager of the employee's username. **/
+	@XmlElement(nillable = true)
     private String parentUserName;
 
 	/** A description of the employees role. **/
+	@XmlElement(nillable = true)
     private String jobRole;
 
     /** The account details of the employee. **/
+	@XmlElement
     private Account account;
 
     /** A optional field to return an amount of hours worked. Used
      * for dashboard purposes.
      **/
+	@XmlElement(nillable = true)
 	private int hoursWorked;
 	
     /** A optional field to request a password. Used for
      * the post request.
 	 **/
+	@XmlElement
 	private String requestedPassword;
 
 	/**
@@ -103,7 +111,7 @@ public class Employee
     
     public boolean hasParent()
     {
-    	return this.parentUserName != null;
+    	return this.parentUserName != null && !this.parentUserName.isEmpty();
     }
 
     public String getJobRole()

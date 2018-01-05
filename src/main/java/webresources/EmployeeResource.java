@@ -7,13 +7,12 @@ import utilities.PasswordUtils;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.SecurityContext;
 
 import org.apache.log4j.Logger;
 
@@ -111,13 +110,11 @@ public class EmployeeResource
 	 * Post method for creating a new employee.
 	 * 
 	 * @param businessTag - The business to add the employee to.
-	 * @param securityContext - The session information of the logged in user.
 	 * @param employee - The details of the new employee to create.
 	 */
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	public String postEmployee(@PathParam("buisnessTag") String businessTag, 
-			@Context SecurityContext securityContext,
 			Employee employee)
 	{
 		String returnMessage;
@@ -138,9 +135,10 @@ public class EmployeeResource
 				if (employee.isValid())
 				{
 					new DBEmployeeQueries().createEmployeeAccount(employee);
-					
-					return employee.getHoursWorked() == -1 
-							? "Successfully added" : "Warning! hours worked cannot be set";
+					returnMessage = employee.getHoursWorked() == -1 
+							? "Successfully added employee" : "Warning! hours worked cannot be set";
+					LOGGER.info(returnMessage);
+					return returnMessage;
 				}
 				else
 				{
@@ -178,5 +176,34 @@ public class EmployeeResource
             		Response.status(Status.INTERNAL_SERVER_ERROR).entity(returnMessage).build());
 
 		}
+	}
+	
+	/**
+	 * Post method for creating a new employee.
+	 * 
+	 * @param businessTag - The business to add the employee to.
+	 * @param employees - The details of the new employees to create.
+	 */
+	@POST
+	@Path("/import")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public String postEmployees(@PathParam("buisnessTag") String businessTag, 
+			List<Employee> employees)
+	{
+		for (Employee employee : employees)
+		{
+			try {
+				postEmployee(businessTag, employee);
+			}
+			catch (WebApplicationException e)
+			{
+				LOGGER.info("Failed to add: " + employee);
+				LOGGER.info(e.getMessage());
+			}
+		}
+
+		String returnMessage = "All employees created succesfully";
+        LOGGER.info(returnMessage);
+        return returnMessage;	
 	}
 }

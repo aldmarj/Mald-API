@@ -214,8 +214,11 @@ public final class DBClientQueries extends DBQueries
     	Integer locationOwnerId = getClientLocationOwnerIdSQL(client, queryRunner);
     	
     	// Then create the locations for this id
-    	List<Integer> locationIds = DBLocationQueries.createLocationsSQL(client.getLocations(), queryRunner);
-    	DBLocationQueries.createLocationOwnerToLocationsSQL(locationIds, locationOwnerId, queryRunner);
+    	if (client.getLocations() != null)
+    	{
+	    	List<Integer> locationIds = DBLocationQueries.createLocationsSQL(client.getLocations(), queryRunner);
+	    	DBLocationQueries.createLocationOwnerToLocationsSQL(locationIds, locationOwnerId, queryRunner);
+    	}
 	}
 	
 	/**

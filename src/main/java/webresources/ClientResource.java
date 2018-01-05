@@ -8,6 +8,8 @@ import exceptions.BadKeyException;
 import exceptions.DataAccessException;
 
 import java.util.ArrayList;
+import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -143,5 +145,34 @@ public class ClientResource
             		Response.status(Status.SERVICE_UNAVAILABLE).entity(returnMessage).build());
 		}
 	}
+	
+	/**
+	 * Post method for creating a new client.
+	 * 
+	 * @param businessTag the id of the business to add to.
+	 * @param clients the clients to add to the datastore.
+	 */
+	@POST
+	@Path("/import")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public String putClients(@PathParam("businessTag") String businessTag, 
+			List<Client> clients)
+	{
+		for (Client client : clients)
+		{
+			try {
+				putClient(businessTag, client);
+			}
+			catch (WebApplicationException e)
+			{
+				LOGGER.info("Failed to add: " + client);
+				LOGGER.info(e.getMessage());
+			}
+		}
+
+		String returnMessage = "All clients created succesfully";
+        LOGGER.info(returnMessage);
+        return returnMessage;	
+    }
 }
 
