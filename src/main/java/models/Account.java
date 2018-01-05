@@ -1,5 +1,6 @@
 package models;
 
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.security.Principal;
 import javax.xml.bind.annotation.XmlTransient;
@@ -8,12 +9,15 @@ import javax.xml.bind.annotation.XmlTransient;
 @XmlRootElement
 public final class Account implements Principal
 {
+	@XmlElement
     private String userName;
 
     private Password storedPassword;
     
+	@XmlElement
     private String businessTag;
 
+	@XmlElement(nillable = true)
     private String email;
 
     public Account()

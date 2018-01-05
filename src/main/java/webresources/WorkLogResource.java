@@ -9,10 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.log4j.Logger;
@@ -178,6 +176,8 @@ public class WorkLogResource
 	public String putWorkLog(@PathParam("buisnessTag") String businessTag,
 			WorkLog workLog)
 	{
+		String message;
+
 		try 
 		{
 			workLog.setBusinessTag(businessTag);
@@ -186,27 +186,58 @@ public class WorkLogResource
 			{
 				new DBWorkLogQueries().createWorkLog(workLog);
 				
-				return "Successfully added";
+				message = "Successfully added worklog";
+	            LOGGER.info(message);
+				return message;
 			}
 			
-			String message = "Invalid worklog supplied";
+			message = "Invalid worklog supplied";
             LOGGER.error(message);
             throw new WebApplicationException(message,
             		Response.status(Status.BAD_REQUEST).entity(message).build());
 		}
 		catch (final BadKeyException e)
 		{
-			String message = "Worklog of given id already exists";
+			message = "Client or employee does not correspond to existing records";
             LOGGER.error(message);
             throw new WebApplicationException(message, e,
             		Response.status(Status.BAD_REQUEST).entity(message).build());
 		}
 		catch (final DataAccessException e)
 		{
-			String message = "No data store found";
+			message = "No data store found";
             LOGGER.error(message, e);
             throw new WebApplicationException(message, e,
             		Response.status(Status.SERVICE_UNAVAILABLE).entity(message).build());
 		}
+	}
+	
+	/**
+	 * Post method for creating a new worklog.
+	 * 
+	 * @param businessTag the id of the business to add to.
+	 * @param worklogs - the worklogs to add to the datastore.
+	 */
+	@POST
+	@Path("/import")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public String putWorkLogs(@PathParam("buisnessTag") String businessTag,
+			List<WorkLog> worklogs)
+	{
+		for (WorkLog worklog : worklogs)
+		{
+			try {
+				putWorkLog(businessTag, worklog);
+			}
+			catch (WebApplicationException e)
+			{
+				LOGGER.info("Failed to add: " + worklog);
+				LOGGER.info(e.getMessage());
+			}
+		}
+
+		String returnMessage = "All worklogs created succesfully";
+        LOGGER.info(returnMessage);
+        return returnMessage;	
 	}
 }

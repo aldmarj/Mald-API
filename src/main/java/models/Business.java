@@ -1,5 +1,6 @@
 package models;
 
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -10,13 +11,16 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class Business
 {
-	/** The business tag, also acts as the unique identifie */
+	/** The business tag, also acts as the unique identifier */
+	@XmlElement
     private String businessTag;
 
     /** The full name of the business */
+	@XmlElement
     private String businessName;
 
     /** The initial employee for the business **/
+	@XmlElement
 	private Employee initialEmployee;
     
     /**
