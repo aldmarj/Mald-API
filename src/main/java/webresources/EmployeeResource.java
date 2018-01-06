@@ -25,7 +25,7 @@ import exceptions.DataAccessException;
  *  
  * @author Lawrence
  */
-@Path("/business/{buisnessTag}/employee")
+@Path("/business/{businessTag}/employee")
 public class EmployeeResource
 {
     /** Logger **/
@@ -36,7 +36,7 @@ public class EmployeeResource
 	 */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-    public Collection<Employee> getAllEmployees(@PathParam("buisnessTag") String businessTag)
+    public Collection<Employee> getAllEmployees(@PathParam("businessTag") String businessTag)
     {
 		Collection<Employee> employees = new ArrayList<Employee>();
 
@@ -60,7 +60,7 @@ public class EmployeeResource
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("{userName}")
-	public Employee getEmployee(@PathParam("buisnessTag") String businessTag,
+	public Employee getEmployee(@PathParam("businessTag") String businessTag,
 			@PathParam("userName") String userName)
 	{	
 		Employee employee = new Employee();
@@ -99,7 +99,7 @@ public class EmployeeResource
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("mostWorked/top/{startRange : \\d+}/{endRange : \\d+}/between/{startTimeRange : \\d+}/{endTimeRange : \\d+}")
-	public Collection<Employee> getEmployeebyMostWorkedRange(@PathParam("buisnessTag") String businessTag,
+	public Collection<Employee> getEmployeebyMostWorkedRange(@PathParam("businessTag") String businessTag,
 			@PathParam("startRange") int startRange, @PathParam("endRange") int endRange,
 			@PathParam("startTimeRange") long startTimeRange, @PathParam("endTimeRange") long endTimeRange)
 	{	
@@ -108,18 +108,11 @@ public class EmployeeResource
 		try 
 		{
 			// Minus one to the given values to account for 0th index.
-			employees = 
-					new DBEmployeeQueries().getAllEmployeesbyMostWorkedRangeBetweenTimes(
+			employees = new DBEmployeeQueries().getAllEmployeesbyMostWorkedRangeBetweenTimes(
 							businessTag, startRange - 1, endRange - 1, startTimeRange, endTimeRange);
 			
-			if (employees != null)
-			{
-				return employees;
-			}
-			else
-			{
-				throw new WebApplicationException(Response.Status.NOT_FOUND);
-			}
+			return employees;
+
 		}
 		catch (DataAccessException e) 
 		{
@@ -135,7 +128,7 @@ public class EmployeeResource
 	 */
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
-	public String postEmployee(@PathParam("buisnessTag") String businessTag, 
+	public String postEmployee(@PathParam("businessTag") String businessTag, 
 			Employee employee)
 	{
 		String returnMessage;
@@ -208,7 +201,7 @@ public class EmployeeResource
 	@POST
 	@Path("/import")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public String postEmployees(@PathParam("buisnessTag") String businessTag, 
+	public String postEmployees(@PathParam("businessTag") String businessTag, 
 			List<Employee> employees)
 	{
 		for (Employee employee : employees)

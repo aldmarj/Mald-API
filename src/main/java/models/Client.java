@@ -18,22 +18,28 @@ public class Client
     private String clientName;
 
     private String businessTag;
+    
+    private long hoursWorked;
 
 	private List<Location> locations;
 
     public Client()
     {
-    	this.clientId = -1;
-        this.clientName = "";
-        this.businessTag = "";
-        this.locations = new ArrayList<Location>();
+    	this(-1, "", "", -1);
     }
     
     public Client(final int clientId, final String clientName, final String businessTag)
     {
+        this(clientId, clientName, businessTag, -1);
+    }
+    
+    public Client(final int clientId, final String clientName, final String businessTag, 
+    		final long hoursWorked)
+    {
         this.clientId = clientId;
         this.clientName = clientName;
         this.businessTag = businessTag;
+        this.hoursWorked = hoursWorked;
         this.locations = new ArrayList<Location>();
     }
 
@@ -75,6 +81,16 @@ public class Client
 	public void setLocations(List<Location> list) 
 	{
 		this.locations = list;
+	}
+	
+    public long getHoursWorked() 
+    {
+		return hoursWorked;
+	}
+
+	public void setHoursWorked(long hoursWorked) 
+	{
+		this.hoursWorked = hoursWorked;
 	}
 	
 	public boolean isValid()
