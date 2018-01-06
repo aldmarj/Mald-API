@@ -36,7 +36,7 @@ public class Employee
      * for dashboard purposes.
      **/
 	@XmlElement(nillable = true)
-	private int hoursWorked;
+	private long hoursWorked;
 	
     /** A optional field to request a password. Used for
      * the post request.
@@ -159,12 +159,12 @@ public class Employee
 		this.account = account;
 	} 
 	
-    public int getHoursWorked() 
+    public long getHoursWorked() 
     {
 		return hoursWorked;
 	}
 
-	public void setHoursWorked(int hoursWorked) 
+	public void setHoursWorked(long hoursWorked) 
 	{
 		this.hoursWorked = hoursWorked;
 	}
