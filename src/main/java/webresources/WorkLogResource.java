@@ -20,11 +20,11 @@ import exceptions.BadKeyException;
 import exceptions.DataAccessException;
 
 /**
- * WorkLog servlet to handle worklog processing.
+ * WorkLog resource to handle worklog processing.
  *  
  * @author Lawrence
  */
-@Path("/business/{buisnessTag}/worklog")
+@Path("/business/{businessTag}/worklog")
 public class WorkLogResource
 {
     /** Logger **/
@@ -39,7 +39,7 @@ public class WorkLogResource
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("{workLogId : \\d+}")
-	public WorkLog getWorkLog(@PathParam("buisnessTag") String businessTag,
+	public WorkLog getWorkLog(@PathParam("businessTag") String businessTag,
 			@PathParam("workLogId") int workLogId)
 	{	
 		WorkLog result = null;
@@ -71,13 +71,13 @@ public class WorkLogResource
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/user/{username}")
-	public ArrayList<WorkLog> getWorkLog(@PathParam("buisnessTag") String businessTag,
+	public ArrayList<WorkLog> getWorkLog(@PathParam("businessTag") String businessTag,
 			@PathParam("username") String username)
 	{	
 		ArrayList<WorkLog> result = new ArrayList<WorkLog>();
 		try 
 		{
-			result = new DBWorkLogQueries().getWorkLogbyUser(username);
+			result = new DBWorkLogQueries().getWorkLogbyUser(username, businessTag);
 			
 			if (result != null)
 			{
@@ -105,7 +105,7 @@ public class WorkLogResource
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/user/{userName}/range/{startTime : \\d+}/{endTime : \\d+}")
-	public List<WorkLog> getWorkLogInRangeForEmployee(@PathParam("buisnessTag") String businessTag,
+	public List<WorkLog> getWorkLogInRangeForEmployee(@PathParam("businessTag") String businessTag,
 			@PathParam("userName") String userName,
 			@PathParam("startTime") long startTime,
 			@PathParam("endTime") long endTime)
@@ -141,7 +141,7 @@ public class WorkLogResource
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/range/{startTime : \\d+}/{endTime : \\d+}")
-	public List<WorkLog> getWorkLogInRange(@PathParam("buisnessTag") String businessTag,
+	public List<WorkLog> getWorkLogInRange(@PathParam("businessTag") String businessTag,
 			@PathParam("startTime") long startTime,
 			@PathParam("endTime") long endTime)
 	{	
@@ -173,7 +173,7 @@ public class WorkLogResource
 	 */
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
-	public String putWorkLog(@PathParam("buisnessTag") String businessTag,
+	public String putWorkLog(@PathParam("businessTag") String businessTag,
 			WorkLog workLog)
 	{
 		String message;
@@ -221,7 +221,7 @@ public class WorkLogResource
 	@POST
 	@Path("/import")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public String putWorkLogs(@PathParam("buisnessTag") String businessTag,
+	public String putWorkLogs(@PathParam("businessTag") String businessTag,
 			List<WorkLog> worklogs)
 	{
 		for (WorkLog worklog : worklogs)

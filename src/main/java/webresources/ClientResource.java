@@ -8,6 +8,7 @@ import exceptions.BadKeyException;
 import exceptions.DataAccessException;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -90,6 +91,41 @@ public class ClientResource
 			{
 				throw new WebApplicationException(Response.Status.NOT_FOUND);
 			}
+		}
+		catch (DataAccessException e) 
+		{
+			throw new WebApplicationException(Response.Status.BAD_GATEWAY);		
+		}
+	}
+	
+	/**
+	 * Getter for getting the top clients in a range of time. 
+	 * Sorted by those that have been worked for the most first.
+	 * Does not count worklogs that aren't completely in the time period. i.e.
+	 * Start and finish in the time period.
+	 * 
+	 * @param businessTag - The tag of the business to interrogate.
+	 * @param startRange - The start of the range of clients to return, 1 for the first. (Non 0 indexed)
+	 * @param endRange - The end of the range of clients to return, x for the xth. (Non 0 indexed)
+	 * @param startTimeRange - The time in millisecond to start counting from.
+	 * @param endTimeRange - The time in millisecond to stop counting from.
+	 */
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("mostWorked/top/{startRange : \\d+}/{endRange : \\d+}/between/{startTimeRange : \\d+}/{endTimeRange : \\d+}")
+	public Collection<Client> getClientbyMostWorkedRange(@PathParam("businessTag") String businessTag,
+			@PathParam("startRange") int startRange, @PathParam("endRange") int endRange,
+			@PathParam("startTimeRange") long startTimeRange, @PathParam("endTimeRange") long endTimeRange)
+	{	
+		Collection<Client> clients = new ArrayList<Client>();
+		
+		try 
+		{
+			// Minus one to the given values to account for 0th index.
+			clients = new DBClientQueries().getAllClientsbyMostWorkedRangeBetweenTimes(
+							businessTag, startRange - 1, endRange - 1, startTimeRange, endTimeRange);
+			
+			return clients;
 		}
 		catch (DataAccessException e) 
 		{

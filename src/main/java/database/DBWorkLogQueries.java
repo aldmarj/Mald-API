@@ -211,13 +211,13 @@ public class DBWorkLogQueries extends DBQueries {
 	 * @return The requested worklogs.
 	 * @throws DataAccessException If a connection cannot be made to the store.
 	 */
-	public ArrayList<WorkLog> getWorkLogbyUser(String username) throws DataAccessException
+	public ArrayList<WorkLog> getWorkLogbyUser(String username, String businessTag) throws DataAccessException
 	{
 		ArrayList<WorkLog> result = new ArrayList<WorkLog>();
 		
 	    try
 	    {		
-	    	result = getWorkLogbyUserSQL(username, this);
+	    	result = getWorkLogbyUserSQL(username, businessTag, this);
 	    	
 	    	for (WorkLog workLog : result)
 	    	{
@@ -377,18 +377,19 @@ public class DBWorkLogQueries extends DBQueries {
 	 * @throws SQLException - if the DB cannot be reached.
 	 * @throws DataAccessException - if the DB cannot be reached.
 	 */
-	public static ArrayList<WorkLog> getWorkLogbyUserSQL(String username, DBQueries queryRunner) 
+	public static ArrayList<WorkLog> getWorkLogbyUserSQL(String username, String businessTag, DBQueries queryRunner) 
 			throws SQLException, DataAccessException
 	{
 		ArrayList<WorkLog> result = new ArrayList<WorkLog>();
 		
 		String query = "SELECT workLogId, userName, businessTag, clientId, startTime, endTime, description "
-				+ "FROM WorkLog WHERE WorkLog.userName = ? ORDER BY startTime DESC;";
+				+ "FROM WorkLog WHERE WorkLog.userName = ? AND WorkLog.businessTag = ? ORDER BY startime DESC;";
 		
 		final PreparedStatement stmt = queryRunner.connection.prepareStatement(query);
 		int index = 1;
 		
 		stmt.setString(index++, username);
+		stmt.setString(index++, businessTag);
 		
 		queryRunner.resultSet = stmt.executeQuery();
 		while (queryRunner.resultSet.next())

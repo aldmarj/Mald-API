@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import exceptions.BadKeyException;
@@ -167,6 +168,45 @@ public final class DBClientQueries extends DBQueries
 	    
 	    return result;
 	}
+	
+	/**
+	 * Returns a range of clients for a given business based of how much they have worked
+	 * between two given times. 
+	 * 
+	 * @return the range of client ordered by how much they have worked.
+	 * @throws DataAccessException If a connection cannot be made to the store.
+	 */
+	public Collection<Client> getAllClientsbyMostWorkedRangeBetweenTimes(String businessTag,
+			int startRange, int endRange, long startTimeRange, long endTimeRange) 
+					throws DataAccessException
+	{
+		Collection<Client> result = new ArrayList<Client>();
+		
+	    try
+	    {		
+	    	result = 
+	    		getAllClientsbyMostWorkedRangeBetweenTimesSQL(
+	    				businessTag, startRange, endRange, startTimeRange, endTimeRange, this);
+	    	
+	    	for (Client client : result)
+	    	{
+	    		client.setLocations(
+		    			DBLocationQueries.getLocationsForIdSQL(
+		    	    	DBClientQueries.getClientLocationOwnerIdSQL(client, this), this));
+	    	}
+		}
+	    catch (SQLException e) 
+	    {
+			this.handleSQLException(e);
+		}
+	    finally
+	    {
+	    	this.closeResultSet();
+	    	this.closeConnection();
+	    }
+	    
+	    return result;
+	}
 
 	/**
 	 * Creates a client in the database with the given client and DB runner.
@@ -270,8 +310,8 @@ public final class DBClientQueries extends DBQueries
 	{
 		ArrayList<Client> result = new ArrayList<Client>();
 
-		String query = "SELECT clientId, clientName, businessTag FROM BusinessClient WHERE BusinessClient.businessTag = ? "
-				+ "ORDER BY clientName ASC;";
+		String query = "SELECT clientId, clientName, businessTag FROM BusinessClient "
+				+ "WHERE BusinessClient.businessTag = ? ORDER BY clientName ASC;";
 		
 		final PreparedStatement stmt = queryRunner.connection.prepareStatement(query);
 		stmt.setString(1, businessTag);
@@ -313,6 +353,54 @@ public final class DBClientQueries extends DBQueries
 		if (resultSet.next()) 
 		{
 		    result = resultSet.getInt(1);
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * Get clients from the database from a business within a range given by most worked.
+	 * 
+	 * @param businessTag - The business to interrogate.
+	 * @param startrange - The start of the range to return.
+	 * @param endRange - The end of the range to return.
+	 * @param queryRunner - the DB query runner.
+	 * @throws SQLException if a key constraint is violated.
+	 * @throws DataAccessException if the DB cannot be reached.
+	 */
+	private static Collection<Client> getAllClientsbyMostWorkedRangeBetweenTimesSQL(
+			String businessTag, int startRange, int endRange, long startTimeRange, long endTimeRange,
+			DBQueries queryRunner) throws SQLException, DataAccessException 
+	{
+		Collection<Client> result = new ArrayList<Client>();
+		
+		String query = "SELECT clientName, BusinessClient.clientId, BusinessClient.businessTag, "
+			+ "SUM(WorkLog.endTime - WorkLog.startTime) as hoursWorked "
+			+ "FROM BusinessClient "
+			+ "LEFT JOIN WorkLog ON BusinessClient.clientId = WorkLog.clientId AND BusinessClient.businessTag = WorkLog.businessTag "
+			+ "AND WorkLog.startTime >= ? AND WorkLog.endTime <= ? "
+			+ "WHERE BusinessClient.businessTag = ? "
+			+ "GROUP BY BusinessClient.clientId "
+			+ "ORDER BY hoursWorked DESC "
+			+ "LIMIT ? OFFSET ?;";
+		
+		final PreparedStatement stmt = queryRunner.connection.prepareStatement(query);
+		int columnIndex = 1;
+		
+		stmt.setLong(columnIndex++, startTimeRange);
+		stmt.setLong(columnIndex++, endTimeRange);
+		stmt.setString(columnIndex++, businessTag);
+		stmt.setInt(columnIndex++, endRange - startRange);
+		stmt.setInt(columnIndex++, startRange);
+		
+		queryRunner.resultSet = stmt.executeQuery();
+		while (queryRunner.resultSet.next())
+		{
+			result.add(new Client(
+					queryRunner.resultSet.getInt("clientId"),
+					queryRunner.resultSet.getString("clientName"),
+					queryRunner.resultSet.getString("businessTag"),
+					queryRunner.resultSet.getInt("hoursWorked")));
 		}
 		
 		return result;
