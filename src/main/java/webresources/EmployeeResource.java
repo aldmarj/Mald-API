@@ -21,7 +21,7 @@ import exceptions.BadKeyException;
 import exceptions.DataAccessException;
 
 /**
- * Employee servlet to handle employee processing.
+ * Employee resource to handle employee processing.
  *  
  * @author Lawrence
  */
@@ -30,6 +30,27 @@ public class EmployeeResource
 {
     /** Logger **/
     private static final Logger LOGGER = Logger.getLogger(EmployeeResource.class);
+    
+	/**
+	 * Getter for getting all employees in the business context.
+	 */
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+    public Collection<Employee> getAllEmployees(@PathParam("buisnessTag") String businessTag)
+    {
+		Collection<Employee> employees = new ArrayList<Employee>();
+
+		try 
+		{
+			employees = new DBEmployeeQueries().getAllEmployees(businessTag);
+			
+			return employees;
+		}
+		catch (DataAccessException e) 
+		{
+			throw new WebApplicationException(Response.Status.BAD_GATEWAY);		
+		}
+    }
     
 	/**
 	 * Getter for getting a employee by its username.
