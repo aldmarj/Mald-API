@@ -383,7 +383,7 @@ public class DBWorkLogQueries extends DBQueries {
 		ArrayList<WorkLog> result = new ArrayList<WorkLog>();
 		
 		String query = "SELECT workLogId, userName, businessTag, clientId, startTime, endTime, description "
-				+ "FROM WorkLog WHERE WorkLog.userName = ?;";
+				+ "FROM WorkLog WHERE WorkLog.userName = ? ORDER BY startTime DESC;";
 		
 		final PreparedStatement stmt = queryRunner.connection.prepareStatement(query);
 		int index = 1;
@@ -423,7 +423,8 @@ public class DBWorkLogQueries extends DBQueries {
 		ArrayList<WorkLog> result = new ArrayList<WorkLog>();
 		
 		String query = "SELECT workLogId, userName, businessTag, clientId, startTime, endTime, description "
-				+ "FROM WorkLog WHERE startTime >= ? AND endTime <= ? AND userName = ? AND businessTag = ?;";
+				+ "FROM WorkLog WHERE startTime >= ? AND endTime <= ? AND userName = ? AND businessTag = ? "
+				+ "ORDER BY startTime DESC;";
 		
 		final PreparedStatement stmt = queryRunner.connection.prepareStatement(query);
 		int index = 1;
@@ -466,7 +467,7 @@ public class DBWorkLogQueries extends DBQueries {
 		ArrayList<WorkLog> result = new ArrayList<WorkLog>();
 		
 		String query = "SELECT workLogId, userName, businessTag, clientId, startTime, endTime, description "
-				+ "FROM WorkLog WHERE startTime >= ? AND endTime <= ? AND businessTag = ?;";
+				+ "FROM WorkLog WHERE startTime >= ? AND endTime <= ? AND businessTag = ? ORDER BY startTime DESC;";
 		
 		final PreparedStatement stmt = queryRunner.connection.prepareStatement(query);
 		int index = 1;

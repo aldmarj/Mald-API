@@ -270,7 +270,8 @@ public final class DBClientQueries extends DBQueries
 	{
 		ArrayList<Client> result = new ArrayList<Client>();
 
-		String query = "SELECT clientId, clientName, businessTag FROM BusinessClient WHERE BusinessClient.businessTag = ?;";
+		String query = "SELECT clientId, clientName, businessTag FROM BusinessClient WHERE BusinessClient.businessTag = ? "
+				+ "ORDER BY clientName ASC;";
 		
 		final PreparedStatement stmt = queryRunner.connection.prepareStatement(query);
 		stmt.setString(1, businessTag);
