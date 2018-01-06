@@ -178,7 +178,7 @@ public class DBLocationQueries extends DBQueries
 		String query = "SELECT postcode, description FROM Location "
 				+ "LEFT JOIN LocationOwnertoLocation ON Location.locationId = LocationOwnertoLocation.locationId "
 				+ "LEFT JOIN LocationOwner ON LocationOwnertoLocation.locationOwnerId = LocationOwner.locationOwnerId "
-				+ "WHERE LocationOwner.locationOwnerId = ?;";
+				+ "WHERE LocationOwner.locationOwnerId = ? ORDER BY postcode ASC;";
 		
 		final PreparedStatement stmt = queryRunner.connection.prepareStatement(query);
 		int index = 1;
